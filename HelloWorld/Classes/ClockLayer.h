@@ -10,8 +10,12 @@ public:
 	Sprite * minute;
 	Sprite * second;
 	SceneManager * tsm;
+	int hourRotation;
+	int minRotation;
+	int secRotation;
 	virtual bool init();
 	CREATE_FUNC(ClockLayer);
 	void menuCallBack(Ref * pSender);
+	void onSchedule(float t);
 };
 #endif
