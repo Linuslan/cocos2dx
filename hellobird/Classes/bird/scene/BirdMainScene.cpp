@@ -7,17 +7,10 @@ bool BirdMainScene::init() {
     if(!Scene::init()) {
         return false;
     }
-    SpriteFrameCache* sfc = SpriteFrameCache::getInstance();
-    sfc->addSpriteFramesWithFile("pic/bird.plist", "pic/birdP.png");
-    Vector<SpriteFrame*> animeFrames;
-    animeFrames.pushBack(sfc->getSpriteFrameByName("bird1.png"));
-    animeFrames.pushBack(sfc->getSpriteFrameByName("bird2.png"));
-    animeFrames.pushBack(sfc->getSpriteFrameByName("bird3.png"));
-    Animation* animation = Animation::createWithSpriteFrames(animeFrames, 0.1f);
-    Animate* animate = Animate::create(animation);
-    Sprite* bird = Sprite::createWithSpriteFrame(sfc->getSpriteFrameByName("bird2.png"));
-    bird->setPosition(Vec2(200, 200));
-    bird->runAction(RepeatForever::create(animate));
-    this->addChild(bird);
+    Size winSize = Director::getInstance()->getWinSize();
+    BirdMainLayer* mainLayer = BirdMainLayer::create();
+    mainLayer->setAnchorPoint(Vec2(0, 0));
+    mainLayer->setPosition(Vec2(0, 0));
+    this->addChild(mainLayer);
     return true;
 }

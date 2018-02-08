@@ -6,6 +6,7 @@
 #define PROJ_ANDROID_STUDIO_BIRDMAINSCENE_H
 
 #include "cocos2d.h"
+#include "BirdMainLayer.h"
 USING_NS_CC;
 class BirdMainScene : public Scene {
 public:
