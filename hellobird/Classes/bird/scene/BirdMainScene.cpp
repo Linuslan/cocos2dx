@@ -9,8 +9,8 @@ bool BirdMainScene::init() {
     }
     Size winSize = Director::getInstance()->getWinSize();
     BirdMainLayer* mainLayer = BirdMainLayer::create();
-    mainLayer->setAnchorPoint(Vec2(0, 0));
-    mainLayer->setPosition(Vec2(0, 0));
+    //mainLayer->setAnchorPoint(Vec2(0, 0));
+    //mainLayer->setPosition(Vec2(0, 0));
     this->addChild(mainLayer);
     return true;
 }

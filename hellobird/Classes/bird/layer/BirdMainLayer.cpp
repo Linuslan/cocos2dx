@@ -10,17 +10,22 @@ bool BirdMainLayer::init() {
     Size winSize = Director::getInstance()->getWinSize();
     //添加背景
     Sprite* background = Sprite::create("pic/morning.png");
-    background->setPosition(Vec2(0, 0));
-    background->setAnchorPoint(Vec2(0, 0));
-    background->setContentSize(winSize);
+    background->setPosition(Vec2(winSize/2));
+    background->setScale(1.5f, 2.0f);
+    /*background->setPosition(Vec2(0, 0));
+    background->setAnchorPoint(Vec2(1, 0));*/
     this->addChild(background);
 
     //添加地板
     Sprite* floor = Sprite::create("pic/floor.png");
-    //floor->setPosition(Vec2(0, 50));
-    floor->setScaleY(0.5);
-    floor->setScaleX(1.5);
-    floor->setAnchorPoint(Vec2(0,-0.05));
+    floor->setPosition(Vec2(winSize.width*0.5, winSize.height*0.05));
+    /*floor->setPosition(Vec2(0, 0));
+    floor->setAnchorPoint(Vec2(0, 0));*/
+    floor->setScaleX(2);
+    MoveBy* act1 = MoveBy::create(1, Vec2(108, 0));
+    MoveTo* act2 = MoveTo::create(0, Vec2(winSize.width/2, winSize.height*0.05));
+    Sequence* seq = Sequence::create(act1, act2, nullptr);
+    floor->runAction(RepeatForever::create(seq));
     this->addChild(floor);
     SpriteFrameCache* sfc = SpriteFrameCache::getInstance();
     sfc->addSpriteFramesWithFile("pic/bird.plist", "pic/birdP.png");
