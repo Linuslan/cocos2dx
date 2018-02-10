@@ -13,6 +13,7 @@ class BirdMainLayer : public Layer {
 private:
     Sprite* topTube;
     Sprite* bottomTube;
+    Sprite* bird;
 public:
     virtual bool init();
     CREATE_FUNC(BirdMainLayer);

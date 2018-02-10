@@ -31,16 +31,23 @@ bool BirdMainLayer::init() {
     animeFrames.pushBack(sfc->getSpriteFrameByName("bird3.png"));
     Animation* animation = Animation::createWithSpriteFrames(animeFrames, 0.1f);
     Animate* animate = Animate::create(animation);
-    Sprite* bird = Sprite::createWithSpriteFrame(sfc->getSpriteFrameByName("bird2.png"));
-    bird->setPosition(Vec2(200, 100));
+    bird = Sprite::createWithSpriteFrame(sfc->getSpriteFrameByName("bird2.png"));
+    bird->setPosition(Vec2(200, 200));
     bird->runAction(RepeatForever::create(animate));
-    this->addChild(bird, 10);
-    this->schedule(schedule_selector(BirdMainLayer::createTube), 3);
+    this->addChild(bird, 10, "bird");
+    this->schedule(schedule_selector(BirdMainLayer::createTube), 2);
 
     auto listener1 = EventListenerTouchOneByOne::create();
-
     listener1->onTouchBegan = [](Touch* touch, Event* event){
-        log("点击一次");
+        Layer* layer = static_cast<Layer*>(event->getCurrentTarget());
+        Sprite* bird = static_cast<Sprite*>(layer->getChildByName("bird"));
+        //bird->stopActionByTag(0);
+        bird->stopActionByTag(1);
+        MoveBy* flyUp = MoveBy::create(0.25, Vec2(0, 25));
+        MoveTo* flyDown = MoveTo::create(0.8, Vec2(200, 20));
+        Sequence* seq = Sequence::create(flyUp, flyDown, nullptr);
+        seq->setTag(1);
+        bird->runAction(seq);
         return true;
     };
     _eventDispatcher->addEventListenerWithSceneGraphPriority(listener1, this);
@@ -50,7 +57,7 @@ bool BirdMainLayer::init() {
 void BirdMainLayer::createTube(float a) {
     Size winSize = Director::getInstance()->getWinSize();
     log("可视区域的大小为width:%f, height:%f", winSize.width, winSize.height);
-    int speed = 5;  //管子移动的速度
+    int speed = 4.5;  //管子移动的速度
     int topMinHeight = 230; //上层管子距离屏幕底部最小的距离
     int topBottomDis = 50;  //上层管子和下层管子之间的距离
     //获取随机数
