@@ -35,17 +35,51 @@ bool BirdMainLayer::init() {
     bird->setPosition(Vec2(200, 100));
     bird->runAction(RepeatForever::create(animate));
     this->addChild(bird, 10);
+    this->schedule(schedule_selector(BirdMainLayer::createTube), 3);
+
+    auto listener1 = EventListenerTouchOneByOne::create();
+
+    listener1->onTouchBegan = [](Touch* touch, Event* event){
+        log("点击一次");
+        return true;
+    };
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener1, this);
+    return true;
+}
+
+void BirdMainLayer::createTube(float a) {
+    Size winSize = Director::getInstance()->getWinSize();
+    log("可视区域的大小为width:%f, height:%f", winSize.width, winSize.height);
+    int speed = 5;  //管子移动的速度
+    int topMinHeight = 230; //上层管子距离屏幕底部最小的距离
+    int topBottomDis = 50;  //上层管子和下层管子之间的距离
+    //获取随机数
+    srand((unsigned)time(nullptr));
+    int randomNum = rand();
+    log("本次生成的随机数为：%d", randomNum);
+    int topY = (randomNum%(int(winSize.height)-topMinHeight))+topMinHeight;
+    log("本次生成的topY的值为：%d", topY);
+    int bottomY = topY - topBottomDis;
+    log("本次生成的bottomY:%d", bottomY);
 
     //添加柱子的上部分
-    Sprite* topTube = Sprite::create("pic/column2.png");
-    topTube->setPosition(Vec2(220, 230));
+    topTube = Sprite::create("pic/column2.png");
+    topTube->setPosition(Vec2(winSize.width, topY));
     topTube->setScaleY(2.0f);
     this->addChild(topTube);
+    MoveBy* topTubeAct1 = MoveBy::create(speed, Vec2(-winSize.width, 0));
+    Sequence* topTubeActSeq = Sequence::create(topTubeAct1, nullptr);
+    topTube->runAction(topTubeActSeq);
 
     //添加柱子的下部分
-    Sprite* bottomTube = Sprite::create("pic/column1.png");
-    bottomTube->setPosition(Vec2(220, 0));
+    bottomTube = Sprite::create("pic/column1.png");
     bottomTube->setScaleY(2.0f);
+    log("下部分管子的height:%f", bottomTube->getContentSize().height*2);
+    bottomY = bottomY-int(bottomTube->getContentSize().height)*2;
+    log("计算最终的bottomY:%d", bottomY);
+    bottomTube->setPosition(Vec2(winSize.width, bottomY));
     this->addChild(bottomTube, 2);
-    return true;
+    MoveBy* bottomTubeAct1 = MoveBy::create(speed, Vec2(-winSize.width, 0));
+    Sequence* bottomTubeActSeq = Sequence::create(bottomTubeAct1, nullptr);
+    bottomTube->runAction(bottomTubeActSeq);
 }
