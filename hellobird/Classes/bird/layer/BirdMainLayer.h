@@ -18,5 +18,8 @@ public:
     virtual bool init();
     CREATE_FUNC(BirdMainLayer);
     void createTube(float a);
+    void update(float a);
+    void detectCollisionByRect();
+    void detectCollisionByPosition();
 };
 #endif //PROJ_ANDROID_STUDIO_MAINLAYER_H
