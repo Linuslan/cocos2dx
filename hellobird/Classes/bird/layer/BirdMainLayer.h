@@ -14,6 +14,7 @@ private:
     Sprite* topTube;
     Sprite* bottomTube;
     Sprite* bird;
+    int index = 0;
 public:
     virtual bool init();
     CREATE_FUNC(BirdMainLayer);
