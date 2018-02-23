@@ -2,6 +2,7 @@
 #include "LoadLayer.h"
 #include "OpenLayer.h"
 #include "ClockLayer.h"
+#include "TileMapLayer.h"
 void SceneManager::createLoadScene() {
 	loadScene = Scene::create();
 	LoadLayer * layer = LoadLayer::create();
@@ -23,4 +24,12 @@ void SceneManager::goClockScene() {
 	clockScene->addChild(layer);
 	layer->tsm = this;
 	Director::getInstance()->replaceScene(clockScene);
+}
+
+void SceneManager::goTileMapScene() {
+	tileMapScene = Scene::create();
+	TileMapLayer* layer = TileMapLayer::create();
+	tileMapScene->addChild(layer);
+	layer->tsm = this;
+	Director::getInstance()->replaceScene(tileMapScene);
 }
