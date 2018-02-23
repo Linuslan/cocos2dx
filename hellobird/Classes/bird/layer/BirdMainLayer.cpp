@@ -17,8 +17,8 @@ bool BirdMainLayer::init() {
     //添加地板
     Sprite* floor = Sprite::create("pic/floor.png");
     floor->setPosition(Vec2(winSize.width*0.5, winSize.height*0.02));
-    //floor->setScaleX(2);
-    MoveBy* act1 = MoveBy::create(1, Vec2(-108, 0));
+    floor->setScaleY(0.7);
+    MoveBy* act1 = MoveBy::create(0.5, Vec2(-108, 0));
     MoveTo* act2 = MoveTo::create(0, Vec2(winSize.width/2, winSize.height*0.02));
     Sequence* seq = Sequence::create(act1, act2, nullptr);
     floor->runAction(RepeatForever::create(seq));
@@ -34,8 +34,9 @@ bool BirdMainLayer::init() {
     bird = Sprite::createWithSpriteFrame(sfc->getSpriteFrameByName("bird2.png"));
     bird->setPosition(Vec2(200, 300));
     bird->runAction(RepeatForever::create(animate));
+    bird->setScale(0.7);
     this->addChild(bird, 10, "bird");
-    this->schedule(schedule_selector(BirdMainLayer::createTube), 2);
+    this->schedule(schedule_selector(BirdMainLayer::createTube), 2.7);
 
 
     auto listener1 = EventListenerTouchOneByOne::create();
@@ -43,8 +44,8 @@ bool BirdMainLayer::init() {
         Layer* layer = static_cast<Layer*>(event->getCurrentTarget());
         Sprite* bird = static_cast<Sprite*>(layer->getChildByName("bird"));
         bird->stopActionByTag(1);
-        MoveBy* flyUp = MoveBy::create(0.25, Vec2(0, 25));
-        MoveTo* flyDown = MoveTo::create(0.8, Vec2(200, 20));
+        MoveBy* flyUp = MoveBy::create(0.2, Vec2(0, 60));
+        MoveTo* flyDown = MoveTo::create(2, Vec2(200, 50));
         Sequence* seq = Sequence::create(flyUp, flyDown, nullptr);
         seq->setTag(1);
         bird->runAction(seq);
@@ -60,7 +61,7 @@ void BirdMainLayer::createTube(float a) {
     //log("可视区域的大小为width:%f, height:%f", winSize.width, winSize.height);
     int speed = 4.5;  //管子移动的速度
     int topMinHeight = 700; //上层管子距离屏幕底部最小的距离
-    int topBottomDis = 150;  //上层管子和下层管子之间的距离
+    int topBottomDis = 160;  //上层管子和下层管子之间的距离
     //获取随机数
     srand((unsigned)time(nullptr));
     int randomNum = rand();
@@ -92,9 +93,13 @@ void BirdMainLayer::createTube(float a) {
     Sequence* bottomTubeActSeq = Sequence::create(bottomTubeAct1, nullptr);
     bottomTube->runAction(bottomTubeActSeq);
     bottomTube->setName("bottomTube");
+    index ++;
+    topTube->setTag(index);
+    bottomTube->setTag(index);
 }
 
 void BirdMainLayer::update(float a) {
+    Size winSize = Director::getInstance()->getWinSize();
     log("执行碰撞检测");
     if(nullptr != bird && nullptr != topTube && nullptr != bottomTube) {
         log("所有对象都不为空，进入碰撞检测逻辑判断");
@@ -107,11 +112,36 @@ void BirdMainLayer::update(float a) {
             bird->setRotation(90);
             MoveTo* act1 = MoveTo::create(1.5, Vec2(bird->getPosition().x, 0));
             bird->runAction(act1);
-            log("abcdefg");
+            _eventDispatcher->removeAllEventListeners();
+            int score = UserDefault::getInstance()->getIntegerForKey("score");
+            UserDefault::getInstance()->setBoolForKey("isAlive", false);
+            log("score:最终得分：%d", score);
+            Sprite* scoreBoard = Sprite::create("pic/scoreOver.png");
+            Label* scoreLabel = Label::createWithSystemFont(StringUtils::format("%d",score), "", 40);
+            Color4B color = Color4B::RED;
+            scoreLabel->setTextColor(color);
+            scoreLabel->setPosition(Vec2(scoreBoard->getContentSize().width-80, scoreBoard->getContentSize().height-80));
+            Sprite* prize = Sprite::create("pic/gold.png");
+            prize->setPosition(Vec2(scoreBoard->getContentSize().width - 310, scoreBoard->getContentSize().height/2-10));
+            scoreBoard->addChild(prize);
+            scoreBoard->setPosition(winSize/2);
+            scoreBoard->addChild(scoreLabel);
+            this->addChild(scoreBoard, 20);
+            this->pause();
         }
         Vector<Node*> sprites = this->getChildren();
         for(Node* node : sprites) {
             if(node->getName() == "topTube" || node->getName() == "bottomTube") {
+                bool isAlive = UserDefault::getInstance()->getBoolForKey("isAlive");
+                int scoreIdx = UserDefault::getInstance()->getIntegerForKey("scoreIdx");
+                if(isAlive && node->getTag() != 0 && node->getTag() != scoreIdx
+                   && (bird->getPositionX()+bird->getContentSize().width/2) >= (node->getPositionX()+node->getContentSize().width/2)) {
+                    int score = UserDefault::getInstance()->getIntegerForKey("score");
+                    UserDefault::getInstance()->setIntegerForKey("score", score + 1);
+                    UserDefault::getInstance()->setIntegerForKey("scoreIdx", node->getTag());
+                    log("score:%d,tag:%d,scoreIdx:%d", score, node->getTag(),scoreIdx);
+                    node->setTag(0);
+                }
                 if(node->getPosition().x < 0) {
                     node->removeFromParent();
                 }
@@ -126,21 +156,6 @@ void BirdMainLayer::detectCollisionByRect() {
         log("所有对象都不为空，进入碰撞检测逻辑判断");
         Rect birdRect = bird->getBoundingBox();
         Rect topTubeRect = topTube->getBoundingBox();
-        float topMaxX = topTubeRect.getMaxX();
-        float topMinX = topTubeRect.getMinX();
-        float topMidX = topTubeRect.getMidX();
-        float topMaxY = topTubeRect.getMaxY();
-        float topMinY = topTubeRect.getMinY();
-        float topMidY = topTubeRect.getMidY();
-        float birdMaxX = birdRect.getMaxX();
-        float birdMinX = birdRect.getMinX();
-        float birdMidX = birdRect.getMidX();
-        float birdMaxY = birdRect.getMaxY();
-        float birdMinY = birdRect.getMinY();
-        float birdMidY = birdRect.getMidY();
-        log("上层管子 maxX = %f, midX = %f, minX = %f, maxY = %f, midY = %f, minY = %f", topMaxX, topMidX, topMinX, topMaxY, topMidY, topMinY);
-        log("小鸟位置 maxX = %f, midX = %f, minX = %f, maxY = %f, midY = %f, minY = %f", birdMaxX, birdMidX, birdMinX, birdMaxY, birdMidY, birdMinY);
-
         Rect bottomTubeRect = bottomTube->getBoundingBox();
         if(topTubeRect.intersectsRect(birdRect) || bottomTubeRect.intersectsRect(birdRect)) {
             log("精灵碰撞，小鸟死亡");
