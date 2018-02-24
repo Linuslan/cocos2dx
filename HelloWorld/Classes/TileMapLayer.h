@@ -5,14 +5,14 @@
 #ifndef PROJ_ANDROID_STUDIO_TILEMAPLAYER_H
 #define PROJ_ANDROID_STUDIO_TILEMAPLAYER_H
 
-#endif //PROJ_ANDROID_STUDIO_TILEMAPLAYER_H
-
 #include "cocos2d.h"
 #include "SceneManager.h"
+#include "MoveSprite.h"
 USING_NS_CC;
 class TileMapLayer : public Layer {
 private:
     std::map<int, Vec2> pMap;
+    float initScale=1;  //初始化的放大缩小比例
 public:
     SceneManager* tsm;
     virtual bool init();
@@ -21,3 +21,5 @@ public:
     void onTouchesBegan(const std::vector<Touch*>& touches, Event* event);
     void onTouchesEnded(const std::vector<Touch*>& touches, Event* event);
 };
+
+#endif //PROJ_ANDROID_STUDIO_TILEMAPLAYER_H

@@ -9,8 +9,9 @@ bool TileMapLayer::init() {
     }
     TMXTiledMap* map = TMXTiledMap::create("tilemap/test1.tmx");
     this->addChild(map, 0, 99);
-    /*Size size = Director::getInstance()->getWinSize();
-    map->setPosition(Vec2(size.width/2, size.height*0.5));*/
+    Size size = Director::getInstance()->getWinSize();
+    map->setPosition(Vec2(-50, -50));
+    map->setAnchorPoint(Vec2::ZERO);
     Sprite* sprite = Sprite::create("tilemap/Player.png");
     sprite->setPosition(Vec2(50, 50));
     this->addChild(sprite, 100, "player");
@@ -19,17 +20,36 @@ bool TileMapLayer::init() {
     listener->onTouchesBegan = CC_CALLBACK_2(TileMapLayer::onTouchesBegan, this);
     listener->onTouchesEnded = CC_CALLBACK_2(TileMapLayer::onTouchesEnded, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+
+    //角色移动触控版
+    MoveSprite* moveSprite = MoveSprite::create();
+    this->addChild(moveSprite);
     return true;
 }
 
 void TileMapLayer::onTouchesMoved(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event* event) {
     log("touch size: %d", touches.size());
+    TMXTiledMap* map = static_cast<TMXTiledMap*>(this->getChildByTag(99));
     //单点移动，则移动地图，否则缩放或者放大地图
     if(touches.size() == 1) {
+        float x = map->getPositionX();
+        float y = map->getPositionY();
+        //移动地图
         auto touch = touches[0];
         auto diff = touch->getDelta();
         auto node = getChildByTag(99);
         auto currentPos = node->getPosition();
+        float originalX = x + diff.x;
+        float originalY = y + diff.y;
+        float endedX = x + map->getContentSize().width;
+        float endedY = y + map->getContentSize().height;
+        Size winSize = Director::getInstance()->getWinSize();
+        /*if(originalX > 0 || originalY > 0 || endedX < winSize.width || endedY < winSize.height) {    //边界检查
+            return ;
+        }*/
+        if(originalX > 0 || originalY > 0) {    //边界检查
+            return ;
+        }
         node->setPosition(currentPos + diff);
         return;
     }
@@ -42,7 +62,7 @@ void TileMapLayer::onTouchesMoved(const std::vector<cocos2d::Touch*>& touches, c
     std::map<int, Vec2>::iterator iter2 = this->pMap.find(touch2->getID());
     Vec2 original2 = iter2->second;
     Vec2 curr2 = touch2->getLocation();
-    log("original1.x=%f, original2.x=%f", original1.x, original2.x);
+    log("touch original1.x=%f, original2.x=%f", original1.x, original2.x);
     float originalWidth = abs(original1.x-original2.x);
     if(originalWidth == 0) {
         original1 = curr1;
@@ -53,13 +73,12 @@ void TileMapLayer::onTouchesMoved(const std::vector<cocos2d::Touch*>& touches, c
     //float originalWidth = abs(original1.x - original2.x);
     //float currWidth = abs(curr1.x - curr2.x);
     float currWidth = abs(curr1.x-curr2.x);
-    log("curr1.x=%f, curr2.x=%f", curr1.x, curr2.x);
-    log("originalWidth=%f, currWidth=%f", originalWidth, currWidth);
+    log("touch curr1.x=%f, curr2.x=%f", curr1.x, curr2.x);
+    log("touch originalWidth=%f, currWidth=%f", originalWidth, currWidth);
     float scaleX = originalWidth == 0 ? 1 : currWidth/originalWidth;
     log("缩放比例：%f",scaleX);
-    //float scaleX = 1.5;
-    TMXTiledMap* map = static_cast<TMXTiledMap*>(this->getChildByTag(99));
-    map->setScale(scaleX);
+    //缩放地图
+    map->setScale(initScale*scaleX);
 }
 
 void TileMapLayer::onTouchesBegan(const std::vector<Touch *> &touches, Event *event) {
@@ -78,4 +97,6 @@ void TileMapLayer::onTouchesBegan(const std::vector<Touch *> &touches, Event *ev
 
 void TileMapLayer::onTouchesEnded(const std::vector<Touch *> &touches, Event *unused_event) {
     this->pMap.clear();
+    TMXTiledMap* map = static_cast<TMXTiledMap*>(this->getChildByTag(99));
+    initScale = map->getScale();
 }
