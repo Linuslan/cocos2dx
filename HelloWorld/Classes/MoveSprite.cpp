@@ -8,7 +8,7 @@ bool MoveSprite::init() {
     if(!Sprite::init()) {
         return false;
     }
-    this->setPosition(50, 50);
+    this->setPosition(300, 150);
     this->setTexture("tilemap/move_nav.png");
     EventListenerTouchAllAtOnce* moveListener = EventListenerTouchAllAtOnce::create();
     moveListener->onTouchesBegan = CC_CALLBACK_2(MoveSprite::onMoveTouchesBegan, this);
@@ -49,7 +49,7 @@ void MoveSprite::onMoveTouchesBegan(const std::vector<Touch *> &touches, Event *
 }
 
 void MoveSprite::onMoveTouchesMoved(const std::vector<Touch *> &touches, Event *event) {
-    float diameter = 30.0;  //圆的直径
+    float diameter = 140.0;  //圆的直径
     Touch* touch = touches[0];
     Vec2 vec = touch->getLocation();
     log("touch.x=%f, touch.y=%f", vec.x, vec.y);

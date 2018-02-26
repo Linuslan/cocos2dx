@@ -7,14 +7,13 @@ bool TileMapLayer::init() {
     if(!Layer::init()) {
         return false;
     }
-    TMXTiledMap* map = TMXTiledMap::create("tilemap/test1.tmx");
+    TMXTiledMap* map = TMXTiledMap::create("tilemap/test2.tmx");
     this->addChild(map, 0, 99);
     Size size = Director::getInstance()->getWinSize();
-    map->setPosition(Vec2(0, 0));
-    map->setAnchorPoint(Vec2::ZERO);
-    Sprite* sprite = Sprite::create("tilemap/Player.png");
-    sprite->setPosition(Vec2(50, 50));
-    this->addChild(sprite, 100, "player");
+    map->setPosition(Vec2(0, -150));
+    /*Sprite* sprite = Sprite::create("tilemap/Player.png");
+    sprite->setPosition(Vec2(100, 100));
+    this->addChild(sprite, 100, "player");*/
     auto listener = EventListenerTouchAllAtOnce::create();
     listener->onTouchesMoved = CC_CALLBACK_2(TileMapLayer::onTouchesMoved, this);
     listener->onTouchesBegan = CC_CALLBACK_2(TileMapLayer::onTouchesBegan, this);
@@ -30,24 +29,28 @@ bool TileMapLayer::init() {
 void TileMapLayer::onTouchesMoved(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event* event) {
     log("touch size: %d", touches.size());
     TMXTiledMap* map = static_cast<TMXTiledMap*>(this->getChildByTag(99));
+    Size winSize = Director::getInstance()->getWinSize();
     //单点移动，则移动地图，否则缩放或者放大地图
     if(touches.size() == 1) {
         float x = map->getPositionX();
         float y = map->getPositionY();
         //移动地图
         auto touch = touches[0];
+        Vec2 touchLocation = touch->getLocation();
         auto diff = touch->getDelta();
         auto node = getChildByTag(99);
         auto currentPos = node->getPosition();
         float originalX = x + diff.x;
         float originalY = y + diff.y;
-        float endedX = x + map->getContentSize().width;
-        float endedY = y + map->getContentSize().height;
-        Size winSize = Director::getInstance()->getWinSize();
+        float endedX = abs(originalX)+winSize.width;
+        float endedY = abs(originalY)+winSize.height;
+
+        log("drag point: original_x=%f, original_y=%f, end_x=%f, end_y=%f, map.width=%f, map.height=%f, winSize.width=%f, winSize.height=%f",
+            originalX, originalY, endedX, endedY, map->getContentSize().width, map->getContentSize().height, winSize.width, winSize.height);
         /*if(originalX > 0 || originalY > 0 || endedX < winSize.width || endedY < winSize.height) {    //边界检查
             return ;
         }*/
-        if(originalX > 0 || originalY > 0) {    //边界检查
+        if(originalX > 0 || originalY > -150 || endedX >= map->getContentSize().width || endedY >= map->getContentSize().height) {    //边界检查
             return ;
         }
         node->setPosition(currentPos + diff);
