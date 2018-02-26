@@ -10,7 +10,7 @@ bool TileMapLayer::init() {
     TMXTiledMap* map = TMXTiledMap::create("tilemap/test1.tmx");
     this->addChild(map, 0, 99);
     Size size = Director::getInstance()->getWinSize();
-    map->setPosition(Vec2(-50, -50));
+    map->setPosition(Vec2(0, 0));
     map->setAnchorPoint(Vec2::ZERO);
     Sprite* sprite = Sprite::create("tilemap/Player.png");
     sprite->setPosition(Vec2(50, 50));
@@ -23,7 +23,7 @@ bool TileMapLayer::init() {
 
     //角色移动触控版
     MoveSprite* moveSprite = MoveSprite::create();
-    this->addChild(moveSprite);
+    this->addChild(moveSprite, 0, 110);
     return true;
 }
 
@@ -99,4 +99,5 @@ void TileMapLayer::onTouchesEnded(const std::vector<Touch *> &touches, Event *un
     this->pMap.clear();
     TMXTiledMap* map = static_cast<TMXTiledMap*>(this->getChildByTag(99));
     initScale = map->getScale();
+    Director::getInstance()->getEventDispatcher()->resumeEventListenersForTarget(this->getChildByTag(110));
 }
