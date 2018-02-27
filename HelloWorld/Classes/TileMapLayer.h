@@ -8,6 +8,7 @@
 #include "cocos2d.h"
 #include "SceneManager.h"
 #include "MoveSprite.h"
+#include "HeroSprite.h"
 USING_NS_CC;
 class TileMapLayer : public Layer {
 private:

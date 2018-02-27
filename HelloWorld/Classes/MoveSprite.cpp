@@ -8,7 +8,7 @@ bool MoveSprite::init() {
     if(!Sprite::init()) {
         return false;
     }
-    this->setPosition(300, 150);
+    this->setPosition(200, 150);
     this->setTexture("tilemap/move_nav.png");
     EventListenerTouchAllAtOnce* moveListener = EventListenerTouchAllAtOnce::create();
     moveListener->onTouchesBegan = CC_CALLBACK_2(MoveSprite::onMoveTouchesBegan, this);

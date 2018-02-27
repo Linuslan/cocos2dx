@@ -2,6 +2,7 @@
 // Created by LinusLan on 2018/2/23.
 //
 
+#include <Role/HeroSprite.h>
 #include "TileMapLayer.h"
 bool TileMapLayer::init() {
     if(!Layer::init()) {
@@ -23,6 +24,31 @@ bool TileMapLayer::init() {
     //角色移动触控版
     MoveSprite* moveSprite = MoveSprite::create();
     this->addChild(moveSprite, 0, 110);
+
+    /*SpriteFrameCache* sfc = SpriteFrameCache::getInstance();
+    sfc->addSpriteFramesWithFile("tilemap/role.plist", "tilemap/role.png");
+    Vector<SpriteFrame*> animeFrames;
+    animeFrames.pushBack(sfc->getSpriteFrameByName("role-1.png"));
+    animeFrames.pushBack(sfc->getSpriteFrameByName("role-2.png"));
+    animeFrames.pushBack(sfc->getSpriteFrameByName("role-3.png"));
+    animeFrames.pushBack(sfc->getSpriteFrameByName("role-4.png"));
+    animeFrames.pushBack(sfc->getSpriteFrameByName("role-5.png"));
+    animeFrames.pushBack(sfc->getSpriteFrameByName("role-6.png"));
+    animeFrames.pushBack(sfc->getSpriteFrameByName("role-7.png"));
+    animeFrames.pushBack(sfc->getSpriteFrameByName("role-8.png"));
+    animeFrames.pushBack(sfc->getSpriteFrameByName("role-9.png"));
+    animeFrames.pushBack(sfc->getSpriteFrameByName("role-2.png"));
+    Animation* animation = Animation::createWithSpriteFrames(animeFrames, 0.12f);
+    Animate* animate = Animate::create(animation);
+    Sprite* hero = Sprite::createWithSpriteFrameName("role-1.png");
+    hero->setPosition(Vec2(400, 400));
+    hero->runAction(RepeatForever::create(animate));
+    this->addChild(hero, 1, 100);
+    hero->setFlippedX(true);*/
+    HeroSprite* hero = HeroSprite::create();
+    hero->setPosition(Vec2(400, 300));
+    this->addChild(hero, 1, 100);
+    hero->walk();
     return true;
 }
 
