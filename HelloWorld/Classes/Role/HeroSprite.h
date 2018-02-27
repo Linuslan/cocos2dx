@@ -6,6 +6,7 @@
 #define PROJ_ANDROID_STUDIO_ROLESPRITE_H
 
 #include "cocos2d.h"
+#include "cmath"
 USING_NS_CC;
 class HeroSprite : public Sprite {
 private:
@@ -16,9 +17,9 @@ private:
 public:
     virtual bool init();
     CREATE_FUNC(HeroSprite);
-    void walk();
+    void walk(double degree);
     void stand();
-    void update(float a);
+    //void update(float a);
 };
 
 #endif //PROJ_ANDROID_STUDIO_ROLESPRITE_H

@@ -10,7 +10,7 @@ bool HeroSprite::init() {
     sfc = SpriteFrameCache::getInstance();
     sfc->addSpriteFramesWithFile("tilemap/role.plist", "tilemap/role.png");
     this->createWithSpriteFrameName("role-1.png");
-    scheduleUpdate();
+    //scheduleUpdate();
     return true;
 }
 
@@ -26,7 +26,7 @@ void HeroSprite::stand() {
     this->runAction(RepeatForever::create(animate));
 }
 
-void HeroSprite::walk() {
+void HeroSprite::walk(double degree) {
     this->stopAllActions();
     Vector<SpriteFrame*> frames;
     for(int i = 2; i < 10; i ++) {
@@ -37,8 +37,17 @@ void HeroSprite::walk() {
     /*MoveBy* move = MoveBy::create(10.0f, Vec2(100, 0));
     Spawn* spawn = Spawn::create(animate, move, nullptr);*/
     this->runAction(RepeatForever::create(animate));
+    float distance = 15.0;
+    if(degree > 90 && degree < 270) {
+        this->setFlippedX(true);
+    } else {
+        this->setFlippedX(false);
+    }
+    double y = sin(degree)*distance;
+    double x = cos(degree)*distance;
+    this->setPosition(x, y);
 }
 
-void HeroSprite::update(float t) {
+/*void HeroSprite::update(float t) {
     this->setPosition(this->getPositionX()+1.7, this->getPositionY());
-}
+}*/

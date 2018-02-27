@@ -46,9 +46,9 @@ bool TileMapLayer::init() {
     this->addChild(hero, 1, 100);
     hero->setFlippedX(true);*/
     HeroSprite* hero = HeroSprite::create();
-    hero->setPosition(Vec2(400, 300));
+    hero->setPosition(Vec2(400, 150));
     this->addChild(hero, 1, 100);
-    hero->walk();
+    hero->stand();
     return true;
 }
 

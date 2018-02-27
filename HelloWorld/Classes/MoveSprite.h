@@ -5,6 +5,8 @@
 #ifndef PROJ_ANDROID_STUDIO_MOVELAYER_H
 #define PROJ_ANDROID_STUDIO_MOVELAYER_H
 #include "cocos2d.h"
+#include "cmath"
+#include "HeroSprite.h"
 USING_NS_CC;
 class MoveSprite : public Sprite {
 public:

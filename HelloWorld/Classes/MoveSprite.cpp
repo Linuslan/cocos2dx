@@ -8,7 +8,7 @@ bool MoveSprite::init() {
     if(!Sprite::init()) {
         return false;
     }
-    this->setPosition(200, 150);
+    this->setPosition(160, 150);
     this->setTexture("tilemap/move_nav.png");
     EventListenerTouchAllAtOnce* moveListener = EventListenerTouchAllAtOnce::create();
     moveListener->onTouchesBegan = CC_CALLBACK_2(MoveSprite::onMoveTouchesBegan, this);
@@ -77,6 +77,10 @@ void MoveSprite::onMoveTouchesMoved(const std::vector<Touch *> &touches, Event *
         log("over circle x=%f, y=%f", x, y);
         sprite->setPosition(Vec2(this->getContentSize()/2)+Vec2(x,y));
     }
+    double tangentValue = sprite->getPositionY()/sprite->getPositionX();   //求出正切值
+    double degree = atan(tangentValue);
+    HeroSprite* hero = static_cast<HeroSprite*>(this->getParent()->getChildByTag(100));
+    hero->walk(degree);
     log("moved");
 }
 
@@ -85,5 +89,7 @@ void MoveSprite::onMoveTouchesEnded(const std::vector<Touch *> &touches, Event *
     Sprite* sprite = static_cast<Sprite*>(this->getChildByTag(111));
     sprite->setPosition(this->getContentSize()/2);
     Director::getInstance()->getEventDispatcher()->resumeEventListenersForTarget(this);
+    HeroSprite* hero = static_cast<HeroSprite*>(this->getParent()->getChildByTag(100));
+    hero->stand();
     log("move ended");
 }
