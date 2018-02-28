@@ -14,12 +14,14 @@ private:
     //图片资源
     std::string resource;
     SpriteFrameCache* sfc;
+    float offsetX = 0.0f;    //人物在当前地图的坐标点
+    float offsetY = 0.0f;    //人物在当前地图的坐标点
 public:
     virtual bool init();
     CREATE_FUNC(HeroSprite);
     void walk(double degree);
     void stand();
-    //void update(float a);
+    void update(float a);
 };
 
 #endif //PROJ_ANDROID_STUDIO_ROLESPRITE_H

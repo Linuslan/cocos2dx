@@ -77,8 +77,11 @@ void MoveSprite::onMoveTouchesMoved(const std::vector<Touch *> &touches, Event *
         log("over circle x=%f, y=%f", x, y);
         sprite->setPosition(Vec2(this->getContentSize()/2)+Vec2(x,y));
     }
-    double tangentValue = sprite->getPositionY()/sprite->getPositionX();   //求出正切值
-    double degree = atan(tangentValue);
+    double tangentValue = (sprite->getPositionY()-this->getContentSize().height/2)/(sprite->getPositionX()-this->getContentSize().width/2);   //求出正切值
+    //求出来的反正切值即弧度，将弧度转化为角度
+    double degree = atan2(sprite->getPositionY()-this->getContentSize().height/2, sprite->getPositionX()-this->getContentSize().width/2)*double(180.0)/double(3.14159265758);
+    //double degree = atan(tangentValue)*double(180.0)/double(3.14159265758);
+    log("move:positionY:%f, positionX:%f, 移动角度为degree=%f", sprite->getPositionY()-this->getContentSize().height/2, sprite->getPositionX()-this->getContentSize().width/2, degree);
     HeroSprite* hero = static_cast<HeroSprite*>(this->getParent()->getChildByTag(100));
     hero->walk(degree);
     log("moved");
