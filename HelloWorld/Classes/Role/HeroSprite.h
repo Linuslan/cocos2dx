@@ -11,7 +11,7 @@ USING_NS_CC;
 class HeroSprite : public Sprite {
 private:
     std::string name;
-    //图片资源
+    //图片资源;
     std::string resource;
     SpriteFrameCache* sfc;
     float offsetX = 0.0f;    //人物在当前地图的坐标点
@@ -21,6 +21,13 @@ public:
     CREATE_FUNC(HeroSprite);
     void walk(double degree);
     void stand();
+    void update(float a);
+};
+
+class HeroAnimate : public Animate {
+private:
+    std::vector<Animation*> actions;
+public:
     void update(float a);
 };
 
