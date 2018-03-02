@@ -3,3 +3,15 @@
 //
 
 #include "Weapon.h"
+bool Weapon::init() {
+    if(!Sprite::init()) {
+        return false;
+    }
+    return true;
+}
+
+void Weapon::stand() {}
+
+void Weapon::fight() {}
+
+void Weapon::walk() {}
