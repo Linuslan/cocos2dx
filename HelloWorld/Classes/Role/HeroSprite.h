@@ -8,7 +8,11 @@
 #include "Weapon.h"
 #include "cocos2d.h"
 #include "cmath"
+#include "Spear.h"
+#include "HeroAnimate.h"
+#include "HeroAnimation.h"
 USING_NS_CC;
+
 class HeroSprite : public Sprite {
 private:
     std::string name;
@@ -24,22 +28,6 @@ public:
     void walk(double degree);
     void stand();
     void update(float a);
-};
-
-class HeroAnimate : public Animate {
-private:
-    std::vector<Animation*>* actions;
-public:
-    static HeroAnimate* create(Animation* animation, std::vector<Animation*> actions);
-    HeroAnimate();
-    ~HeroAnimate();
-    void update(float a);
-    void addAction(Animation* animation);
-};
-
-class HeroAnimation : public Animation {
-private:
-    Sprite* target;
 };
 
 #endif //PROJ_ANDROID_STUDIO_ROLESPRITE_H

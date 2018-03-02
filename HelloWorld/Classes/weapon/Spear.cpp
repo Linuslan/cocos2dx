@@ -7,21 +7,25 @@ bool Spear::init() {
         return false;
     }
     this->sfc = SpriteFrameCache::getInstance();
-    sfc->addSpriteFramesWithFile("role-stand.plist", "role-stand.png");
-    this->createWithSpriteFrameName("");
+    //standFrames = new Vector<SpriteFrame*> ();
+    //sfc->addSpriteFramesWithFile("tilemap/role-stand.plist", "tilemap/role-stand.png");
+    //this->createWithSpriteFrameName("");
     return true;
 }
 
-void Spear::stand() {
+HeroAnimation* Spear::stand() {
+    log("start spear stand");
     Vector<SpriteFrame*> weaponFrames;
     weaponFrames.pushBack(sfc->getSpriteFrameByName("Weapon-1-1.png"));
     weaponFrames.pushBack(sfc->getSpriteFrameByName("Weapon-1-2.png"));
     weaponFrames.pushBack(sfc->getSpriteFrameByName("Weapon-1-3.png"));
     weaponFrames.pushBack(sfc->getSpriteFrameByName("Weapon-1-4.png"));
-    Animation* animation = Animation::createWithSpriteFrames(weaponFrames, 0.17f);
-    Animate* animate = Animate::create(animation);
-    animate->setTag(3);
-    this->runAction(RepeatForever::create(animate));
+    HeroAnimation* animation = HeroAnimation::createWithSpriteFrames(weaponFrames, 0.17f);
+    Vector<AnimationFrame*> frames = animation->getFrames();
+    log("get frames size spear:%d", frames.size());
+    animation->setTarget(this);
+    log("spear stand ended");
+    return animation;
 }
 
 void Spear::fight() {

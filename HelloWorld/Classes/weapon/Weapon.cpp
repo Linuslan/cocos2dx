@@ -3,6 +3,7 @@
 //
 
 #include "Weapon.h"
+
 bool Weapon::init() {
     if(!Sprite::init()) {
         return false;
@@ -10,8 +11,21 @@ bool Weapon::init() {
     return true;
 }
 
-void Weapon::stand() {}
+HeroAnimation* Weapon::stand() {}
 
 void Weapon::fight() {}
 
 void Weapon::walk() {}
+
+Vector<SpriteFrame*>* Weapon::getStandFrames() {
+    return standFrames;
+}
+
+Vector<SpriteFrame*>* Weapon::getFightFrames() {
+    return fightFrames;
+}
+
+Vector<SpriteFrame*>* Weapon::getWalkFrames() {
+    return walkFrames;
+}
+

@@ -8,31 +8,44 @@ bool HeroSprite::init() {
         return false;
     }
     sfc = SpriteFrameCache::getInstance();
-    sfc->addSpriteFramesWithFile("tilemap/role.plist", "tilemap/role.png");
+    //sfc->addSpriteFramesWithFile("tilemap/role.plist", "tilemap/role.png");
     sfc->addSpriteFramesWithFile("tilemap/role-stand.plist", "tilemap/role-stand.png");
-    this->createWithSpriteFrameName("role-1.png");
+    this->createWithSpriteFrameName("role-1-1.png");
+    log("start create weapon");
+    this->weapon = Spear::create();
+    log("weapon create ended");
     scheduleUpdate();
     return true;
 }
 
 void HeroSprite::stand() {
+    log("start stand");
     offsetX = 0.0f;
     offsetY = 0.0f;
     this->stopActionByTag(2);
 
     Vector<SpriteFrame*> frames;
-    frames.pushBack(sfc->getSpriteFrameByName("role-1.png"));
+    /*frames.pushBack(sfc->getSpriteFrameByName("role-1.png"));
     frames.pushBack(sfc->getSpriteFrameByName("role-10.png"));
     frames.pushBack(sfc->getSpriteFrameByName("role-11.png"));
-    frames.pushBack(sfc->getSpriteFrameByName("role-12.png"));
+    frames.pushBack(sfc->getSpriteFrameByName("role-12.png"));*/
     frames.pushBack(sfc->getSpriteFrameByName("role-1-1.png"));
     frames.pushBack(sfc->getSpriteFrameByName("role-1-2.png"));
     frames.pushBack(sfc->getSpriteFrameByName("role-1-3.png"));
     frames.pushBack(sfc->getSpriteFrameByName("Role-1-4.png"));
     Animation* animation = Animation::createWithSpriteFrames(frames, 0.17f);
-    Animate* animate = Animate::create(animation);
+    //Animate* animate = Animate::create(animation);
+    //animate->setTag(1);
+    //this->runAction(RepeatForever::create(animate));
+    log("start weapon stand");
+    HeroAnimation* heroAnimation = this->weapon->stand();
+    Vector<AnimationFrame*> vector = animation->getFrames();
+    log("get frames size HeroSprite:%d", vector.size());
+    HeroAnimate* animate = HeroAnimate::create(animation);
+    animate->addAction(heroAnimation);
     animate->setTag(1);
     this->runAction(RepeatForever::create(animate));
+    log("start stand end");
 }
 
 void HeroSprite::walk(double degree) {
@@ -64,40 +77,4 @@ void HeroSprite::walk(double degree) {
 
 void HeroSprite::update(float t) {
     this->setPosition(this->getPositionX()+offsetX, this->getPositionY()+offsetY);
-}
-
-HeroAnimate* create(Animation* animation) {
-    HeroAnimate* animate = new (std::nothrow) HeroAnimate();
-    if (animate && animate->initWithAnimation(animation))
-    {
-        animate->autorelease();
-        return animate;
-    }
-
-    delete animate;
-    return nullptr;
-}
-
-HeroAnimate::HeroAnimate() {
-    actions = new std::vector<Animation*> ();
-}
-
-HeroAnimate::~HeroAnimate() {
-    std::vector<Animation*>::iterator iter;
-    for(iter = actions->begin(); iter != actions->end(); iter ++) {
-        CC_SAFE_RELEASE((*iter));
-    }
-    delete actions;
-}
-
-void HeroAnimate::addAction(Animation *animation) {
-    this->actions->push_back(animation);
-}
-
-void HeroAnimate::update(float a) {
-    int index = this->getCurrentFrameIndex();
-    std::vector<Animation*>::iterator iter;
-    for(iter = actions->begin(); iter != actions->end(); iter ++) {
-
-    }
 }
