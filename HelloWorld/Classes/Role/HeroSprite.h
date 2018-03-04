@@ -11,6 +11,10 @@
 #include "Spear.h"
 #include "HeroAnimate.h"
 #include "HeroAnimation.h"
+#include "BardSprite.h"
+#include "HairSprite.h"
+#include "NormalHairSprite.h"
+#include "WhiteBardSprite.h"
 USING_NS_CC;
 
 class HeroSprite : public Sprite {
@@ -22,7 +26,10 @@ private:
     float offsetX = 0.0f;    //人物在当前地图的坐标点
     float offsetY = 0.0f;    //人物在当前地图的坐标点
     Weapon* weapon;
+    BardSprite* bard;
+    HairSprite* hair;
 public:
+    ~HeroSprite();
     virtual bool init();
     CREATE_FUNC(HeroSprite);
     void walk(double degree);

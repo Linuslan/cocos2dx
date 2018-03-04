@@ -4,123 +4,243 @@
     <dict>
         <key>frames</key>
         <dict>
-            <key>Role-1-4.png</key>
+            <key>bard-stand-1.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{-62,0}</string>
+                <string>{-55,-58}</string>
                 <key>spriteSize</key>
-                <string>{159,218}</string>
+                <string>{143,94}</string>
                 <key>spriteSourceSize</key>
-                <string>{353,218}</string>
+                <string>{365,240}</string>
                 <key>textureRect</key>
-                <string>{{1,1},{159,218}}</string>
+                <string>{{1355,1},{143,94}}</string>
+                <key>textureRotated</key>
+                <true/>
+            </dict>
+            <key>bard-stand-2.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{-56,-52}</string>
+                <key>spriteSize</key>
+                <string>{151,86}</string>
+                <key>spriteSourceSize</key>
+                <string>{365,240}</string>
+                <key>textureRect</key>
+                <string>{{1451,1},{151,86}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>Weapon-1-1.png</key>
+            <key>bard-stand-3.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{0,21}</string>
+                <string>{-56,-52}</string>
+                <key>spriteSize</key>
+                <string>{131,90}</string>
+                <key>spriteSourceSize</key>
+                <string>{365,240}</string>
+                <key>textureRect</key>
+                <string>{{1602,89},{131,90}}</string>
+                <key>textureRotated</key>
+                <true/>
+            </dict>
+            <key>bard-stand-4.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{-57,-53}</string>
+                <key>spriteSize</key>
+                <string>{135,92}</string>
+                <key>spriteSourceSize</key>
+                <string>{365,240}</string>
+                <key>textureRect</key>
+                <string>{{1508,89},{135,92}}</string>
+                <key>textureRotated</key>
+                <true/>
+            </dict>
+            <key>hair-stand-1.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{-105,82}</string>
+                <key>spriteSize</key>
+                <string>{153,70}</string>
+                <key>spriteSourceSize</key>
+                <string>{365,240}</string>
+                <key>textureRect</key>
+                <string>{{1604,1},{153,70}}</string>
+                <key>textureRotated</key>
+                <false/>
+            </dict>
+            <key>hair-stand-2.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{-96,71}</string>
+                <key>spriteSize</key>
+                <string>{131,74}</string>
+                <key>spriteSourceSize</key>
+                <string>{365,240}</string>
+                <key>textureRect</key>
+                <string>{{1694,149},{131,74}}</string>
+                <key>textureRotated</key>
+                <false/>
+            </dict>
+            <key>hair-stand-3.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{-98,71}</string>
+                <key>spriteSize</key>
+                <string>{137,74}</string>
+                <key>spriteSourceSize</key>
+                <string>{365,240}</string>
+                <key>textureRect</key>
+                <string>{{1694,73},{137,74}}</string>
+                <key>textureRotated</key>
+                <false/>
+            </dict>
+            <key>hair-stand-4.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{-104,78}</string>
+                <key>spriteSize</key>
+                <string>{151,72}</string>
+                <key>spriteSourceSize</key>
+                <string>{365,240}</string>
+                <key>textureRect</key>
+                <string>{{1355,146},{151,72}}</string>
+                <key>textureRotated</key>
+                <false/>
+            </dict>
+            <key>role-stand-1.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{-59,-8}</string>
+                <key>spriteSize</key>
+                <string>{159,216}</string>
+                <key>spriteSourceSize</key>
+                <string>{365,240}</string>
+                <key>textureRect</key>
+                <string>{{678,1},{159,216}}</string>
+                <key>textureRotated</key>
+                <false/>
+            </dict>
+            <key>role-stand-2.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{-59,-8}</string>
+                <key>spriteSize</key>
+                <string>{159,218}</string>
+                <key>spriteSourceSize</key>
+                <string>{365,240}</string>
+                <key>textureRect</key>
+                <string>{{517,1},{159,218}}</string>
+                <key>textureRotated</key>
+                <false/>
+            </dict>
+            <key>role-stand-3.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{-60,-8}</string>
+                <key>spriteSize</key>
+                <string>{159,216}</string>
+                <key>spriteSourceSize</key>
+                <string>{365,240}</string>
+                <key>textureRect</key>
+                <string>{{839,1},{159,216}}</string>
+                <key>textureRotated</key>
+                <false/>
+            </dict>
+            <key>role-stand-4.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{-59,-6}</string>
+                <key>spriteSize</key>
+                <string>{159,220}</string>
+                <key>spriteSourceSize</key>
+                <string>{365,240}</string>
+                <key>textureRect</key>
+                <string>{{1,1},{159,220}}</string>
+                <key>textureRotated</key>
+                <false/>
+            </dict>
+            <key>weapon-stand-1.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{5,11}</string>
                 <key>spriteSize</key>
                 <string>{353,98}</string>
                 <key>spriteSourceSize</key>
-                <string>{353,218}</string>
+                <string>{365,240}</string>
                 <key>textureRect</key>
-                <string>{{645,1},{353,98}}</string>
+                <string>{{162,1},{353,98}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>Weapon-1-2.png</key>
+            <key>weapon-stand-2.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{1,21}</string>
+                <string>{4,13}</string>
                 <key>spriteSize</key>
-                <string>{351,98}</string>
+                <string>{353,98}</string>
                 <key>spriteSourceSize</key>
-                <string>{353,218}</string>
+                <string>{365,240}</string>
                 <key>textureRect</key>
-                <string>{{645,101},{351,98}}</string>
+                <string>{{162,101},{353,98}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>Weapon-1-3.png</key>
+            <key>weapon-stand-3.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{0,21}</string>
+                <string>{4,13}</string>
                 <key>spriteSize</key>
                 <string>{353,96}</string>
                 <key>spriteSourceSize</key>
-                <string>{353,218}</string>
+                <string>{365,240}</string>
                 <key>textureRect</key>
-                <string>{{998,101},{353,96}}</string>
+                <string>{{1000,1},{353,96}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>Weapon-1-4.png</key>
+            <key>weapon-stand-4.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{0,23}</string>
+                <string>{4,17}</string>
                 <key>spriteSize</key>
                 <string>{353,94}</string>
                 <key>spriteSourceSize</key>
-                <string>{353,218}</string>
+                <string>{365,240}</string>
                 <key>textureRect</key>
-                <string>{{1000,1},{353,94}}</string>
-                <key>textureRotated</key>
-                <false/>
-            </dict>
-            <key>role-1-1.png</key>
-            <dict>
-                <key>aliases</key>
-                <array/>
-                <key>spriteOffset</key>
-                <string>{-63,1}</string>
-                <key>spriteSize</key>
-                <string>{159,216}</string>
-                <key>spriteSourceSize</key>
-                <string>{353,218}</string>
-                <key>textureRect</key>
-                <string>{{323,1},{159,216}}</string>
-                <key>textureRotated</key>
-                <false/>
-            </dict>
-            <key>role-1-2.png</key>
-            <dict>
-                <key>aliases</key>
-                <array/>
-                <key>spriteOffset</key>
-                <string>{-62,0}</string>
-                <key>spriteSize</key>
-                <string>{159,218}</string>
-                <key>spriteSourceSize</key>
-                <string>{353,218}</string>
-                <key>textureRect</key>
-                <string>{{162,1},{159,218}}</string>
-                <key>textureRotated</key>
-                <false/>
-            </dict>
-            <key>role-1-3.png</key>
-            <dict>
-                <key>aliases</key>
-                <array/>
-                <key>spriteOffset</key>
-                <string>{-63,0}</string>
-                <key>spriteSize</key>
-                <string>{159,216}</string>
-                <key>spriteSourceSize</key>
-                <string>{353,218}</string>
-                <key>textureRect</key>
-                <string>{{484,1},{159,216}}</string>
+                <string>{{1000,99},{353,94}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -136,9 +256,9 @@
             <key>realTextureFileName</key>
             <string>role-stand.png</string>
             <key>size</key>
-            <string>{1354,220}</string>
+            <string>{1832,225}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:92c5a11ce8b93a1f9d483fab8d69cef4:9ba2798b0c11726845509fdbd4836575:26b6d82b8a4bb50d7d3c14a7b53ee489$</string>
+            <string>$TexturePacker:SmartUpdate:9a9bb0959eb6431d959d077b675993d5:76221676eb62380debcb0425603e6e62:26b6d82b8a4bb50d7d3c14a7b53ee489$</string>
             <key>textureFileName</key>
             <string>role-stand.png</string>
         </dict>

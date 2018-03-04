@@ -10,12 +10,21 @@ bool HeroSprite::init() {
     sfc = SpriteFrameCache::getInstance();
     //sfc->addSpriteFramesWithFile("tilemap/role.plist", "tilemap/role.png");
     sfc->addSpriteFramesWithFile("tilemap/role-stand.plist", "tilemap/role-stand.png");
-    this->createWithSpriteFrameName("role-1-1.png");
+    this->createWithSpriteFrameName("role-stand-1.png");
     log("start create weapon");
     this->weapon = Spear::create();
+    this->addChild(this->weapon);
+    this->hair = NormalHairSprite::create();
+    this->addChild(this->hair);
+    this->bard = WhiteBardSprite::create();
+    this->addChild(this->bard);
     log("weapon create ended");
     scheduleUpdate();
     return true;
+}
+
+HeroSprite::~HeroSprite() {
+    this->weapon->release();
 }
 
 void HeroSprite::stand() {
@@ -23,26 +32,27 @@ void HeroSprite::stand() {
     offsetX = 0.0f;
     offsetY = 0.0f;
     this->stopActionByTag(2);
-
     Vector<SpriteFrame*> frames;
     /*frames.pushBack(sfc->getSpriteFrameByName("role-1.png"));
     frames.pushBack(sfc->getSpriteFrameByName("role-10.png"));
     frames.pushBack(sfc->getSpriteFrameByName("role-11.png"));
     frames.pushBack(sfc->getSpriteFrameByName("role-12.png"));*/
-    frames.pushBack(sfc->getSpriteFrameByName("role-1-1.png"));
-    frames.pushBack(sfc->getSpriteFrameByName("role-1-2.png"));
-    frames.pushBack(sfc->getSpriteFrameByName("role-1-3.png"));
-    frames.pushBack(sfc->getSpriteFrameByName("Role-1-4.png"));
+    frames.pushBack(sfc->getSpriteFrameByName("role-stand-1.png"));
+    frames.pushBack(sfc->getSpriteFrameByName("role-stand-2.png"));
+    frames.pushBack(sfc->getSpriteFrameByName("role-stand-3.png"));
+    frames.pushBack(sfc->getSpriteFrameByName("role-stand-4.png"));
     Animation* animation = Animation::createWithSpriteFrames(frames, 0.17f);
     //Animate* animate = Animate::create(animation);
     //animate->setTag(1);
     //this->runAction(RepeatForever::create(animate));
     log("start weapon stand");
-    HeroAnimation* heroAnimation = this->weapon->stand();
-    Vector<AnimationFrame*> vector = animation->getFrames();
-    log("get frames size HeroSprite:%d", vector.size());
+    HeroAnimation* weaponAnimation = this->weapon->stand();
+    HeroAnimation* bardAnimation = this->bard->stand();
+    HeroAnimation* hairAnimation = this->hair->stand();
     HeroAnimate* animate = HeroAnimate::create(animation);
-    animate->addAction(heroAnimation);
+    animate->addAction(weaponAnimation);
+    animate->addAction(bardAnimation);
+    animate->addAction(hairAnimation);
     animate->setTag(1);
     this->runAction(RepeatForever::create(animate));
     log("start stand end");
