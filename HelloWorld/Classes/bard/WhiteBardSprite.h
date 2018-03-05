@@ -11,7 +11,7 @@ class WhiteBardSprite : public BardSprite {
 public:
     CREATE_FUNC(WhiteBardSprite);
     HeroAnimation* stand();
-    //HeroAnimation* walk();
+    HeroAnimation* walk();
     //HeroAnimation* fight();
 };
 #endif //PROJ_ANDROID_STUDIO_WHITEBARD_H

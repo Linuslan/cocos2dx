@@ -10,5 +10,6 @@ class Spear : public Weapon {
 public:
     CREATE_FUNC(Spear);
     HeroAnimation* stand();
+    HeroAnimation* walk();
 };
 #endif //PROJ_ANDROID_STUDIO_SPEAR_H

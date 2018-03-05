@@ -12,6 +12,6 @@ public:
     CREATE_FUNC(NormalHairSprite);
     HeroAnimation* stand();
     //HeroAnimation* fight();
-    //HeroAnimation* walk();
+    HeroAnimation* walk();
 };
 #endif //PROJ_ANDROID_STUDIO_NORMALHAIR_H
