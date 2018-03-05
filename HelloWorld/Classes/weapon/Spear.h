@@ -8,10 +8,7 @@
 #include "Weapon.h"
 class Spear : public Weapon {
 public:
-    virtual bool init();
     CREATE_FUNC(Spear);
     HeroAnimation* stand();
-    void walk();
-    void fight();
 };
 #endif //PROJ_ANDROID_STUDIO_SPEAR_H

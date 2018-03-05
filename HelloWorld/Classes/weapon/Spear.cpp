@@ -2,52 +2,15 @@
 // Created by LinusLan on 2018/3/1.
 //
 #include "Spear.h"
-bool Spear::init() {
-    if(!Sprite::init()) {
-        return false;
-    }
-    this->sfc = SpriteFrameCache::getInstance();
-    //standFrames = new Vector<SpriteFrame*> ();
-    //sfc->addSpriteFramesWithFile("tilemap/role-stand.plist", "tilemap/role-stand.png");
-    //this->createWithSpriteFrameName("");
-    return true;
-}
 
 HeroAnimation* Spear::stand() {
-    log("start spear stand");
+    SpriteFrameCache* sfc = SpriteFrameCache::getInstance();
     Vector<SpriteFrame*> weaponFrames;
-    weaponFrames.pushBack(sfc->getSpriteFrameByName("Weapon-1-1.png"));
-    weaponFrames.pushBack(sfc->getSpriteFrameByName("Weapon-1-2.png"));
-    weaponFrames.pushBack(sfc->getSpriteFrameByName("Weapon-1-3.png"));
-    weaponFrames.pushBack(sfc->getSpriteFrameByName("Weapon-1-4.png"));
+    for(int i = 0; i < 4; i ++) {
+        weaponFrames.pushBack(sfc->getSpriteFrameByName(StringUtils::format("weapon-stand-%d.png", (i+1))));
+    }
     HeroAnimation* animation = HeroAnimation::createWithSpriteFrames(weaponFrames, 0.17f);
-    Vector<AnimationFrame*> frames = animation->getFrames();
-    log("get frames size spear:%d", frames.size());
+    animation->setName("Spear");
     animation->setTarget(this);
-    log("spear stand ended");
     return animation;
-}
-
-void Spear::fight() {
-    Vector<SpriteFrame*> frames;
-    frames.pushBack(sfc->getSpriteFrameByName("role-1.png"));
-    frames.pushBack(sfc->getSpriteFrameByName("role-10.png"));
-    frames.pushBack(sfc->getSpriteFrameByName("role-11.png"));
-    frames.pushBack(sfc->getSpriteFrameByName("role-12.png"));
-    Animation* animation = Animation::createWithSpriteFrames(frames, 0.17f);
-    Animate* animate = Animate::create(animation);
-    animate->setTag(1);
-    this->runAction(RepeatForever::create(animate));
-}
-
-void Spear::walk() {
-    Vector<SpriteFrame*> frames;
-    frames.pushBack(sfc->getSpriteFrameByName("role-1.png"));
-    frames.pushBack(sfc->getSpriteFrameByName("role-10.png"));
-    frames.pushBack(sfc->getSpriteFrameByName("role-11.png"));
-    frames.pushBack(sfc->getSpriteFrameByName("role-12.png"));
-    Animation* animation = Animation::createWithSpriteFrames(frames, 0.17f);
-    Animate* animate = Animate::create(animation);
-    animate->setTag(1);
-    this->runAction(RepeatForever::create(animate));
 }

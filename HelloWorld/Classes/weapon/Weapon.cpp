@@ -8,24 +8,14 @@ bool Weapon::init() {
     if(!Sprite::init()) {
         return false;
     }
+    this->setAnchorPoint(Vec2(0, 0));
+    this->setPosition(Vec2(0, 0));
     return true;
 }
 
-HeroAnimation* Weapon::stand() {}
+HeroAnimation* Weapon::stand() {return nullptr;}
 
-void Weapon::fight() {}
+HeroAnimation* Weapon::fight() {return nullptr;}
 
-void Weapon::walk() {}
-
-Vector<SpriteFrame*>* Weapon::getStandFrames() {
-    return standFrames;
-}
-
-Vector<SpriteFrame*>* Weapon::getFightFrames() {
-    return fightFrames;
-}
-
-Vector<SpriteFrame*>* Weapon::getWalkFrames() {
-    return walkFrames;
-}
+HeroAnimation* Weapon::walk() {return nullptr;}
 

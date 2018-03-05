@@ -46,9 +46,15 @@ bool TileMapLayer::init() {
     this->addChild(hero, 1, 100);
     hero->setFlippedX(true);*/
     HeroSprite* hero = HeroSprite::create();
+
     hero->setPosition(Vec2(400, 150));
+    hero->setAnchorPoint(Vec2(0, 0));
     this->addChild(hero, 1, 100);
     hero->stand();
+    /*Spear* spear = Spear::create();
+    this->addChild(spear, 1, 200);
+    spear->fight();
+    spear->setPosition(Vec2(400, 150));*/
     return true;
 }
 
