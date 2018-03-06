@@ -32,7 +32,9 @@ void HeroSprite::stand() {
     log("start stand");
     offsetX = 0.0f;
     offsetY = 0.0f;
-    this->stopActionByTag(2);
+    int size = this->getNumberOfRunningActionsByTag(2);
+    log("tag 2 action number is: %d", size);
+    this->stopAllActionsByTag(2);
     Vector<SpriteFrame*> frames;
     frames.pushBack(sfc->getSpriteFrameByName("role-stand-1.png"));
     frames.pushBack(sfc->getSpriteFrameByName("role-stand-2.png"));
@@ -48,12 +50,16 @@ void HeroSprite::stand() {
     animate->addAction(bardAnimation);
     animate->addAction(hairAnimation);
     animate->setTag(1);
-    this->runAction(RepeatForever::create(animate));
+    RepeatForever* repeat = RepeatForever::create(animate);
+    repeat->setTag(1);
+    this->runAction(repeat);
     log("start stand end");
 }
 
 void HeroSprite::walk(double degree) {
-    this->stopActionByTag(1);
+    int size = this->getNumberOfRunningActionsByTag(1);
+    log("tag 1 action number is: %d", size);
+    this->stopAllActionsByTag(1);
     Vector<SpriteFrame*> frames;
     for(int i = 1; i < 9; i ++) {
         frames.pushBack(sfc->getSpriteFrameByName(StringUtils::format("role-walk-%d.png", i)));
@@ -68,7 +74,9 @@ void HeroSprite::walk(double degree) {
     animate->addAction(bardAnimation);
     animate->addAction(hairAnimation);
     animate->setTag(2);
-    this->runAction(RepeatForever::create(animate));
+    RepeatForever* repeat = RepeatForever::create(animate);
+    repeat->setTag(2);
+    this->runAction(repeat);
 
     float distance = 2.5;
     //offsetY = sin(degree)*distance;
