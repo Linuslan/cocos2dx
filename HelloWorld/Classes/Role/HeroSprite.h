@@ -15,6 +15,7 @@
 #include "HairSprite.h"
 #include "NormalHairSprite.h"
 #include "WhiteBardSprite.h"
+#include "TileMapLayer.h"
 USING_NS_CC;
 
 class HeroSprite : public Sprite {
@@ -28,6 +29,9 @@ private:
     Weapon* weapon;
     BardSprite* bard;
     HairSprite* hair;
+    float degree;
+    bool flippedX = false;
+    bool flippedY = false;
 public:
     ~HeroSprite();
     virtual bool init();

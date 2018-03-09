@@ -23,6 +23,7 @@ public:
     void onTouchesBegan(const std::vector<Touch*>& touches, Event* event);
     void onTouchesEnded(const std::vector<Touch*>& touches, Event* event);
     Vec2 parsePosition(const Vec2& pos);
+    TMXTiledMap* getMap() {return map;}
 };
 
 #endif //PROJ_ANDROID_STUDIO_TILEMAPLAYER_H

@@ -23,18 +23,11 @@ bool TileMapLayer::init() {
     this->addChild(moveSprite, 0, 110);
     HeroSprite* hero = HeroSprite::create();
 
-    hero->setPosition(Vec2(400, 150));
+    hero->setPosition(Vec2(13, 20));
     hero->setAnchorPoint(Vec2(0, 0));
-    this->addChild(hero, 1, 100);
+    int order = map->getLayer("building")->getLocalZOrder();
+    map->addChild(hero, order-1, 100);
     hero->stand();
-    TMXLayer* layer = map->getLayer("meta");
-    log("get layer of meta");
-    int gid = layer->getTileGIDAt(Vec2(20, 10));
-    log("get gid of position(30,20):%d", gid);
-    Value value = map->getPropertiesForGID(gid);
-    log("get value of gid:%d, ok:%s", value.asValueMap().at("collision").asBool(), value.asValueMap().at("ok").asString().c_str());
-    /*bool isCollision = value.asValueMap().at("collision").asBool();
-    log("position(10, 20):%d", isCollision);*/
     return true;
 }
 
@@ -121,6 +114,6 @@ Vec2 TileMapLayer::parsePosition(const Vec2 &pos) {
     Size mapSize = this->map->getMapSize();
     Size tileSize = this->map->getTileSize();
     int x = pos.x/tileSize.width;
-    int y = (mapSize.height-pos.y)/tileSize.height;
+    int y = (mapSize.height*tileSize.height-pos.y)/tileSize.height;
     return Vec2(x, y);
 }
