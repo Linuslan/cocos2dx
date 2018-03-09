@@ -20,7 +20,7 @@ HeroAnimation* NormalHairSprite::stand() {
 HeroAnimation* NormalHairSprite::walk() {
     SpriteFrameCache* sfc = SpriteFrameCache::getInstance();
     Vector<SpriteFrame*>* spriteFrames = new Vector<SpriteFrame*>();
-    for(int i = 0; i < 4; i ++) {
+    for(int i = 0; i < 8; i ++) {
         spriteFrames->pushBack(sfc->getSpriteFrameByName(StringUtils::format("hair-walk-%d.png", (i+1))));
     }
     HeroAnimation* animation = HeroAnimation::createWithSpriteFrames(*spriteFrames);

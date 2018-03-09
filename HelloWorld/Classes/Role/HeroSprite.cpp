@@ -60,23 +60,27 @@ void HeroSprite::walk(double degree) {
     int size = this->getNumberOfRunningActionsByTag(1);
     log("tag 1 action number is: %d", size);
     this->stopAllActionsByTag(1);
-    Vector<SpriteFrame*> frames;
-    for(int i = 1; i < 9; i ++) {
-        frames.pushBack(sfc->getSpriteFrameByName(StringUtils::format("role-walk-%d.png", i)));
-    }
+    int actionSize = this->getNumberOfRunningActionsByTag(2);
+    log("tag 2 action number is %d", actionSize);
+    if(actionSize <= 0) {
+        Vector<SpriteFrame*> frames;
+        for(int i = 1; i < 9; i ++) {
+            frames.pushBack(sfc->getSpriteFrameByName(StringUtils::format("role-walk-%d.png", i)));
+        }
 
-    Animation* animation = Animation::createWithSpriteFrames(frames, 0.15f);
-    HeroAnimation* weaponAnimation = this->weapon->walk();
-    HeroAnimation* bardAnimation = this->bard->walk();
-    HeroAnimation* hairAnimation = this->hair->walk();
-    HeroAnimate* animate = HeroAnimate::create(animation);
-    animate->addAction(weaponAnimation);
-    animate->addAction(bardAnimation);
-    animate->addAction(hairAnimation);
-    animate->setTag(2);
-    RepeatForever* repeat = RepeatForever::create(animate);
-    repeat->setTag(2);
-    this->runAction(repeat);
+        Animation* animation = Animation::createWithSpriteFrames(frames, 0.15f);
+        HeroAnimation* weaponAnimation = this->weapon->walk();
+        HeroAnimation* bardAnimation = this->bard->walk();
+        HeroAnimation* hairAnimation = this->hair->walk();
+        HeroAnimate* animate = HeroAnimate::create(animation);
+        animate->addAction(weaponAnimation);
+        animate->addAction(bardAnimation);
+        animate->addAction(hairAnimation);
+        animate->setTag(2);
+        RepeatForever* repeat = RepeatForever::create(animate);
+        repeat->setTag(2);
+        this->runAction(repeat);
+    }
 
     float distance = 2.5;
     //offsetY = sin(degree)*distance;

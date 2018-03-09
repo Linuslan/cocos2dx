@@ -33,7 +33,6 @@ void HeroAnimate::addAction(HeroAnimation *animation) {
 }
 
 void HeroAnimate::update(float a) {
-    Animate::update(a);
     int index = this->getCurrentFrameIndex();
     std::vector<HeroAnimation*>::iterator iter;
     for(iter = actions->begin(); iter != actions->end(); iter ++) {
@@ -46,4 +45,5 @@ void HeroAnimate::update(float a) {
             sprite->setSpriteFrame(spriteFrame);
         }
     }
+    Animate::update(a);
 }

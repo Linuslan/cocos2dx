@@ -9,7 +9,7 @@ HeroAnimation* Spear::stand() {
     for(int i = 0; i < 4; i ++) {
         weaponFrames.pushBack(sfc->getSpriteFrameByName(StringUtils::format("weapon-stand-%d.png", (i+1))));
     }
-    HeroAnimation* animation = HeroAnimation::createWithSpriteFrames(weaponFrames, 0.17f);
+    HeroAnimation* animation = HeroAnimation::createWithSpriteFrames(weaponFrames);
     animation->setName("Spear stand animation");
     animation->setTarget(this);
     return animation;
@@ -18,10 +18,10 @@ HeroAnimation* Spear::stand() {
 HeroAnimation* Spear::walk() {
     SpriteFrameCache* sfc = SpriteFrameCache::getInstance();
     Vector<SpriteFrame*> weaponFrames;
-    for(int i = 0; i < 4; i ++) {
+    for(int i = 0; i < 8; i ++) {
         weaponFrames.pushBack(sfc->getSpriteFrameByName(StringUtils::format("weapon-walk-%d.png", (i+1))));
     }
-    HeroAnimation* animation = HeroAnimation::createWithSpriteFrames(weaponFrames, 0.17f);
+    HeroAnimation* animation = HeroAnimation::createWithSpriteFrames(weaponFrames);
     animation->setName("Spear walk animation");
     animation->setTarget(this);
     return animation;

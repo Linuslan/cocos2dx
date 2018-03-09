@@ -21,13 +21,6 @@ HeroAnimation::HeroAnimation() {
 
 HeroAnimation::~HeroAnimation() {
     log("HeroAnimation Destructing");
-    /*if(frames) {
-        std::vector<AnimationFrame*>::iterator iter;
-        for(iter = frames->begin(); iter != frames->end(); iter ++) {
-            CC_SAFE_RELEASE(*iter);
-        }
-        delete frames;
-    }*/
 }
 
 void HeroAnimation::setTarget(Sprite *sprite) {

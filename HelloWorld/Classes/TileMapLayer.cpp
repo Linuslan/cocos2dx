@@ -8,13 +8,10 @@ bool TileMapLayer::init() {
     if(!Layer::init()) {
         return false;
     }
-    TMXTiledMap* map = TMXTiledMap::create("tilemap/test2.tmx");
+    map = TMXTiledMap::create("tilemap/test3.tmx");
     this->addChild(map, 0, 99);
     Size size = Director::getInstance()->getWinSize();
-    map->setPosition(Vec2(0, -150));
-    /*Sprite* sprite = Sprite::create("tilemap/Player.png");
-    sprite->setPosition(Vec2(100, 100));
-    this->addChild(sprite, 100, "player");*/
+    map->setPosition(Vec2(0, 0));
     auto listener = EventListenerTouchAllAtOnce::create();
     listener->onTouchesMoved = CC_CALLBACK_2(TileMapLayer::onTouchesMoved, this);
     listener->onTouchesBegan = CC_CALLBACK_2(TileMapLayer::onTouchesBegan, this);
@@ -24,37 +21,20 @@ bool TileMapLayer::init() {
     //角色移动触控版
     MoveSprite* moveSprite = MoveSprite::create();
     this->addChild(moveSprite, 0, 110);
-
-    /*SpriteFrameCache* sfc = SpriteFrameCache::getInstance();
-    sfc->addSpriteFramesWithFile("tilemap/role.plist", "tilemap/role.png");
-    Vector<SpriteFrame*> animeFrames;
-    animeFrames.pushBack(sfc->getSpriteFrameByName("role-1.png"));
-    animeFrames.pushBack(sfc->getSpriteFrameByName("role-2.png"));
-    animeFrames.pushBack(sfc->getSpriteFrameByName("role-3.png"));
-    animeFrames.pushBack(sfc->getSpriteFrameByName("role-4.png"));
-    animeFrames.pushBack(sfc->getSpriteFrameByName("role-5.png"));
-    animeFrames.pushBack(sfc->getSpriteFrameByName("role-6.png"));
-    animeFrames.pushBack(sfc->getSpriteFrameByName("role-7.png"));
-    animeFrames.pushBack(sfc->getSpriteFrameByName("role-8.png"));
-    animeFrames.pushBack(sfc->getSpriteFrameByName("role-9.png"));
-    animeFrames.pushBack(sfc->getSpriteFrameByName("role-2.png"));
-    Animation* animation = Animation::createWithSpriteFrames(animeFrames, 0.12f);
-    Animate* animate = Animate::create(animation);
-    Sprite* hero = Sprite::createWithSpriteFrameName("role-1.png");
-    hero->setPosition(Vec2(400, 400));
-    hero->runAction(RepeatForever::create(animate));
-    this->addChild(hero, 1, 100);
-    hero->setFlippedX(true);*/
     HeroSprite* hero = HeroSprite::create();
 
     hero->setPosition(Vec2(400, 150));
     hero->setAnchorPoint(Vec2(0, 0));
     this->addChild(hero, 1, 100);
     hero->stand();
-    /*Spear* spear = Spear::create();
-    this->addChild(spear, 1, 200);
-    spear->fight();
-    spear->setPosition(Vec2(400, 150));*/
+    TMXLayer* layer = map->getLayer("meta");
+    log("get layer of meta");
+    int gid = layer->getTileGIDAt(Vec2(20, 10));
+    log("get gid of position(30,20):%d", gid);
+    Value value = map->getPropertiesForGID(gid);
+    log("get value of gid:%d, ok:%s", value.asValueMap().at("collision").asBool(), value.asValueMap().at("ok").asString().c_str());
+    /*bool isCollision = value.asValueMap().at("collision").asBool();
+    log("position(10, 20):%d", isCollision);*/
     return true;
 }
 
@@ -82,7 +62,7 @@ void TileMapLayer::onTouchesMoved(const std::vector<cocos2d::Touch*>& touches, c
         /*if(originalX > 0 || originalY > 0 || endedX < winSize.width || endedY < winSize.height) {    //边界检查
             return ;
         }*/
-        if(originalX > 0 || originalY > -150 || endedX >= map->getContentSize().width || endedY >= map->getContentSize().height) {    //边界检查
+        if(originalX > 0 || originalY > 0 || endedX >= map->getContentSize().width || endedY >= map->getContentSize().height) {    //边界检查
             return ;
         }
         node->setPosition(currentPos + diff);
@@ -135,4 +115,12 @@ void TileMapLayer::onTouchesEnded(const std::vector<Touch *> &touches, Event *un
     TMXTiledMap* map = static_cast<TMXTiledMap*>(this->getChildByTag(99));
     initScale = map->getScale();
     Director::getInstance()->getEventDispatcher()->resumeEventListenersForTarget(this->getChildByTag(110));
+}
+
+Vec2 TileMapLayer::parsePosition(const Vec2 &pos) {
+    Size mapSize = this->map->getMapSize();
+    Size tileSize = this->map->getTileSize();
+    int x = pos.x/tileSize.width;
+    int y = (mapSize.height-pos.y)/tileSize.height;
+    return Vec2(x, y);
 }

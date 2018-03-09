@@ -14,6 +14,7 @@ class TileMapLayer : public Layer {
 private:
     std::map<int, Vec2> pMap;
     float initScale=1;  //初始化的放大缩小比例
+    TMXTiledMap* map;
 public:
     SceneManager* tsm;
     virtual bool init();
@@ -21,6 +22,7 @@ public:
     void onTouchesMoved(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event* event);
     void onTouchesBegan(const std::vector<Touch*>& touches, Event* event);
     void onTouchesEnded(const std::vector<Touch*>& touches, Event* event);
+    Vec2 parsePosition(const Vec2& pos);
 };
 
 #endif //PROJ_ANDROID_STUDIO_TILEMAPLAYER_H
