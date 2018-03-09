@@ -9,14 +9,34 @@
  <tileset firstgid="809" name="6-01" tilewidth="30" tileheight="30" tilecount="342" columns="38">
   <image source="6-01.png" width="1140" height="293"/>
  </tileset>
- <tileset firstgid="1151" name="meta_tiles" tilewidth="30" tileheight="30" spacing="1" margin="1" tilecount="2" columns="2">
-  <image source="meta_tiles.png" width="67" height="34"/>
+ <tileset firstgid="1151" name="meta_tiles" tilewidth="32" tileheight="32" spacing="1" margin="1" tilecount="2" columns="2">
+  <image source="meta_tiles.png" trans="ffffff" width="67" height="34"/>
   <tile id="0">
    <properties>
-    <property name="collision" type="bool" value="true"/>
-    <property name="ok" value="hahaha"/>
+    <property name="collision" type="bool" value="false"/>
    </properties>
   </tile>
+  <tile id="1">
+   <properties>
+    <property name="collision" type="bool" value="true"/>
+   </properties>
+  </tile>
+ </tileset>
+ <tileset firstgid="1153" name="meta_tiles" tilewidth="32" tileheight="32" spacing="1" margin="1" tilecount="2" columns="2">
+  <image source="meta_tiles.png" trans="ffffff" width="67" height="34"/>
+  <tile id="0">
+   <properties>
+    <property name="mask" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="1" type="mask-meta">
+   <properties>
+    <property name="mask" type="bool" value="true"/>
+   </properties>
+  </tile>
+ </tileset>
+ <tileset firstgid="1155" name="6-12" tilewidth="30" tileheight="30" tilecount="143" columns="13">
+  <image source="6-12.png" trans="ffffff" width="419" height="333"/>
  </tileset>
  <layer name="sky" width="72" height="25">
   <data encoding="base64" compression="zlib">
@@ -33,9 +53,19 @@
    eJzt1eO7kAcAxuFOtk+2bdu262S7zsm2bbstc8sNYV5ujEPNqK22Gtq9/+L98P6u6/7+fHtixQoLCwsLCwsLCwsLCwsLCwt6EcQmDnGJR3wSkJBEJCYJSUlGclKQklSkJg1piSQd6clARjKRmSxkJRvZyUFOcpGbPOQlX4B25acABSlEYYpQlGIUpwQlKUVpylCWcpSnAhWpRGWqUJVqVKcGNalFbepQl3rUpwENaURjmgRoV1Oa0ZwWtKQVrWlDW9rRng50pBNRdKYLXelGd3rQk170pg996Ud/BjCQQQxmCEMZxnCiiQnQrhGMZBSjGcNYxjGeCUxkEpOZwlSmMZ0ZzGQWs5nDXOYxnwUsZBGLWcJSlrGcFaxkFatZw9oA7VrHejawkU1sZgtb2cZ2drCTl3iZXexmD3vZx34OcJBDHOYIR3mFVznGcU5wklOc5gxneY3XA7TrDd7kHOe5wEXe4m3e4V3e430+4EMucZkrXOUa17nBTT7iYz7hUz7jc25xmzvc5R73+YIv+YqvA7TrAQ/5hm/5ju/5gR/5iZ/5hV95xGN+43ee8JQ/+JNnPOcv/uYf/uUF/59SBLGJQ1ziEZ8EJCQRiSOCsysJSUlGclKQklSkJg1piSQd6clARjKRmSxkJRvZyUFOcpGbPOQlH/kpQEEKUZgiFKUYxSkRoF0lKUVpylCWcpSnAhWpRGWqUJVqVKcGNalFbepQl3rUpwENaURjmtCUZjSnBS1pRWva0JZ2AdrVng50pBNRdKYLXelGd3rQk170pg996Ud/BjCQQQxmCEMZxnCiiWEEIxnFaMYwlnGMZwITA7RrEpOZwlSmMZ0ZzGQWs5nDXOYxnwUsZBGLWcJSlrGcFaxkFatZw1rWsZ4NbGQTm9nCVraxPUC7/gM6B1R6
   </data>
  </layer>
- <layer name="meta" width="72" height="25" opacity="0">
+ <layer name="building" width="72" height="25">
   <data encoding="base64" compression="zlib">
-   eJztw7ENAAAIA6AO/t3X/UIXSOgkVVVV1ecAAADcWJ1a3wg=
+   eJzt0GlXjQEUhuGXzqGM9ZtTRIZUSsaUmQyZKlSGFKFEiaKQITImM12W/3COtd59r3V9389OkiiKoiiKoiiKoiiKon+VZpJkFWWUs5o1VLCWdVSyng1szOT74ty2yd4qNlNNDbVsoY56ttLANran7D877N3JLnbTyB6aaGYv+9jPAQ6m7D+H7D3MEY7SwjGOc4KTtHKK05xJ2X/O2nuONtrp4DwXuEgnXXRzicsp+88Ve6/SwzV66eM6N+jnJre4zUDK/jNo7x2GuMs9hhnhPqM84CFjjKfsP4/sfcwEkzzhKc+Y4jkveMkrplP2n9f2vmGGt7zjPR/4yCdm+cwcX1L2n6/2fuM7P/jJL37z5+8vskmygIUUkMnm++LclrV3EYsppIglLGUZy1nBSoop+U/+Mw8ePWEl
+  </data>
+ </layer>
+ <layer name="collision-meta" width="72" height="25" opacity="0">
+  <data encoding="base64" compression="zlib">
+   eJzt1iESADAIA0FE/w1Pr62oQSFYsf4mKnkiEgAAAOBRH9NN3V4AgA6/wz6bXPEunAc=
+  </data>
+ </layer>
+ <layer name="mask-meta" width="72" height="25" opacity="0">
+  <data encoding="base64" compression="zlib">
+   eJzt0CEOACAMBMEKPl5ejm9CkIcYMX6zvaoaAAAAYNhDuuc3/vjjjz/pP37d37ykO/0B0g41gqeE
   </data>
  </layer>
 </map>
