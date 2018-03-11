@@ -60,7 +60,7 @@
  </layer>
  <layer name="collision-meta" width="72" height="25" opacity="0">
   <data encoding="base64" compression="zlib">
-   eJzt1iESADAIA0FE/w1Pr62oQSFYsf4mKnkiEgAAAOBRH9NN3V4AgA6/wz6bXPEunAc=
+   eJzt2CEBAAAIxEAEvSE6ngp/4gpMbrpqAACCLAAAAMDjK+iT5ACh2J36
   </data>
  </layer>
  <layer name="mask-meta" width="72" height="25" opacity="0">

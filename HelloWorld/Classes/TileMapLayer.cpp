@@ -9,6 +9,7 @@ bool TileMapLayer::init() {
         return false;
     }
     map = TMXTiledMap::create("tilemap/test3.tmx");
+    map->setAnchorPoint(Vec2(0, 0));
     this->addChild(map, 0, 99);
     Size size = Director::getInstance()->getWinSize();
     map->setPosition(Vec2(0, 0));
@@ -23,7 +24,7 @@ bool TileMapLayer::init() {
     this->addChild(moveSprite, 0, 110);
     HeroSprite* hero = HeroSprite::create();
 
-    hero->setPosition(Vec2(13, 20));
+    hero->setPosition(Vec2(200, 20));
     hero->setAnchorPoint(Vec2(0, 0));
     int order = map->getLayer("building")->getLocalZOrder();
     map->addChild(hero, order-1, 100);
