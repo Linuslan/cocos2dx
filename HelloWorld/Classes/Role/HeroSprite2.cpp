@@ -1,13 +1,14 @@
 //
-// Created by LinusLan on 2018/3/12.
+// Created by LinusLan on 2018/2/27.
 //
 
 #include "HeroSprite.h"
 bool HeroSprite::init() {
-    if(!RoleSprite::init()) {
+    if(!Sprite::init()) {
         return false;
     }
-    SpriteFrameCache* sfc = SpriteFrameCache::getInstance();
+    sfc = SpriteFrameCache::getInstance();
+    //sfc->addSpriteFramesWithFile("tilemap/role.plist", "tilemap/role.png");
     sfc->addSpriteFramesWithFile("tilemap/role-stand.plist", "tilemap/role-stand.png");
     sfc->addSpriteFramesWithFile("tilemap/role-walk.plist", "tilemap/role-walk.png");
     this->createWithSpriteFrameName("role-stand-1.png");
@@ -31,7 +32,6 @@ void HeroSprite::stand() {
     log("tag 2 action number is: %d", size);
     this->stopAllActionsByTag(2);
     Vector<SpriteFrame*> frames;
-    SpriteFrameCache* sfc = SpriteFrameCache::getInstance();
     frames.pushBack(sfc->getSpriteFrameByName("role-stand-1.png"));
     frames.pushBack(sfc->getSpriteFrameByName("role-stand-2.png"));
     frames.pushBack(sfc->getSpriteFrameByName("role-stand-3.png"));
@@ -53,7 +53,6 @@ void HeroSprite::stand() {
 }
 
 void HeroSprite::walk(double degree) {
-    SpriteFrameCache* sfc = SpriteFrameCache::getInstance();
     int size = this->getNumberOfRunningActionsByTag(1);
     log("tag 1 action number is: %d", size);
     this->stopAllActionsByTag(1);
@@ -102,6 +101,7 @@ void HeroSprite::walk(double degree) {
     } else {
         flippedY = false;
     }
+    this->degree = degree;
     log("hero: offsetX=%f, offsetY=%f", offsetX, offsetY);
     scheduleUpdate();
     //this->setPosition(this->getPositionX()+offsetX, this->getPositionY()+offsetY);
