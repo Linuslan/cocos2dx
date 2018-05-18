@@ -8,6 +8,8 @@
 #include "cocos2d.h"
 USING_NS_CC;
 class LoginLayer : public Layer {
-
+public:
+    virtual bool init();
+    CREATE_FUNC(LoginLayer);
 };
 #endif //PROJ_ANDROID_STUDIO_LOGINLAYER_H
