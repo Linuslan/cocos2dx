@@ -4,7 +4,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 22
-    buildToolsVersion "25.0.0"
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
         applicationId "com.linuslan.careergame"
@@ -34,6 +34,7 @@ android {
                     }
                     
                     arguments '-j' + Runtime.runtime.availableProcessors()
+                    abiFilters "armeabi-v7a"
                     abiFilters.addAll(PROP_APP_ABI.split(':').collect{it as String})
                 }
             }
