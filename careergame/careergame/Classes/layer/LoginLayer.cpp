@@ -34,6 +34,8 @@ bool LoginLayer::init() {
     this->addChild(loginBtn);
     loginBtn->addClickEventListener([](Ref* ref){
         log("login...");
+        HomeScene* homeScene = HomeScene::create();
+        Director::getInstance()->replaceScene(homeScene);
     });
     ui::Button* quitBtn = ui::Button::create("images/login/quit.png", "images/login/quit.png", "images/login/quit.png");
     quitBtn->setPosition(Vec2(winSize.width*0.71, winSize.height*0.66));
