@@ -34,10 +34,12 @@ bool LoginLayer::init() {
     loginBtn->setScale(0.8);
     loginBtn->setTag(1);
     this->addChild(loginBtn);
+    //按钮点击事件，实现点击时放大缩小的效果
     loginBtn->addClickEventListener([this](Ref* ref){
         ui::Button* btn = static_cast<ui::Button*>(this->getChildByTag(1));
         ScaleTo* scaleTo = ScaleTo::create(0.1, 1);
         ScaleTo* scaleTo1 = ScaleTo::create(0.1, 0.8);
+        //放大缩小的效果执行完成后，CallFunc为动作完成后需要执行的回调函数
         Sequence* sequence = Sequence::create(scaleTo, scaleTo1, CallFunc::create([](){
             HomeScene* homeScene = HomeScene::create();
             Director::getInstance()->replaceScene(homeScene);
