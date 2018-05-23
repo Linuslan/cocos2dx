@@ -14,8 +14,9 @@ bool GameHeaderLayer::init() {
         email->setPosition(Vec2(winSize.width*0.88, headerHeight));
         email->setScale(0.04);
         FadeIn* fadeIn = FadeIn::create(0.5);
-        FadeOut* fadeOut = FadeOut::create(0.5);
-        Sequence* sequence = Sequence::create(fadeIn, fadeOut, nullptr);
+        //FadeOut* fadeOut = FadeOut::create(0.5);
+        //Sequence* sequence = Sequence::create(fadeIn, fadeOut, nullptr);
+        Sequence* sequence = Sequence::create(fadeIn, nullptr);
         email->runAction(RepeatForever::create(sequence));
         this->addChild(email);
         ui::Button* quitBtn = ui::Button::create("CloseNormal.png", "CloseSelected.png");

@@ -7,6 +7,7 @@ bool LoginLayer::init() {
     if(!Layer::init()) {
         return false;
     }
+    this->setTag(1000);
     Size winSize = Director::getInstance()->getWinSize();
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 visibleOrigin = Director::getInstance()->getVisibleOrigin();
@@ -31,11 +32,18 @@ bool LoginLayer::init() {
     ui::Button* loginBtn = ui::Button::create("images/login/login_btn.png", "images/login/login_btn.png", "images/login/login_btn.png");
     loginBtn->setPosition(Vec2(winSize.width*0.5, winSize.height*0.4));
     loginBtn->setScale(0.8);
+    loginBtn->setTag(1);
     this->addChild(loginBtn);
-    loginBtn->addClickEventListener([](Ref* ref){
-        log("login...");
-        HomeScene* homeScene = HomeScene::create();
-        Director::getInstance()->replaceScene(homeScene);
+    loginBtn->addClickEventListener([this](Ref* ref){
+        ui::Button* btn = static_cast<ui::Button*>(this->getChildByTag(1));
+        ScaleTo* scaleTo = ScaleTo::create(0.1, 1);
+        ScaleTo* scaleTo1 = ScaleTo::create(0.1, 0.8);
+        Sequence* sequence = Sequence::create(scaleTo, scaleTo1, CallFunc::create([](){
+            HomeScene* homeScene = HomeScene::create();
+            Director::getInstance()->replaceScene(homeScene);
+        }), nullptr);
+        btn->runAction(sequence);
+        log("login...%d", btn->getTag());
     });
     ui::Button* quitBtn = ui::Button::create("images/login/quit.png", "images/login/quit.png", "images/login/quit.png");
     quitBtn->setPosition(Vec2(winSize.width*0.71, winSize.height*0.66));
