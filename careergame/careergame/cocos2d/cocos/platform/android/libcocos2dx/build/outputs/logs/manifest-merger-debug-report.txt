@@ -1,41 +1,41 @@
 -- Merging decision tree log ---
 manifest
-ADDED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml:1:1-7:12
-INJECTED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml:1:1-7:12
-INJECTED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml:1:1-7:12
-INJECTED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml:1:1-7:12
-INJECTED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml:1:1-7:12
-INJECTED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml:1:1-7:12
-INJECTED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml:1:1-7:12
+ADDED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml:1:1-7:12
+INJECTED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml:1:1-7:12
+INJECTED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml:1:1-7:12
+INJECTED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml:1:1-7:12
+INJECTED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml:1:1-7:12
+INJECTED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml:1:1-7:12
+INJECTED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml:1:1-7:12
 	package
-		ADDED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml:1:70-96
-		INJECTED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
-		INJECTED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
+		ADDED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml:1:70-96
+		INJECTED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
+		INJECTED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
 	android:versionName
-		INJECTED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
-		ADDED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml:1:1-7:12
-		INJECTED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
+		INJECTED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
+		ADDED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml:1:1-7:12
+		INJECTED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
 	android:versionCode
-		INJECTED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
-		ADDED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml:1:1-7:12
-		INJECTED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
+		INJECTED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
+		ADDED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml:1:1-7:12
+		INJECTED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
 	xmlns:android
-		ADDED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml:1:11-69
+		ADDED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml:1:11-69
 application
-ADDED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml:3:5-5:19
+ADDED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml:3:5-5:19
 	android:allowBackup
-		ADDED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml:3:18-44
+		ADDED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml:3:18-44
 uses-sdk
-INJECTED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml reason: use-sdk injection requested
-INJECTED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
-INJECTED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
-INJECTED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
-INJECTED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
+INJECTED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
+INJECTED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
+INJECTED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
+INJECTED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
 	android:targetSdkVersion
-		INJECTED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
-		ADDED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
-		INJECTED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
+		INJECTED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
+		ADDED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
+		INJECTED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
 	android:minSdkVersion
-		INJECTED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
-		ADDED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
-		INJECTED from F:\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
+		INJECTED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
+		ADDED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml
+		INJECTED from G:\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\libcocos2dx\AndroidManifest.xml

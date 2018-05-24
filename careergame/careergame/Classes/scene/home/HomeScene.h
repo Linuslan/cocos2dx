@@ -7,7 +7,7 @@
 
 #include "cocos2d.h"
 #include "GameHeaderLayer.h"
-#include "HomeLayer.h"
+#include "Classes/layer/home/HomeLayer.h"
 #include <exception>
 #include <string>
 USING_NS_CC;
