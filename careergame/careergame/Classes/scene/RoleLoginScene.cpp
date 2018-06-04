@@ -7,7 +7,12 @@ bool RoleLoginScene::init() {
     if(!Scene::init()) {
         return false;
     }
-    RoleLoginLayer* layer = RoleLoginLayer::create();
-    this->addChild(layer);
+    try {
+        log("开始初始化角色场景");
+        RoleLoginLayer* layer = RoleLoginLayer::create();
+        this->addChild(layer);
+    } catch (std::exception& ex) {
+        log("初始化角色场景异常，%s", ex.what());
+    }
     return true;
 }

@@ -7,6 +7,9 @@
 
 #include "cocos2d.h"
 #include "RoleLoginLayer.h"
+#include "HomeLayer.h"
+#include "GameHeaderLayer.h"
+#include <exception>
 USING_NS_CC;
 class RoleLoginScene: public Scene {
 public:

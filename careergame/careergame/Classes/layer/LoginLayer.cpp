@@ -1,10 +1,7 @@
 //
 // Created by LinusLan on 2018/5/18.
 //
-
-#include <Classes/scene/RoleLoginScene.h>
 #include "LoginLayer.h"
-#include "RoleLoginLayer.h"
 
 bool LoginLayer::init() {
     if(!Layer::init()) {
