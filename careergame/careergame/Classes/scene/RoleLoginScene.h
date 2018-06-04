@@ -6,10 +6,11 @@
 #define PROJ_ANDROID_STUDIO_ROLESCENE_H
 
 #include "cocos2d.h"
+#include "RoleLoginLayer.h"
 USING_NS_CC;
-class RoleScene: public Scene {
+class RoleLoginScene: public Scene {
 public:
     virtual bool init();
-    CREATE_FUNC(RoleScene);
+    CREATE_FUNC(RoleLoginScene);
 };
 #endif //PROJ_ANDROID_STUDIO_ROLESCENE_H

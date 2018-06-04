@@ -2,7 +2,10 @@
 // Created by LinusLan on 2018/5/18.
 //
 
+#include <Classes/scene/RoleLoginScene.h>
 #include "LoginLayer.h"
+#include "RoleLoginLayer.h"
+
 bool LoginLayer::init() {
     if(!Layer::init()) {
         return false;
@@ -41,8 +44,10 @@ bool LoginLayer::init() {
         ScaleTo* scaleTo1 = ScaleTo::create(0.1, 0.8);
         //放大缩小的效果执行完成后，CallFunc为动作完成后需要执行的回调函数
         Sequence* sequence = Sequence::create(scaleTo, scaleTo1, CallFunc::create([](){
-            HomeScene* homeScene = HomeScene::create();
-            Director::getInstance()->replaceScene(homeScene);
+            //HomeScene* homeScene = HomeScene::create();
+            //Director::getInstance()->replaceScene(homeScene);
+            RoleLoginScene* roleLoginScene = RoleLoginScene::create();
+            Director::getInstance()->replaceScene(roleLoginScene);
         }), nullptr);
         btn->runAction(sequence);
         log("login...%d", btn->getTag());

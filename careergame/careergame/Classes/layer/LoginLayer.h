@@ -7,7 +7,7 @@
 
 #include "cocos2d.h"
 #include "cocos-ext.h"
-#include "Classes/scene/home/HomeScene.h"
+#include "HomeScene.h"
 USING_NS_CC;
 class LoginLayer : public Layer {
 public:

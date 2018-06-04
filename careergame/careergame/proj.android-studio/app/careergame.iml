@@ -30,9 +30,6 @@
     <output url="file://$MODULE_DIR$/build/intermediates/classes/debug" />
     <output-test url="file://$MODULE_DIR$/build/intermediates/classes/test/debug" />
     <exclude-output />
-    <content url="file://E:/Install/Work/android-sdk/ndk-bundle/sources/android/cpufeatures">
-      <sourceFolder url="file://E:/Install/Work/android-sdk/ndk-bundle/sources/android/cpufeatures" isTestSource="false" />
-    </content>
     <content url="file://$MODULE_DIR$/../../Classes">
       <sourceFolder url="file://$MODULE_DIR$/../../Classes" isTestSource="false" />
     </content>
@@ -42,8 +39,14 @@
     <content url="file://$MODULE_DIR$/../../Classes/layer/header">
       <sourceFolder url="file://$MODULE_DIR$/../../Classes/layer/header" isTestSource="false" />
     </content>
+    <content url="file://$MODULE_DIR$/../../Classes/layer/home">
+      <sourceFolder url="file://$MODULE_DIR$/../../Classes/layer/home" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/../../Classes/scene">
       <sourceFolder url="file://$MODULE_DIR$/../../Classes/scene" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Classes/scene/home">
+      <sourceFolder url="file://$MODULE_DIR$/../../Classes/scene/home" isTestSource="false" />
     </content>
     <content url="file://$MODULE_DIR$/../../Resources">
       <sourceFolder url="file://$MODULE_DIR$/../../Resources" type="java-resource" />
@@ -451,12 +454,15 @@
       <excludeFolder url="file://$MODULE_DIR$/build/outputs" />
       <excludeFolder url="file://$MODULE_DIR$/build/tmp" />
     </content>
+    <content url="file://$MODULE_DIR$/../../../../../../software/install2/AndroidSdk/ndk-bundle/sources/android/cpufeatures">
+      <sourceFolder url="file://$MODULE_DIR$/../../../../../../software/install2/AndroidSdk/ndk-bundle/sources/android/cpufeatures" isTestSource="false" />
+    </content>
     <orderEntry type="jdk" jdkName="Android API 22 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="__local_aars__:F.\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\java\libs\android-async-http-1.4.9.jar:unspecified@jar" level="project" />
-    <orderEntry type="library" name="__local_aars__:F.\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\java\libs\com.android.vending.expansion.zipfile.jar:unspecified@jar" level="project" />
-    <orderEntry type="library" name="__local_aars__:F.\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\java\libs\EngineDataManager.jar:unspecified@jar" level="project" />
-    <orderEntry type="library" name="__local_aars__:F.\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\java\libs\httpclient-4.4.1.1.jar:unspecified@jar" level="project" />
+    <orderEntry type="library" name="__local_aars__:G.\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\java\libs\httpclient-4.4.1.1.jar:unspecified@jar" level="project" />
+    <orderEntry type="library" name="__local_aars__:G.\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\java\libs\com.android.vending.expansion.zipfile.jar:unspecified@jar" level="project" />
+    <orderEntry type="library" name="__local_aars__:G.\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\java\libs\android-async-http-1.4.9.jar:unspecified@jar" level="project" />
+    <orderEntry type="library" name="__local_aars__:G.\LinusLan\CodeRepository\cocos2dx\careergame\careergame\cocos2d\cocos\platform\android\java\libs\EngineDataManager.jar:unspecified@jar" level="project" />
     <orderEntry type="module" module-name="libcocos2dx" />
   </component>
 </module>

@@ -6,10 +6,11 @@
 #define PROJ_ANDROID_STUDIO_ROLELAYER_H
 
 #include "cocos2d.h"
+#include "cocos-ext.h"
 USING_NS_CC;
-class RoleLayer: public Layer {
+class RoleLoginLayer: public Layer {
 public:
     virtual bool init();
-    CREATE_FUNC(RoleLayer);
+    CREATE_FUNC(RoleLoginLayer);
 };
 #endif //PROJ_ANDROID_STUDIO_ROLELAYER_H
