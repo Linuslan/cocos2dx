@@ -15,3 +15,4 @@ careergame/careergame/cocos2d/cocos/platform/android/libcocos2dx/build/intermedi
 careergame/careergame/cocos2d/cocos/platform/android/libcocos2dx/build/outputs/logs/manifest-merger-debug-report.txt
 careergame/careergame/cocos2d/cocos/platform/android/libcocos2dx/libcocos2dx.iml
 careergame/careergame/proj.android-studio/app/careergame.iml
+careergame/careergame/cocos2d/cocos/platform/android/libcocos2dx/build/generated/source/aidl/debug/com/enhance/gameservice/IGameTuningService.java
