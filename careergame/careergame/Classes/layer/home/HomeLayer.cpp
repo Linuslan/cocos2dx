@@ -9,7 +9,7 @@ bool HomeLayer::init() {
     }
     try {
         Size winSize = Director::getInstance()->getWinSize();
-        Sprite* bg = Sprite::create("images/scene/002.jpg");
+        Sprite* bg = Sprite::create("images/scene/home2.png");
         //bg->setScale(0.5);
         bg->setPosition(winSize/2);
         this->addChild(bg);
