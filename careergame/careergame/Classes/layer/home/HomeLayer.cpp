@@ -9,10 +9,13 @@ bool HomeLayer::init() {
     }
     try {
         Size winSize = Director::getInstance()->getWinSize();
-        Sprite* bg = Sprite::create("images/scene/home2.png");
+        Sprite* bg = Sprite::create("test/home_wall.png");
         //bg->setScale(0.5);
         bg->setPosition(winSize/2);
         this->addChild(bg);
+        Sprite* computer = Sprite::create("test/home_computer.png");
+        computer->setPosition(Vec2(winSize.width*0.026, winSize.height*0.3));
+        this->addChild(computer);
     } catch(std::exception& ex) {
         log("初始化家框架异常，%s", ex.what());
     }
