@@ -6,6 +6,7 @@
 #define PROJ_ANDROID_STUDIO_HOMELAYER_H
 
 #include "cocos2d.h"
+#include "cocos-ext.h"
 #include <exception>
 #include <string>
 USING_NS_CC;
