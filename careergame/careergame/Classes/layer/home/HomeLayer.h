@@ -7,6 +7,7 @@
 
 #include "cocos2d.h"
 #include "cocos-ext.h"
+#include "RoleSprite.h"
 #include <exception>
 #include <string>
 USING_NS_CC;

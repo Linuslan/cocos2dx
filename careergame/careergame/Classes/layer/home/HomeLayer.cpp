@@ -43,6 +43,13 @@ bool HomeLayer::init() {
         ui::Button* airConditioner = ui::Button::create("test/home_air_conditioner.png");
         airConditioner->setPosition(Vec2(winSize.width*0.014, winSize.height*0.65));
         this->addChild(airConditioner);
+        log("开始创建角色");
+        RoleSprite* role = RoleSprite::create();
+        role->setPosition(Vec2(winSize.width*0.26, winSize.height*0.3));
+        role->standFront();
+        this->addChild(role);
+        Vec2 pos = computer->getPosition();
+        role->walk(pos);
     } catch(std::exception& ex) {
         log("初始化家框架异常，%s", ex.what());
     }
