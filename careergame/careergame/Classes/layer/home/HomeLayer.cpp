@@ -9,6 +9,10 @@ bool HomeLayer::init() {
     }
     try {
         Size winSize = Director::getInstance()->getWinSize();
+        RoleSprite* role = RoleSprite::create();
+        role->setPosition(Vec2(winSize.width*0.26, winSize.height*0.3));
+        role->standFront();
+        this->addChild(role);
         Sprite* bg = Sprite::create("test/home_wall.png");
         //bg->setScale(0.5);
         bg->setPosition(winSize/2);
@@ -18,6 +22,7 @@ bool HomeLayer::init() {
         this->addChild(computer);
         computer->addClickEventListener([this](Ref* ref){
             log("点击了电脑");
+
         });
 
         ui::Button* chair = ui::Button::create("test/home_chair.png");
@@ -44,10 +49,7 @@ bool HomeLayer::init() {
         airConditioner->setPosition(Vec2(winSize.width*0.014, winSize.height*0.65));
         this->addChild(airConditioner);
         log("开始创建角色");
-        RoleSprite* role = RoleSprite::create();
-        role->setPosition(Vec2(winSize.width*0.26, winSize.height*0.3));
-        role->standFront();
-        this->addChild(role);
+
         Vec2 pos = computer->getPosition();
         role->walk(pos);
     } catch(std::exception& ex) {
