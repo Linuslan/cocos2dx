@@ -20,7 +20,7 @@ bool RoleSprite::init() {
 }
 
 void RoleSprite::standFront() {
-    this->stopAllActions();
+    this->stopAllActionsByTag(2);
     Vector<SpriteFrame*> frames;
     SpriteFrameCache* sfc = SpriteFrameCache::getInstance();
     SpriteFrame* frame = sfc->getSpriteFrameByName("stand-front.png");
@@ -28,7 +28,7 @@ void RoleSprite::standFront() {
 }
 
 void RoleSprite::standBack() {
-    this->stopAllActions();
+    this->stopAllActionsByTag(2);
     Vector<SpriteFrame*> frames;
     SpriteFrameCache* sfc = SpriteFrameCache::getInstance();
     SpriteFrame* frame = sfc->getSpriteFrameByName("stand-back.png");
@@ -37,10 +37,16 @@ void RoleSprite::standBack() {
 
 void RoleSprite::standSide() {
     log("开始侧面站立");
+    //this->stopAllActionsByTag(2);
     this->stopAllActions();
     Vector<SpriteFrame*> frames;
     SpriteFrameCache* sfc = SpriteFrameCache::getInstance();
     SpriteFrame* frame = sfc->getSpriteFrameByName("stand-side.png");
+    /*frames.pushBack(frame);
+    Animation* animation = Animation::createWithSpriteFrames(frames);
+    Animate* animate = Animate::create(animation);
+    RepeatForever* action = RepeatForever::create(animate);
+    this->runAction(action);*/
     this->setSpriteFrame(frame);
 }
 
@@ -75,8 +81,11 @@ void RoleSprite::update(float t) {
         if(targetPos.x < this->getPosition().x) {
             x = this->getPosition().x - step;
         }
-        if(x == targetPos.x) {
-            this->stopAllActionsByTag(2);
+        log("x=%lf, targetPos.x=%lf", x, targetPos.x);
+        if(int(x) == int(targetPos.x)) {
+            //this->stopAllActionsByTag(2);
+            //this->stopAllActions();
+            log("到达指定位置，开始站立");
             this->standSide();
             return;
         }
