@@ -36,7 +36,7 @@ void RoleSprite::standBack() {
 }
 
 void RoleSprite::standSide() {
-    log("开始侧面站立");
+    //log("开始侧面站立");
     //this->stopAllActionsByTag(2);
     this->stopAllActions();
     Vector<SpriteFrame*> frames;
@@ -85,7 +85,7 @@ void RoleSprite::update(float t) {
         if(int(x) == int(targetPos.x)) {
             //this->stopAllActionsByTag(2);
             //this->stopAllActions();
-            log("到达指定位置，开始站立");
+            //log("到达指定位置，开始站立");
             this->standSide();
             return;
         }

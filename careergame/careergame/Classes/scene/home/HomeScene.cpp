@@ -9,10 +9,11 @@ bool HomeScene::init() {
         return false;
     }
     try {
-        HomeLayer* homeLayer = HomeLayer::create();
-        this->addChild(homeLayer);
         GameHeaderLayer* headerLayer = GameHeaderLayer::create();
         this->addChild(headerLayer);
+        headerLayer->setLocalZOrder(10);
+        HomeLayer* homeLayer = HomeLayer::create();
+        this->addChild(homeLayer);
     } catch(std::exception& ex) {
         log("初始化家场景异常，%s", ex.what());
     }
