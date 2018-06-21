@@ -10,7 +10,6 @@
 #include "RoleSprite.h"
 #include <exception>
 #include <string>
-#include "HomeComputerBtn.h"
 USING_NS_CC;
 class HomeLayer : public Layer {
 public:

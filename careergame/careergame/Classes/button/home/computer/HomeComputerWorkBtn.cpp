@@ -3,15 +3,32 @@
 //
 
 #include "HomeComputerWorkBtn.h"
+#include "HomeLayer.h"
+#include "RoleSprite.h"
+#include "DialogLayer.h"
 bool HomeComputerWorkBtn::init() {
     if(!ui::Button::init()) {
         return false;
     }
-    this->loadTextureNormal("test/home_computer.png", TextureResType::LOCAL);
+    this->loadTextureNormal("images/home/work.png", TextureResType::LOCAL);
     this->addClickEventListener(CC_CALLBACK_1(HomeComputerWorkBtn::doClick, this));
     return true;
 }
 
 void HomeComputerWorkBtn::doClick(Ref* ref) {
     log("点击了工作按钮");
+    DialogLayer* dialogLayer = static_cast<DialogLayer*>(this->getParent());
+
+    HomeLayer* layer = static_cast<HomeLayer*>(this->getParent()->getParent()->getChildByName("HomeLayer"));
+    RoleSprite* sprite = static_cast<RoleSprite*>(layer->getChildByName("role-11"));
+    sprite->setTargetBtn(this);
+    sprite->callback = [](){
+        log("执行工作行数回调");
+    };
+    dialogLayer->removeFromParent();
+    sprite->walk();
+}
+
+void HomeComputerWorkBtn::callback() {
+    log("执行工作回调函数");
 }

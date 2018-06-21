@@ -7,8 +7,6 @@
 
 #include "BaseBtn.h"
 #include "HomeComputerWorkBtn.h"
-#include "HomeLayer.h"
-#include "HomeScene.h"
 class HomeComputerBtn:public BaseBtn {
 private:
     HomeComputerWorkBtn* workBtn;

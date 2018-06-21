@@ -7,8 +7,6 @@
 
 #include "cocos2d.h"
 #include "cocos-ext.h"
-#include "DialogLayer.h"
-#include "RoleSprite.h"
 USING_NS_CC;
 class BaseBtn:public ui::Button {
 public:

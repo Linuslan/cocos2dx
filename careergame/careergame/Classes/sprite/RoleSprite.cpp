@@ -43,20 +43,15 @@ void RoleSprite::standSide() {
     Vector<SpriteFrame*> frames;
     SpriteFrameCache* sfc = SpriteFrameCache::getInstance();
     SpriteFrame* frame = sfc->getSpriteFrameByName("stand-side.png");
-    /*frames.pushBack(frame);
-    Animation* animation = Animation::createWithSpriteFrames(frames);
-    Animate* animate = Animate::create(animation);
-    RepeatForever* action = RepeatForever::create(animate);
-    this->runAction(action);*/
     this->setSpriteFrame(frame);
 }
 
-void RoleSprite::walk(Vec2 pos) {
+void RoleSprite::walk() {
     this->stopAllActions();
     SpriteFrameCache* sfc = SpriteFrameCache::getInstance();
-    this->targetPos = pos;
-    float x = pos.x;
-    float y = pos.y;
+    Vec2 targetPos = this->targetObj->getPosition();
+    float x = targetPos.x;
+    float y = targetPos.y;
     Vec2 rolePos = this->getPosition();
     if(x < rolePos.x) {
         this->setFlippedX(false);
@@ -79,15 +74,18 @@ void RoleSprite::update(float t) {
     try {
         float step = 0.5;
         float x = this->getPosition().x + step;
+        if(targetObj == nullptr || nullptr == targetBtn) {
+            return;
+        }
+        Vec2 targetPos = targetObj->getPosition();
         if(targetPos.x < this->getPosition().x) {
             x = this->getPosition().x - step;
         }
-        //log("x=%lf, targetPos.x=%lf", x, targetPos.x);
-        if(int(x) == int(targetPos.x)) {
-            //this->stopAllActionsByTag(2);
-            //this->stopAllActions();
-            //log("到达指定位置，开始站立");
+        if(this->getBoundingBox().intersectsRect(targetObj->getBoundingBox())) {
             this->standSide();
+            this->callback();
+            targetObj = nullptr;
+            targetBtn = nullptr;
             return;
         }
         this->setPosition(x, targetPos.y);

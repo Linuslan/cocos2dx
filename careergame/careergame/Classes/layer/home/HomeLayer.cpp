@@ -3,11 +3,13 @@
 //
 
 #include "HomeLayer.h"
+#include "HomeComputerBtn.h"
 bool HomeLayer::init() {
     if(!Layer::init()) {
         return false;
     }
     try {
+        this->setName("HomeLayer");
         Size winSize = Director::getInstance()->getWinSize();
         log("开始创建角色");
         RoleSprite* role = RoleSprite::create();

@@ -11,18 +11,20 @@
 USING_NS_CC;
 class RoleSprite : public Sprite {
 private:
-    //需要走向的坐标
-    Vec2 targetPos;
+    //需要角色走过去的对象
+    BaseBtn* targetObj;
     //走到坐标后需要执行的按钮
     BaseBtn* targetBtn;
 public:
     virtual bool init();
     CREATE_FUNC(RoleSprite);
-    void walk(Vec2 pos);
+    void walk();
     void standFront();
     void standBack();
     void standSide();
     void update(float a);
     void setTargetBtn(BaseBtn* targetBtn) {this->targetBtn=targetBtn;}
+    void setTargetObj(BaseBtn* targetObj) {this->targetObj = targetObj;}
+    void (*callback)();
 };
 #endif //PROJ_ANDROID_STUDIO_ROLESPRITE_H
