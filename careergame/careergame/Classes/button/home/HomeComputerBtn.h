@@ -8,12 +8,14 @@
 #include "BaseBtn.h"
 #include "HomeComputerWorkBtn.h"
 #include "HomeLayer.h"
+#include "HomeScene.h"
 class HomeComputerBtn:public BaseBtn {
 private:
     HomeComputerWorkBtn* workBtn;
 public:
     virtual bool init();
     CREATE_FUNC(HomeComputerBtn);
-    virtual void callback(Ref* ref);
+    virtual void callback();
+    virtual void doClick(Ref* ref);
 };
 #endif //PROJ_ANDROID_STUDIO_HOMECOMPUTERBTN_H

@@ -30,8 +30,20 @@
     <output url="file://$MODULE_DIR$/build/intermediates/classes/debug" />
     <output-test url="file://$MODULE_DIR$/build/intermediates/classes/test/debug" />
     <exclude-output />
+    <content url="file://E:/Install/Work/android-sdk/ndk-bundle/sources/android/cpufeatures">
+      <sourceFolder url="file://E:/Install/Work/android-sdk/ndk-bundle/sources/android/cpufeatures" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/../../Classes">
       <sourceFolder url="file://$MODULE_DIR$/../../Classes" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Classes/button">
+      <sourceFolder url="file://$MODULE_DIR$/../../Classes/button" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Classes/button/home">
+      <sourceFolder url="file://$MODULE_DIR$/../../Classes/button/home" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Classes/button/home/computer">
+      <sourceFolder url="file://$MODULE_DIR$/../../Classes/button/home/computer" isTestSource="false" />
     </content>
     <content url="file://$MODULE_DIR$/../../Classes/layer">
       <sourceFolder url="file://$MODULE_DIR$/../../Classes/layer" isTestSource="false" />
@@ -47,6 +59,9 @@
     </content>
     <content url="file://$MODULE_DIR$/../../Classes/scene/home">
       <sourceFolder url="file://$MODULE_DIR$/../../Classes/scene/home" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Classes/sprite">
+      <sourceFolder url="file://$MODULE_DIR$/../../Classes/sprite" isTestSource="false" />
     </content>
     <content url="file://$MODULE_DIR$/../../Resources">
       <sourceFolder url="file://$MODULE_DIR$/../../Resources" type="java-resource" />
@@ -453,9 +468,6 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/transforms" />
       <excludeFolder url="file://$MODULE_DIR$/build/outputs" />
       <excludeFolder url="file://$MODULE_DIR$/build/tmp" />
-    </content>
-    <content url="file://F:/software/install2/AndroidSdk/ndk-bundle/sources/android/cpufeatures">
-      <sourceFolder url="file://F:/software/install2/AndroidSdk/ndk-bundle/sources/android/cpufeatures" isTestSource="false" />
     </content>
     <orderEntry type="jdk" jdkName="Android API 22 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

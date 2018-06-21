@@ -12,9 +12,15 @@ bool HomeComputerBtn::init() {
     return true;
 }
 
-void HomeComputerBtn::callback(Ref* ref) {
+void HomeComputerBtn::doClick(Ref* ref) {
     log("点击了电脑");
+    Size winSize = Director::getInstance()->getWinSize();
     HomeLayer* layer = static_cast<HomeLayer*>(this->getParent());
+    HomeScene* scene = static_cast<HomeScene*>(layer->getParent());
     DialogLayer* dialog = DialogLayer::create();
-    layer->addChild(dialog);
+    scene->addChild(dialog);
+    dialog->setLocalZOrder(11);
+    this->workBtn = HomeComputerWorkBtn::create();
+    dialog->addChild(workBtn);
+    workBtn->setPosition(winSize/2);
 }

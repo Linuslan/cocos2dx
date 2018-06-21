@@ -6,6 +6,7 @@
 #define PROJ_ANDROID_STUDIO_DIALOGLAYER_H
 
 #include "cocos2d.h"
+#include "cocos-ext.h"
 USING_NS_CC;
 class DialogLayer : public Layer {
 public:

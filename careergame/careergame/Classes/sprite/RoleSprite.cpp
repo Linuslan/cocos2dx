@@ -13,6 +13,7 @@ bool RoleSprite::init() {
         SpriteFrameCache* sfc = SpriteFrameCache::getInstance();
         sfc->addSpriteFramesWithFile("images/role/walk/role.plist", "images/role/walk/role.png");
         this->standFront();
+        this->setName("role-11");
     } catch(std::exception& ex) {
         log("初始化角色异常，%s", ex.what());
     }
@@ -81,7 +82,7 @@ void RoleSprite::update(float t) {
         if(targetPos.x < this->getPosition().x) {
             x = this->getPosition().x - step;
         }
-        log("x=%lf, targetPos.x=%lf", x, targetPos.x);
+        //log("x=%lf, targetPos.x=%lf", x, targetPos.x);
         if(int(x) == int(targetPos.x)) {
             //this->stopAllActionsByTag(2);
             //this->stopAllActions();
