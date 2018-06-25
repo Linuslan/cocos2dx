@@ -7,6 +7,9 @@ bool HomeWorkLayer::init() {
     if(!Layer::init()) {
         return false;
     }
-    Sprite* sprite = Sprite::create("");
+    Size winSize = Director::getInstance()->getWinSize();
+    Sprite* sprite = Sprite::create("images/home/home_work_bg.png");
+    this->addChild(sprite);
+    sprite->setPosition(winSize/2);
     return true;
 }

@@ -6,6 +6,7 @@
 #include "HomeLayer.h"
 #include "RoleSprite.h"
 #include "DialogLayer.h"
+#include "HomeWorkScene.h"
 bool HomeComputerWorkBtn::init() {
     if(!ui::Button::init()) {
         return false;
@@ -24,6 +25,8 @@ void HomeComputerWorkBtn::doClick(Ref* ref) {
     sprite->setTargetBtn(this);
     sprite->callback = [](){
         log("执行工作行数回调");
+        HomeWorkScene* scene = HomeWorkScene::create();
+        Director::getInstance()->replaceScene(scene);
     };
     dialogLayer->removeFromParent();
     sprite->walk();

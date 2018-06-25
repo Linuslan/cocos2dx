@@ -45,6 +45,9 @@
     <content url="file://$MODULE_DIR$/../../Classes/button/home/computer">
       <sourceFolder url="file://$MODULE_DIR$/../../Classes/button/home/computer" isTestSource="false" />
     </content>
+    <content url="file://$MODULE_DIR$/../../Classes/config">
+      <sourceFolder url="file://$MODULE_DIR$/../../Classes/config" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/../../Classes/layer">
       <sourceFolder url="file://$MODULE_DIR$/../../Classes/layer" isTestSource="false" />
     </content>

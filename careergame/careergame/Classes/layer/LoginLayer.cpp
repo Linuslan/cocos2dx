@@ -2,7 +2,10 @@
 // Created by LinusLan on 2018/5/18.
 //
 #include "LoginLayer.h"
-
+#include "GameConfig.h"
+#include "iostream"
+#include "fstream"
+using namespace rapidjson;
 bool LoginLayer::init() {
     if(!Layer::init()) {
         return false;
