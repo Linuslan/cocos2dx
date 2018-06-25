@@ -10,9 +10,14 @@ bool GameHeaderLayer::init() {
     try {
         Size winSize = Director::getInstance()->getWinSize();
         float headerHeight = winSize.height*0.9;
+        //玩家左侧属性栏内容
+        Label* nameLbl = Label::createWithSystemFont("姓名：", "", 20);
+        this->addChild(nameLbl);
+        nameLbl->setPosition(Vec2(winSize.width*0.1, headerHeight));
+
         Sprite* email = Sprite::create("images/gameheader/email.png");
         email->setPosition(Vec2(winSize.width*0.88, headerHeight));
-        email->setScale(0.04);
+        email->setScale(0.1);
         FadeIn* fadeIn = FadeIn::create(0.5);
         //FadeOut* fadeOut = FadeOut::create(0.5);
         //Sequence* sequence = Sequence::create(fadeIn, fadeOut, nullptr);
