@@ -3,17 +3,22 @@
 //
 
 #include "GameHeaderLayer.h"
+#include "RoleService.h"
 bool GameHeaderLayer::init() {
     if(!Layer::init()) {
         return false;
     }
     try {
+        RoleService* roleService = new RoleService();
+        Role* role = roleService->loadRoleById(1);
         Size winSize = Director::getInstance()->getWinSize();
         float headerHeight = winSize.height*0.9;
         //玩家左侧属性栏内容
-        Label* nameLbl = Label::createWithSystemFont("姓名：", "", 20);
+        Label* nameLbl = Label::createWithSystemFont("姓名："+role->getName(), "", 20);
         this->addChild(nameLbl);
         nameLbl->setPosition(Vec2(winSize.width*0.1, headerHeight));
+
+        Label* typeLbl = Label::createWithSystemFont("职业：");
 
         Sprite* email = Sprite::create("images/gameheader/email.png");
         email->setPosition(Vec2(winSize.width*0.88, headerHeight));

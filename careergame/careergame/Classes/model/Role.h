@@ -19,6 +19,8 @@ private:
     std::string name;   //玩家角色的名称
     int type;   //玩家角色的职业类型，0：无职业；1：程序员；2：画家；
 public:
+    Role();
+    ~Role();
     int getLevel() {return level;}
     int getHp() {return hp;}
     int getMp() {return mp;}
