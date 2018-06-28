@@ -59,7 +59,7 @@ bool LoginLayer::init() {
     quitBtn->addClickEventListener([](Ref* ref){
         exit(0);
     });
-    /*Role* role = new Role();
+    Role* role = new Role();
     role->setType(1);
     role->setLevel(2);
     role->setMp(100);
@@ -67,6 +67,6 @@ bool LoginLayer::init() {
     role->setExp(200);
     role->setName("哼哈");
     RoleService* roleService = new RoleService();
-    roleService->updateRole(role);*/
+    roleService->updateRole(role);
     return true;
 }

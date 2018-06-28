@@ -6,10 +6,14 @@
 #define PROJ_ANDROID_STUDIO_HOMEWORKLAYER_H
 
 #include "cocos2d.h"
+#include "RoleService.h"
 USING_NS_CC;
 class HomeWorkLayer: public Layer {
+private:
+    RoleService* roleService = nullptr;
 public:
     virtual bool init();
     CREATE_FUNC(HomeWorkLayer);
+    void update(float t);
 };
 #endif //PROJ_ANDROID_STUDIO_HOMEWORKLAYER_H
