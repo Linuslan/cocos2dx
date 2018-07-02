@@ -7,10 +7,12 @@
 
 #include "cocos2d.h"
 #include "RoleService.h"
+#include "cocos-ext.h"
 USING_NS_CC;
 class HomeWorkLayer: public Layer {
 private:
     RoleService* roleService = nullptr;
+    rapidjson::Value* task = nullptr;
 public:
     virtual bool init();
     CREATE_FUNC(HomeWorkLayer);

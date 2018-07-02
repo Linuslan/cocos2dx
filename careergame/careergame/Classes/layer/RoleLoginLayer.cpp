@@ -3,6 +3,7 @@
 //
 
 #include "RoleLoginLayer.h"
+#include "RoleJobTaskConfig.h"
 bool RoleLoginLayer::init() {
     std::string occupation[] = {"程序员", "画家", "设计师", "教师", "投资人"};
     if(!Layer::init()) {
@@ -25,8 +26,8 @@ bool RoleLoginLayer::init() {
     listView->setBackGroundImage("test/white_bg.png");
     listView->setBackGroundColorOpacity(200);
     listView->setBackGroundImageScale9Enabled(true);
-    listView->setContentSize(Size(120, 160));
-    listView->setPosition(Vec2(winSize.width*0.75, winSize.height*0.3));
+    listView->setContentSize(Size(420, 800));
+    listView->setPosition(Vec2(winSize.width*0.75, winSize.height*0.1));
     listView->setAnchorPoint(Vec2::ZERO);
     listView->setScrollBarPositionFromCorner(Vec2(7, 7));
     listView->setMagneticType(ui::ListView::MagneticType::BOTH_END);
@@ -34,14 +35,14 @@ bool RoleLoginLayer::init() {
     ui::Button* default_button = ui::Button::create("images/login/login_btn.png", "images/login/login_btn.png", "images/login/login_btn.png");
     default_button->setName("Title Button");
     default_button->setScale(0.5);
-    Size size = Size(100, 25);
+    Size size = Size(400, 100);
     ui::Layout* default_item = ui::Layout::create();
     default_item->setTouchEnabled(true);
     default_item->setContentSize(size);
     default_item->setBackGroundImage("");
     default_button->setPosition(Vec2(default_item->getContentSize().width*0.7, default_item->getContentSize().height*0.5));
     default_item->addChild(default_button);
-    ui::Text* text = ui::Text::create("", "fonts/黑体 simhei.ttf", 10);
+    ui::Text* text = ui::Text::create("", "fonts/黑体 simhei.ttf", 30);
     text->setTextColor(Color4B::BLACK);
     text->setName("label");
     text->setPosition(Vec2(default_item->getContentSize().width*0.3, default_item->getContentSize().height*0.5));
@@ -83,5 +84,6 @@ bool RoleLoginLayer::init() {
         btn->runAction(sequence);
         log("login...%d", btn->getTag());
     });
+    RoleJobTaskConfig::getTaskList();
     return true;
 }

@@ -23,6 +23,7 @@ bool DialogLayer::init() {
     ui::Button* quitBtn = ui::Button::create("CloseNormal.png", "CloseSelected.png");
     quitBtn->setPosition(Vec2(winSize.width*0.9, headerHeight));
     quitBtn->addClickEventListener([this](Ref* ref) {
+        this->removeAllChildrenWithCleanup(true);
         this->removeFromParent();
     });
     this->addChild(quitBtn);
