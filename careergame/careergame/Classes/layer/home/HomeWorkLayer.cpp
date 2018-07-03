@@ -4,7 +4,6 @@
 
 #include <cocos2d/cocos/ui/UIListView.h>
 #include <cocos2d/cocos/ui/UIText.h>
-#include <Classes/config/RoleJobTaskConfig.h>
 #include <Classes/layer/DialogLayer.h>
 #include "HomeWorkLayer.h"
 bool HomeWorkLayer::init() {
@@ -12,6 +11,7 @@ bool HomeWorkLayer::init() {
         return false;
     }
     this->roleService = new RoleService();
+    this->roleJobTaskService = new RoleJobTaskService();
     Size winSize = Director::getInstance()->getWinSize();
     Sprite* sprite = Sprite::create("images/home/home_work_bg.png");
     this->addChild(sprite);
@@ -54,36 +54,25 @@ bool HomeWorkLayer::init() {
 
         // set all items layout gravity
         listView->setGravity(ui::ListView::Gravity::CENTER_VERTICAL);
-        std::vector<rapidjson::Value*>* jsonArray = RoleJobTaskConfig::getTaskList();
+        //std::vector<rapidjson::Value*>* jsonArray = RoleJobTaskConfig::getTaskList();
+        std::vector<RoleJobTask*>* taskList = this->roleJobTaskService->getTasks();
         //initial the data
-        for(std::vector<rapidjson::Value*>::iterator iter = jsonArray->begin(); iter != jsonArray->end(); iter++) {
-            rapidjson::Value* pvalue = (*iter);
-            log("原始value的地址为：%0x", pvalue);
-            rapidjson::Value value = (*pvalue).GetObject();
-            std::string name = value["name"].GetString();
-            int id = value["id"].GetInt();
+        for(std::vector<RoleJobTask*>::iterator iter = taskList->begin(); iter != taskList->end(); iter++) {
+            RoleJobTask* pTask = (*iter);
+            log("原始value的地址为：%0x", pTask);
+            //rapidjson::Value value = (*pvalue).GetObject();
+            std::string name = pTask->getName();
+            int id = pTask->getId();
             ui::Widget* item = default_item->clone();
             item->setContentSize(size);
             item->setTag(id);
             ui::Text* label = static_cast<ui::Text*>(item->getChildByName("label"));
             label->setString(name.c_str());
             ui::Button* button = static_cast<ui::Button*>(item->getChildByName("btn"));
-            button->addClickEventListener([this, value](Ref* ref){
+            button->addClickEventListener([this, pTask](Ref* ref){
                 Document doc;
-                log("点击了按钮开始工作, pvalue地址为：%0x, 是否对对象：%d, id=%d", pvalue, (*pvalue).IsObject(), (*pvalue)["id"].GetInt());
-                if(nullptr == this->task) {
-                    log("删除旧任务");
-                    delete task;
-                }
-                rapidjson::Value* val = new rapidjson::Value();
-                val->SetObject();
-                val->AddMember(rapidjson::Value("id", doc.GetAllocator()), rapidjson::Value(1), doc.GetAllocator());
-                val->AddMember(rapidjson::Value("name", doc.GetAllocator()), rapidjson::Value("测试", doc.GetAllocator()), doc.GetAllocator());
-                val->AddMember(rapidjson::Value("spendTime", doc.GetAllocator()), rapidjson::Value(60), doc.GetAllocator());
-                log("创建新对象成功, 对象地址：%0x", val);
-                //val->CopyFrom(*pvalue, doc.GetAllocator());
-                //log("复制对象成功");
-                this->task = val;
+                log("点击了按钮开始工作, pvalue地址为：%0x, id=%d", pTask, pTask->getId());
+                this->task = pTask;
             });
             listView->pushBackCustomItem(item);
         }
@@ -108,12 +97,11 @@ void HomeWorkLayer::update(float t) {
         if(role->getMp() >= 20) {
             /*role->mpReduce(20); //一分钟减20的体力
             this->roleService->updateRole(role);*/
-            log("判断task是否为对象：%d, 地址为：%0x", (*task).IsObject(), task);
-            rapidjson::Value val = (*task).GetObject();
+            log("task地址为：%0x", task);
             log("开始计算时间");
-            int spendTime = val["spendTime"].GetInt() + 1;
+            int spendTime = task->getTimeSpend() + 1;
             log("时间加1，得到时间为：%d", spendTime);
-            val["spendTime"].SetInt(spendTime);
+            task->setTimeSpend(spendTime);
             log("增加时间成功：%d", spendTime);
             //RoleJobTaskConfig::updateTask(task);
         }
