@@ -21,6 +21,7 @@ bool HomeWorkLayer::init() {
     this->addChild(jobTaskBtn);
     jobTaskBtn->setPosition(Vec2(winSize.width*0.1, winSize.height*0.8));
     jobTaskBtn->addClickEventListener([this, winSize](Ref* ref) {
+        DialogLayer* dialog = DialogLayer::create();
         ui::ListView* listView = ui::ListView::create();
         listView->setDirection(ui::ScrollView::Direction::VERTICAL);
         listView->setBounceEnabled(true);
@@ -69,14 +70,15 @@ bool HomeWorkLayer::init() {
             ui::Text* label = static_cast<ui::Text*>(item->getChildByName("label"));
             label->setString(name.c_str());
             ui::Button* button = static_cast<ui::Button*>(item->getChildByName("btn"));
-            button->addClickEventListener([this, pTask](Ref* ref){
+            button->addClickEventListener([this, pTask, dialog](Ref* ref){
                 Document doc;
                 log("点击了按钮开始工作, pvalue地址为：%0x, id=%d", pTask, pTask->getId());
                 this->task = pTask;
+                dialog->removeAllChildrenWithCleanup(true);
+                dialog->removeFromParent();
             });
             listView->pushBackCustomItem(item);
         }
-        DialogLayer* dialog = DialogLayer::create();
         dialog->addChild(listView);
         this->addChild(dialog);
     });
@@ -95,15 +97,15 @@ void HomeWorkLayer::update(float t) {
         log("开始执行工作任务");
         Role* role = this->roleService->loadRoleById(1);
         if(role->getMp() >= 20) {
-            /*role->mpReduce(20); //一分钟减20的体力
-            this->roleService->updateRole(role);*/
+            role->mpReduce(20); //一分钟减20的体力
+            this->roleService->updateRole(role);
             log("task地址为：%0x", task);
             log("开始计算时间");
             int spendTime = task->getTimeSpend() + 1;
             log("时间加1，得到时间为：%d", spendTime);
             task->setTimeSpend(spendTime);
             log("增加时间成功：%d", spendTime);
-            //RoleJobTaskConfig::updateTask(task);
+            this->roleJobTaskService->updateTask(task);
         }
     }
 }

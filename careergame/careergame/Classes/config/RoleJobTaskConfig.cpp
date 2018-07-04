@@ -4,6 +4,9 @@
 
 #include "RoleJobTaskConfig.h"
 std::string RoleJobTaskConfig::init() {
+    std::string filePath = FileUtils::getInstance()->fullPathForFilename("config/role_job_task_config.json");
+    std::string writePath = FileUtils::getInstance()->getWritablePath();
+    log("配置路径为：%s, writePath:%s", filePath.c_str(), writePath.c_str());
     std::string data = FileUtils::getInstance()->getStringFromFile("config/role_job_task_config.json");
     UserDefault::getInstance()->setStringForKey("RoleJobTaskConfig", data);
     log("获取到的数据已设置到本地存储中为：%s", data.c_str());

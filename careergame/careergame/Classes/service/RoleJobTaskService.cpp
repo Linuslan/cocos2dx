@@ -5,18 +5,22 @@
 #include <cocos2d/external/json/stringbuffer.h>
 #include <cocos2d/external/json/writer.h>
 #include "RoleJobTaskService.h"
+#include "json/filewritestream.h"
 std::vector<RoleJobTask*>* RoleJobTaskService::getTasks() {
     std::vector<RoleJobTask*>* taskList = new std::vector<RoleJobTask*>();
     std::string data = UserDefault::getInstance()->getStringForKey("RoleJobTaskConfig");
     if(data.empty()) {
         data = RoleJobTaskConfig::init();
     }
+    log("获取到的data为:%s", data.c_str());
     Document doc;
     doc.Parse(data.c_str());
+    log("准备开始组装task对象");
     for(SizeType i = 0; i < doc.Size(); i ++) {
         rapidjson::Value value = doc[i].GetObject();
         RoleJobTask* task = new RoleJobTask();
-        task->setName(value["name"].GetString());
+        std::string name = value["name"].GetString();
+        task->setName(name);
         task->setExp(value["exp"].GetInt());
         task->setLevel(value["level"].GetInt());
         task->setId(value["id"].GetInt());
@@ -36,17 +40,34 @@ void RoleJobTaskService::updateTask(RoleJobTask *task) {
         if(data.empty()) {
             data = RoleJobTaskConfig::init();
         }
+        log("获取到的data为:%s", data.c_str());
         Document doc;
         doc.Parse(data.c_str());
-        for(SizeType i = 0; i < doc.Size(); i ++) {
-            rapidjson::Value value = doc.GetObject();
+        for(rapidjson::Value::ValueIterator iter = doc.Begin(); iter != doc.End(); iter ++) {
+            rapidjson::Value value = (*iter).GetObject();
+            log("开始判断对象");
             if(value["id"].GetInt() == task->getId()) {
-                doc.EraseMember(value);
+                log("id为%d的对象和task为同一个对象，移除对象", value["id"].GetInt());
+                doc.Erase(iter);
+                log("移除成功，退出循环");
                 break;
             }
         }
+        /*for(SizeType i = 0; i < doc.Size(); i ++) {
+            rapidjson::Value value = doc[i].GetObject();
+            log("开始判断%d个对象", i);
+            if(value["id"].GetInt() == task->getId()) {
+                log("id为%d的对象和task为同一个对象，移除对象", value["id"].GetInt());
+                doc.EraseMember(value);
+                log("移除成功，退出循环");
+                break;
+            }
+        }*/
+        log("移除task成功");
         rapidjson::Value taskVal(kObjectType);
+        log("创建value成功");
         taskVal.SetObject();
+        log("设置value为object成功");
         taskVal.AddMember(rapidjson::Value("name", doc.GetAllocator()), rapidjson::Value(task->getName().c_str(), doc.GetAllocator()), doc.GetAllocator());
         taskVal.AddMember(rapidjson::Value("exp", doc.GetAllocator()), rapidjson::Value(task->getExp()), doc.GetAllocator());
         taskVal.AddMember(rapidjson::Value("id", doc.GetAllocator()), rapidjson::Value(task->getId()), doc.GetAllocator());
@@ -61,6 +82,19 @@ void RoleJobTaskService::updateTask(RoleJobTask *task) {
         rapidjson::Writer<StringBuffer> writer(buffer);
         doc.Accept(writer);
         log("角色任务更新后的json：%s", buffer.GetString());
-        FileUtils::getInstance()->writeStringToFile(buffer.GetString(), "config/role_job_task_config.json");
+        std::string filePath = FileUtils::getInstance()->fullPathForFilename("config/role_job_task_config.json");
+        //std::string filePath = FileUtils::getInstance()->fullPathFromRelativeFile("config/role_job_task_config.json");
+        log("配置路径为：%s", filePath.c_str());
+        /*FILE* file = fopen(FileUtils::getInstance()->getSuitableFOpen(filePath).c_str(), "w");
+        const char* json = buffer.GetString();
+        char* jsonCp = new char[sizeof(json)];
+        strcpy(jsonCp, json);
+        FileWriteStream os(file, jsonCp, sizeof(json));
+        Writer<FileWriteStream> writer2(os);
+        doc.Accept(writer2);
+        fclose(file);*/
+        FileUtils::getInstance()->writeStringToFile(buffer.GetString(), filePath);
+        log("写入到文件成功");
+        RoleJobTaskConfig::init();
     }
 }
