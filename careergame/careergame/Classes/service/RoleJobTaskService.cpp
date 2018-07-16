@@ -53,16 +53,6 @@ void RoleJobTaskService::updateTask(RoleJobTask *task) {
                 break;
             }
         }
-        /*for(SizeType i = 0; i < doc.Size(); i ++) {
-            rapidjson::Value value = doc[i].GetObject();
-            log("开始判断%d个对象", i);
-            if(value["id"].GetInt() == task->getId()) {
-                log("id为%d的对象和task为同一个对象，移除对象", value["id"].GetInt());
-                doc.EraseMember(value);
-                log("移除成功，退出循环");
-                break;
-            }
-        }*/
         log("移除task成功");
         rapidjson::Value taskVal(kObjectType);
         log("创建value成功");
@@ -82,17 +72,8 @@ void RoleJobTaskService::updateTask(RoleJobTask *task) {
         rapidjson::Writer<StringBuffer> writer(buffer);
         doc.Accept(writer);
         log("角色任务更新后的json：%s", buffer.GetString());
-        std::string filePath = FileUtils::getInstance()->fullPathForFilename("config/role_job_task_config.json");
-        //std::string filePath = FileUtils::getInstance()->fullPathFromRelativeFile("config/role_job_task_config.json");
+        std::string filePath = RoleJobTaskConfig::getFilePath();
         log("配置路径为：%s", filePath.c_str());
-        /*FILE* file = fopen(FileUtils::getInstance()->getSuitableFOpen(filePath).c_str(), "w");
-        const char* json = buffer.GetString();
-        char* jsonCp = new char[sizeof(json)];
-        strcpy(jsonCp, json);
-        FileWriteStream os(file, jsonCp, sizeof(json));
-        Writer<FileWriteStream> writer2(os);
-        doc.Accept(writer2);
-        fclose(file);*/
         FileUtils::getInstance()->writeStringToFile(buffer.GetString(), filePath);
         log("写入到文件成功");
         RoleJobTaskConfig::init();

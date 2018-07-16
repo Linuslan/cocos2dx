@@ -13,6 +13,6 @@ class RoleJobTaskConfig {
 public:
     static std::string init();
     static std::vector<rapidjson::Value*>* getTaskList();
-    static void updateTask(rapidjson::Value* task);
+    static std::string getFilePath();
 };
 #endif //PROJ_ANDROID_STUDIO_ROLEJOBTASKCONFIG_H
