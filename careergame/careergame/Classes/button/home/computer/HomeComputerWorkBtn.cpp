@@ -24,13 +24,10 @@ void HomeComputerWorkBtn::doClick(Ref* ref) {
     HomeLayer* layer = static_cast<HomeLayer*>(this->getParent()->getParent()->getChildByName("HomeLayer"));
     RoleSprite* sprite = static_cast<RoleSprite*>(layer->getChildByName("role-11"));
     sprite->setTargetBtn(this);
-    sprite->callback = [this](){
+    sprite->callback = [](){
         log("执行工作行数回调");
-        /*HomeWorkScene* scene = HomeWorkScene::create();
-        Director::getInstance()->replaceScene(scene);*/
-        HomeLayer* layer = static_cast<HomeLayer*>(this->getParent()->getParent()->getChildByName("HomeLayer"));
-        HomeComputerBtn* computerBtn = static_cast<HomeComputerBtn*>(layer->getChildByName("computer_table"));
-        computerBtn->callback();
+        HomeWorkScene* scene = HomeWorkScene::create();
+        Director::getInstance()->replaceScene(scene);
     };
     dialogLayer->removeFromParent();
     sprite->walk();

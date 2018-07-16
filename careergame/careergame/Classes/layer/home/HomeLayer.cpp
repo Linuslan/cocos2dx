@@ -22,10 +22,11 @@ bool HomeLayer::init() {
         bg->setPosition(winSize/2);
         this->addChild(bg);
         HomeComputerBtn* computer = HomeComputerBtn::create();
-        computer->setPosition(Vec2(winSize.width*0.026, winSize.height*0.35));
+        //computer->setPosition(Vec2(winSize.width*0.026, winSize.height*0.35));
+        computer->setPosition(Vec2(winSize.width*0.5, winSize.height*0.18));
         this->addChild(computer);
 
-        ui::Button* chair = ui::Button::create("test/home_chair.png");
+        /*ui::Button* chair = ui::Button::create("test/home_chair.png");
         chair->setPosition(Vec2(winSize.width*0.1, winSize.height*0.33));
         this->addChild(chair);
 
@@ -47,7 +48,7 @@ bool HomeLayer::init() {
 
         ui::Button* airConditioner = ui::Button::create("test/home_air_conditioner.png");
         airConditioner->setPosition(Vec2(winSize.width*0.014, winSize.height*0.65));
-        this->addChild(airConditioner);
+        this->addChild(airConditioner);*/
 
     } catch(std::exception& ex) {
         log("初始化家框架异常，%s", ex.what());
