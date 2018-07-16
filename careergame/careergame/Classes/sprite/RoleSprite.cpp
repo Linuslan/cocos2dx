@@ -86,6 +86,7 @@ void RoleSprite::update(float t) {
             this->callback();
             targetObj = nullptr;
             targetBtn = nullptr;
+            this->targetBtn->callback();
             return;
         }
         this->setPosition(x, targetPos.y);

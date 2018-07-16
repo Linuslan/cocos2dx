@@ -57,11 +57,17 @@
     <content url="file://$MODULE_DIR$/../../Classes/layer/home">
       <sourceFolder url="file://$MODULE_DIR$/../../Classes/layer/home" isTestSource="false" />
     </content>
+    <content url="file://$MODULE_DIR$/../../Classes/model">
+      <sourceFolder url="file://$MODULE_DIR$/../../Classes/model" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/../../Classes/scene">
       <sourceFolder url="file://$MODULE_DIR$/../../Classes/scene" isTestSource="false" />
     </content>
     <content url="file://$MODULE_DIR$/../../Classes/scene/home">
       <sourceFolder url="file://$MODULE_DIR$/../../Classes/scene/home" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Classes/service">
+      <sourceFolder url="file://$MODULE_DIR$/../../Classes/service" isTestSource="false" />
     </content>
     <content url="file://$MODULE_DIR$/../../Classes/sprite">
       <sourceFolder url="file://$MODULE_DIR$/../../Classes/sprite" isTestSource="false" />

@@ -17,7 +17,7 @@ bool HomeLayer::init() {
         role->setPosition(Vec2(winSize.width*0.26, winSize.height*0.3));
         role->standFront();
         this->addChild(role);
-        Sprite* bg = Sprite::create("test/home_wall.png");
+        Sprite* bg = Sprite::create("images/home/home.png");
         //bg->setScale(0.5);
         bg->setPosition(winSize/2);
         this->addChild(bg);

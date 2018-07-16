@@ -7,13 +7,20 @@
 
 #include "BaseBtn.h"
 #include "HomeComputerWorkBtn.h"
+#include "RoleService.h"
+#include "cocos-ext.h"
+#include "RoleJobTaskService.h"
 class HomeComputerBtn:public BaseBtn {
 private:
     HomeComputerWorkBtn* workBtn;
+    RoleService* roleService = nullptr;
+    RoleJobTaskService* roleJobTaskService = nullptr;
+    RoleJobTask* task = nullptr;
 public:
     virtual bool init();
     CREATE_FUNC(HomeComputerBtn);
     virtual void callback();
     virtual void doClick(Ref* ref);
+    void update(float t);
 };
 #endif //PROJ_ANDROID_STUDIO_HOMECOMPUTERBTN_H
