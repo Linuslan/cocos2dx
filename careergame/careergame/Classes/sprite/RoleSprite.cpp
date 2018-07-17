@@ -47,6 +47,7 @@ void RoleSprite::standSide() {
 }
 
 void RoleSprite::walk() {
+    startDo = false;
     this->stopAllActions();
     SpriteFrameCache* sfc = SpriteFrameCache::getInstance();
     Vec2 targetPos = this->targetObj->getPosition();
@@ -74,22 +75,49 @@ void RoleSprite::update(float t) {
     try {
         float step = 0.5;
         float x = this->getPosition().x + step;
-        if(targetObj == nullptr || nullptr == targetBtn) {
+        float y = this->getPosition().y + step;
+        /*if(targetObj == nullptr || nullptr == targetBtn) {
             return;
+        }*/
+        if(startDo) {
+            return ;
         }
         Vec2 targetPos = targetObj->getPosition();
         if(targetPos.x < this->getPosition().x) {
             x = this->getPosition().x - step;
         }
+        if(targetPos.y < this->getPosition().y) {
+            y = this->getPosition().y - step;
+        }
         if(this->getBoundingBox().intersectsRect(targetObj->getBoundingBox())) {
+            startDo = true;
             this->standSide();
-            this->callback();
+            if(this->callback) {
+                this->callback();
+            }
+            this->targetBtn->callback();
             targetObj = nullptr;
             targetBtn = nullptr;
-            this->targetBtn->callback();
             return;
         }
-        this->setPosition(x, targetPos.y);
+        //遍历所有的物体，判断角色是否和某个物体相交，如果相交，则不再沿某个方向走动
+        Vector<Node*> nodes = this->getParent()->getChildren();
+        for(Vector<Node*>::iterator iter = nodes.begin(); iter != nodes.end(); iter ++) {
+            //如果是目标物体，则不判断
+            if((*iter) == targetObj) {
+                continue;
+            }
+            //如果角色和不是目标物体的物体相交，则不再沿原来方向走，沿另外一个方向走
+            if(this->getBoundingBox().intersectsRect((*iter)->getBoundingBox())) {
+                turnY = !turnY;
+                break;
+            }
+        }
+        if(!turnY) {
+            this->setPosition(x, this->getPosition().y);
+        } else {
+            this->setPosition(this->getPosition().x, y);
+        }
     } catch(const char* msg) {
         log("异常:%s", msg);
     } catch(std::exception& ex) {

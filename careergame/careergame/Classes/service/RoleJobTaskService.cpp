@@ -74,8 +74,8 @@ void RoleJobTaskService::updateTask(RoleJobTask *task) {
         log("角色任务更新后的json：%s", buffer.GetString());
         std::string filePath = RoleJobTaskConfig::getFilePath();
         log("配置路径为：%s", filePath.c_str());
-        FileUtils::getInstance()->writeStringToFile(buffer.GetString(), filePath);
-        log("写入到文件成功");
-        RoleJobTaskConfig::init();
+        bool isWrited = FileUtils::getInstance()->writeStringToFile(buffer.GetString(), filePath);
+        log("写入到文件成功, %d", isWrited);
+        //RoleJobTaskConfig::init();
     }
 }

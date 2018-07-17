@@ -17,6 +17,8 @@ private:
     //走到坐标后需要执行的按钮
     BaseBtn* targetBtn;
     Role* role = nullptr;
+    bool turnY = false;
+    bool startDo = false;
 public:
     virtual bool init();
     CREATE_FUNC(RoleSprite);

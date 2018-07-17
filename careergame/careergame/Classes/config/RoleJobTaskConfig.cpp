@@ -6,12 +6,6 @@
 std::string RoleJobTaskConfig::init() {
     std::string filePath = FileUtils::getInstance()->fullPathForFilename("config/role_job_task_config.json");
     std::string writePath = RoleJobTaskConfig::getFilePath();
-    FILE* file = fopen(writePath.c_str(), "r");
-    //如果文件不存在，则创建一个新文件
-    if(!file) {
-        file = fopen(writePath.c_str(), "w");
-    }
-    fclose(file);
     log("配置路径为：%s, writePath:%s", filePath.c_str(), writePath.c_str());
     std::string data = FileUtils::getInstance()->getStringFromFile(writePath);
     //FileUtils::getInstance()->writeStringToFile(data, writePath);
@@ -38,6 +32,24 @@ std::vector<rapidjson::Value*>* RoleJobTaskConfig::getTaskList() {
 }
 
 std::string RoleJobTaskConfig::getFilePath() {
-    std::string writePath = FileUtils::getInstance()->getWritablePath()+"/config/role_job_task_config.json";
+    std::string writePath = FileUtils::getInstance()->getWritablePath()+"config/role_job_task_config.json";
+    try {
+        std::string directoryPath = FileUtils::getInstance()->getWritablePath()+"config/";
+
+        bool isDirectoryExist = FileUtils::getInstance()->isDirectoryExist(directoryPath.c_str());
+        if(!isDirectoryExist) {
+            FileUtils::getInstance()->createDirectory(directoryPath.c_str());
+        }
+        std::string filePath = directoryPath+"/role_job_task_config.json";
+        FILE* file = fopen(filePath.c_str(), "r");
+        if(!file) {
+            file = fopen(filePath.c_str(), "w");
+        }
+        fclose(file);
+    } catch(std::exception& ex) {
+        log("创建文件异常：%s", ex.what());
+    } catch(std::runtime_error& error) {
+        log("创建文件错误：%s", error.what());
+    }
     return writePath;
 }
