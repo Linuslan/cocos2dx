@@ -4,6 +4,7 @@
 
 #include "HomeLayer.h"
 #include "HomeComputerBtn.h"
+#include "KitchenTableBtn.h"
 bool HomeLayer::init() {
     if(!Layer::init()) {
         return false;
@@ -11,13 +12,15 @@ bool HomeLayer::init() {
     try {
         this->setName("HomeLayer");
         Size winSize = Director::getInstance()->getWinSize();
-        log("开始创建角色");
+        log("winSize.width=%f, winSize.height=%f, 开始创建角色", winSize.width, winSize.height);
         RoleSprite* role = RoleSprite::create();
         role->setLocalZOrder(10);
         role->setPosition(Vec2(winSize.width*0.26, winSize.height*0.3));
         role->standFront();
         this->addChild(role);
         Sprite* bg = Sprite::create("images/home/home.png");
+        Size bgSize = bg->getContentSize();
+        log("bgSize.width=%f, bgSize.height=%f", bgSize.width, bgSize.height);
         //bg->setScale(0.5);
         bg->setPosition(winSize/2);
         this->addChild(bg);
@@ -26,6 +29,8 @@ bool HomeLayer::init() {
         computer->setPosition(Vec2(winSize.width*0.5, winSize.height*0.18));
         this->addChild(computer);
 
+        KitchenTableBtn* kitchenTable = KitchenTableBtn::create();
+        kitchenTable->setPosition(Vec2(winSize.width*0.05, winSize.height*0.95));
         /*ui::Button* chair = ui::Button::create("test/home_chair.png");
         chair->setPosition(Vec2(winSize.width*0.1, winSize.height*0.33));
         this->addChild(chair);
