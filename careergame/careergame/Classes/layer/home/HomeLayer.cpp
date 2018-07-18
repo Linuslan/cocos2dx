@@ -31,6 +31,7 @@ bool HomeLayer::init() {
 
         KitchenTableBtn* kitchenTable = KitchenTableBtn::create();
         kitchenTable->setPosition(Vec2(winSize.width*0.05, winSize.height*0.95));
+        this->addChild(kitchenTable);
         /*ui::Button* chair = ui::Button::create("test/home_chair.png");
         chair->setPosition(Vec2(winSize.width*0.1, winSize.height*0.33));
         this->addChild(chair);
