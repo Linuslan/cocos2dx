@@ -50,7 +50,7 @@ void RoleSprite::walk() {
     startDo = false;
     this->stopAllActions();
     SpriteFrameCache* sfc = SpriteFrameCache::getInstance();
-    Vec2 targetPos = this->targetObj->getPosition();
+    /*Vec2 targetPos = this->targetObj->getPosition();
     float x = targetPos.x;
     float y = targetPos.y;
     Vec2 rolePos = this->getPosition();
@@ -58,7 +58,7 @@ void RoleSprite::walk() {
         this->setFlippedX(false);
     } else {
         this->setFlippedX(true);
-    }
+    }*/
     Vector<SpriteFrame*> frames;
     for(int i = 1; i < 9; i ++) {
         frames.pushBack(sfc->getSpriteFrameByName(StringUtils::format("%d.png", i)));
@@ -68,7 +68,7 @@ void RoleSprite::walk() {
     RepeatForever* action = RepeatForever::create(animate);
     action->setTag(2);
     this->runAction(action);
-    scheduleUpdate();
+    //scheduleUpdate();
 }
 
 void RoleSprite::update(float t) {

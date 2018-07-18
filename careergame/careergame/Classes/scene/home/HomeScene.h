@@ -10,6 +10,7 @@
 #include "Classes/layer/home/HomeLayer.h"
 #include <exception>
 #include <string>
+#include "MoveLayer.h"
 USING_NS_CC;
 class HomeScene : public Scene {
 public:

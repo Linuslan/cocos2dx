@@ -14,16 +14,17 @@ bool HomeLayer::init() {
         Size winSize = Director::getInstance()->getWinSize();
         log("winSize.width=%f, winSize.height=%f, 开始创建角色", winSize.width, winSize.height);
         RoleSprite* role = RoleSprite::create();
+        role->setName("role-11");
         role->setLocalZOrder(10);
         role->setPosition(Vec2(winSize.width*0.26, winSize.height*0.3));
         role->standFront();
         this->addChild(role);
-        Sprite* bg = Sprite::create("images/home/home.png");
+        /*Sprite* bg = Sprite::create("images/home/home.png");
         Size bgSize = bg->getContentSize();
-        log("bgSize.width=%f, bgSize.height=%f", bgSize.width, bgSize.height);
+        log("bgSize.width=%f, bgSize.height=%f", bgSize.width, bgSize.height);*/
         //bg->setScale(0.5);
-        bg->setPosition(winSize/2);
-        this->addChild(bg);
+        /*bg->setPosition(winSize/2);
+        this->addChild(bg);*/
         HomeComputerBtn* computer = HomeComputerBtn::create();
         //computer->setPosition(Vec2(winSize.width*0.026, winSize.height*0.35));
         computer->setPosition(Vec2(winSize.width*0.5, winSize.height*0.18));
