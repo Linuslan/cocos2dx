@@ -10,10 +10,19 @@ bool HomeComputerBtn::init() {
     if(!ui::Button::init()) {
         return false;
     }
-    this->loadTextureNormal("images/home/computer_table.png", TextureResType::LOCAL);
+    this->loadTextureNormal("images/home/computer_table_blank.png", TextureResType::LOCAL);
     this->addClickEventListener(CC_CALLBACK_1(HomeComputerBtn::doClick, this));
     this->roleService = new RoleService();
     this->roleJobTaskService = new RoleJobTaskService();
+    Size size = this->getContentSize();
+    Sprite* computerTable1 = Sprite::create("images/home/computer_table_1.png");
+    computerTable1->setName("mask");
+    this->addChild(computerTable1);
+    computerTable1->setPosition(Vec2(size.width/2, size.height*0.55));
+    Sprite* computerTable2 = Sprite::create("images/home/computer_table_2.png");
+    computerTable2->setName("building");
+    this->addChild(computerTable2);
+    computerTable2->setPosition(Vec2(size.width/2, size.height*0.05));
     return true;
 }
 

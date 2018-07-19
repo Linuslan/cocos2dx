@@ -5,58 +5,42 @@
 #include "HomeLayer.h"
 #include "HomeComputerBtn.h"
 #include "KitchenTableBtn.h"
+#include "HomeBedBtn.h"
 bool HomeLayer::init() {
     if(!Layer::init()) {
         return false;
     }
     try {
-        this->setName("HomeLayer");
+        this->setName("mainLayer");
         Size winSize = Director::getInstance()->getWinSize();
         log("winSize.width=%f, winSize.height=%f, 开始创建角色", winSize.width, winSize.height);
-        Size mapSize = this->getParent()->getChildByName("homeMap")->getChildByName("mapBg")->getContentSize();
+
+        Sprite* bg = Sprite::create("images/home/home.png");
+        bg->setName("map");
+        Size bgSize = bg->getContentSize();
+        log("bgSize.width=%f, bgSize.height=%f", bgSize.width, bgSize.height);
+        bg->setPosition(winSize/2);
+        this->addChild(bg);
+
         RoleSprite* role = RoleSprite::create();
         role->setName("role-11");
         role->setLocalZOrder(10);
-        role->setPosition(Vec2(winSize.width*0.26, winSize.height*0.3));
+        role->setPosition(Vec2(bgSize.width*0.5, bgSize.height*0.3));
         role->standFront();
-        this->addChild(role);
-        /*Sprite* bg = Sprite::create("images/home/home.png");
-        Size bgSize = bg->getContentSize();
-        log("bgSize.width=%f, bgSize.height=%f", bgSize.width, bgSize.height);*/
-        //bg->setScale(0.5);
-        /*bg->setPosition(winSize/2);
-        this->addChild(bg);*/
+        bg->addChild(role);
+
         HomeComputerBtn* computer = HomeComputerBtn::create();
-        //computer->setPosition(Vec2(winSize.width*0.026, winSize.height*0.35));
-        computer->setPosition(Vec2(winSize.width*0.5, winSize.height*0.18));
-        this->addChild(computer);
+        computer->setPosition(Vec2(bgSize.width*0.45, bgSize.height*0.18));
+        bg->addChild(computer);
 
         KitchenTableBtn* kitchenTable = KitchenTableBtn::create();
-        kitchenTable->setPosition(Vec2(winSize.width*0.05, winSize.height*0.95));
-        this->addChild(kitchenTable);
-        /*ui::Button* chair = ui::Button::create("test/home_chair.png");
-        chair->setPosition(Vec2(winSize.width*0.1, winSize.height*0.33));
-        this->addChild(chair);
+        kitchenTable->setPosition(Vec2(bgSize.width*0.11, bgSize.height*0.35));
+        bg->addChild(kitchenTable);
 
-        ui::Button* door = ui::Button::create("test/home_door.png");
-        door->setPosition(Vec2(winSize.width*0.26, winSize.height*0.48));
-        this->addChild(door);
+        HomeBedBtn* bed = HomeBedBtn::create();
+        bed->setPosition(Vec2(bgSize.width*0.885, bgSize.height*0.305));
+        bg->addChild(bed);
 
-        ui::Button* cabinet = ui::Button::create("test/home_cabinet.png");
-        cabinet->setPosition(Vec2(winSize.width*0.55, winSize.height*0.45));
-        this->addChild(cabinet);
-
-        ui::Button* bed = ui::Button::create("test/home_bed.png");
-        bed->setPosition(Vec2(winSize.width*0.87, winSize.height*0.33));
-        this->addChild(bed);
-
-        ui::Button* window = ui::Button::create("test/home_window.png");
-        window->setPosition(Vec2(winSize.width*0.85, winSize.height*0.65));
-        this->addChild(window);
-
-        ui::Button* airConditioner = ui::Button::create("test/home_air_conditioner.png");
-        airConditioner->setPosition(Vec2(winSize.width*0.014, winSize.height*0.65));
-        this->addChild(airConditioner);*/
 
     } catch(std::exception& ex) {
         log("初始化家框架异常，%s", ex.what());

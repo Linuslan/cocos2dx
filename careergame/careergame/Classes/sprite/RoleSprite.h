@@ -23,6 +23,8 @@ public:
     virtual bool init();
     CREATE_FUNC(RoleSprite);
     void walk();
+    void walkUp();
+    void walkDown();
     void standFront();
     void standBack();
     void standSide();

@@ -21,7 +21,7 @@ bool RoleSprite::init() {
 }
 
 void RoleSprite::standFront() {
-    this->stopAllActionsByTag(2);
+    this->stopAllActions();
     Vector<SpriteFrame*> frames;
     SpriteFrameCache* sfc = SpriteFrameCache::getInstance();
     SpriteFrame* frame = sfc->getSpriteFrameByName("stand-front.png");
@@ -29,7 +29,7 @@ void RoleSprite::standFront() {
 }
 
 void RoleSprite::standBack() {
-    this->stopAllActionsByTag(2);
+    this->stopAllActions();
     Vector<SpriteFrame*> frames;
     SpriteFrameCache* sfc = SpriteFrameCache::getInstance();
     SpriteFrame* frame = sfc->getSpriteFrameByName("stand-back.png");
@@ -69,6 +69,34 @@ void RoleSprite::walk() {
     action->setTag(2);
     this->runAction(action);
     //scheduleUpdate();
+}
+
+void RoleSprite::walkUp() {
+    this->stopAllActions();
+    SpriteFrameCache* sfc = SpriteFrameCache::getInstance();
+    Vector<SpriteFrame*> frames;
+    for(int i = 1; i < 9; i ++) {
+        frames.pushBack(sfc->getSpriteFrameByName(StringUtils::format("%d.png", i)));
+    }
+    Animation* animation = Animation::createWithSpriteFrames(frames, 0.10f);
+    Animate* animate = Animate::create(animation);
+    RepeatForever* action = RepeatForever::create(animate);
+    action->setTag(3);
+    this->runAction(action);
+}
+
+void RoleSprite::walkDown() {
+    this->stopAllActions();
+    SpriteFrameCache* sfc = SpriteFrameCache::getInstance();
+    Vector<SpriteFrame*> frames;
+    for(int i = 1; i < 9; i ++) {
+        frames.pushBack(sfc->getSpriteFrameByName(StringUtils::format("%d.png", i)));
+    }
+    Animation* animation = Animation::createWithSpriteFrames(frames, 0.10f);
+    Animate* animate = Animate::create(animation);
+    RepeatForever* action = RepeatForever::create(animate);
+    action->setTag(4);
+    this->runAction(action);
 }
 
 void RoleSprite::update(float t) {

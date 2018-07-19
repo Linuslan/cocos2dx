@@ -15,8 +15,8 @@ bool BaseBtn::init() {
 
 void BaseBtn::doClick(Ref *ref) {
     log("调用父类点击方法");
-    RoleSprite* sprite = static_cast<RoleSprite*>(this->getParent()->getChildByName("role-11"));
-    sprite->setTargetBtn(this);
+    /*RoleSprite* sprite = static_cast<RoleSprite*>(this->getParent()->getChildByName("role-11"));
+    sprite->setTargetBtn(this);*/
 }
 
 void BaseBtn::callback() {
