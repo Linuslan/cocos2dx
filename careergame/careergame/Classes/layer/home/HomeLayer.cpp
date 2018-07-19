@@ -13,6 +13,7 @@ bool HomeLayer::init() {
         this->setName("HomeLayer");
         Size winSize = Director::getInstance()->getWinSize();
         log("winSize.width=%f, winSize.height=%f, 开始创建角色", winSize.width, winSize.height);
+        Size mapSize = this->getParent()->getChildByName("homeMap")->getChildByName("mapBg")->getContentSize();
         RoleSprite* role = RoleSprite::create();
         role->setName("role-11");
         role->setLocalZOrder(10);

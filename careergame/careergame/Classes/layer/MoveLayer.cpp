@@ -36,7 +36,7 @@ bool MoveLayer::init() {
     ui::Button* turnRightBtn = ui::Button::create("images/common/move/turnRightLight.png");
     turnRightBtn->setPosition(Vec2(winSize.width*0.18, winSize.height*0.2));
     this->addChild(turnRightBtn);
-    turnRightBtn->addTouchEventListener([](Ref* ref, ui::Widget::TouchEventType type) {
+    turnRightBtn->addTouchEventListener([this](Ref* ref, ui::Widget::TouchEventType type) {
         RoleSprite* role = static_cast<RoleSprite*>(this->getParent()->getChildByName("mainLayer")->getChildByName("role-11"));
         if(type == ui::Widget::TouchEventType::BEGAN) {
             role->setFlippedX(true);
@@ -60,11 +60,14 @@ bool MoveLayer::init() {
 }
 
 void MoveLayer::doGoLeft(float t) {
+    Size winSize = Director::getInstance()->getWinSize();
     RoleSprite* role = static_cast<RoleSprite*>(this->getParent()->getChildByName("mainLayer")->getChildByName("role-11"));
     Sprite* sprite = static_cast<Sprite*>(this->getParent()->getChildByName("map")->getChildByName("mapBg"));
     int roleToMap = sprite->getContentSize().width/2 - sprite->getPosition().x;
     log("地图宽：width/2=%f, 地图坐标x=%f", sprite->getContentSize().width/2, sprite->getPosition().x);
-    if(roleToMap>=5) {
+    if(role->getPosition().x > winSize.width/2) {
+        role->setPosition(Vec2(role->getPosition().x-5, role->getPosition().y));
+    } else if(roleToMap>=5) {
         sprite->setPosition(sprite->getPosition().x+5, sprite->getPosition().y);
         log("场景坐标：x=%f, y=%f", sprite->getPosition().x, sprite->getPosition().y);
     } else if(roleToMap > 0) {
@@ -80,13 +83,15 @@ void MoveLayer::doGoRight(float t) {
     Size winSize = Director::getInstance()->getWinSize();
     RoleSprite* role = static_cast<RoleSprite*>(this->getParent()->getChildByName("mainLayer")->getChildByName("role-11"));
     Sprite* sprite = static_cast<Sprite*>(this->getParent()->getChildByName("map")->getChildByName("mapBg"));
-    int mapDiff = sprite->getContentSize().width/2 + sprite->getPosition().x;
-    log("地图宽：width/2=%f, 地图坐标x=%f", sprite->getContentSize().width/2, sprite->getPosition().x);
-    if(mapDiff<=sprite->getContentSize().width) {
+    int mapDiff = winSize.width-sprite->getPosition().x;  //sprite.position.x为地图的中心原点距离屏幕的左边界的距离
+    log("地图宽：width/2=%f, 地图坐标x=%f, 屏幕宽：winSize.width/2=%f", sprite->getContentSize().width/2, sprite->getPosition().x, winSize.width/2);
+    if(role->getPosition().x<winSize.width/2) {
+        role->setPosition(Vec2(role->getPosition().x+5, role->getPosition().y));
+    } else if(mapDiff<=sprite->getContentSize().width/2) {
         sprite->setPosition(sprite->getPosition().x-5, sprite->getPosition().y);
         log("场景坐标：x=%f, y=%f", sprite->getPosition().x, sprite->getPosition().y);
     } else {
-        if(role->getPosition().x+5>winSize.width) {
+        if(role->getPosition().x+5<=winSize.width) {
             role->setPosition(Vec2(role->getPosition().x+5, role->getPosition().y));
         }
     }
