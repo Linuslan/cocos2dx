@@ -12,6 +12,7 @@ bool HomeComputerBtn::init() {
     }
     this->loadTextureNormal("images/home/computer_table_blank.png", TextureResType::LOCAL);
     this->addClickEventListener(CC_CALLBACK_1(HomeComputerBtn::doClick, this));
+    this->setName("computer");
     this->roleService = new RoleService();
     this->roleJobTaskService = new RoleJobTaskService();
     Size size = this->getContentSize();

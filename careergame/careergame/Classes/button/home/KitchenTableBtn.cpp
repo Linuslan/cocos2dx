@@ -7,6 +7,7 @@ bool KitchenTableBtn::init() {
     if(!ui::Button::init()) {
         return false;
     }
+    this->setName("kitchen");
     this->loadTextureNormal("images/home/kitchen_table_blank.png", TextureResType::LOCAL);
     this->addClickEventListener(CC_CALLBACK_1(KitchenTableBtn::doClick, this));
     this->roleService = new RoleService();

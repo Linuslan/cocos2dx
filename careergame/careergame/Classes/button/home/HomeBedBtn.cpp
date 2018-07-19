@@ -10,6 +10,7 @@ bool HomeBedBtn::init() {
     this->loadTextureNormal("images/home/bed.png", TextureResType::LOCAL);
     this->addClickEventListener(CC_CALLBACK_1(HomeBedBtn::doClick, this));
     this->roleService = new RoleService();
+    this->setName("bed");
     return true;
 }
 

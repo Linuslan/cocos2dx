@@ -93,8 +93,19 @@ void MoveLayer2::doGoLeft(float t) {
     Size winSize = Director::getInstance()->getWinSize();
     Sprite* map = static_cast<Sprite*>(this->getParent()->getChildByName("mainLayer")->getChildByName("map"));
     RoleSprite* role = static_cast<RoleSprite*>(map->getChildByName("role-11"));
+    if(role->getPosition().x <= 0) {
+        return ;
+    }
     role->setPosition(Vec2(role->getPosition().x-5, role->getPosition().y));
     Size size = this->moveSize(role->getPosition());
+    if(map->getPosition().x >= map->getContentSize().width/2) {
+        return ;
+    }
+    if(map->getContentSize().width/2-map->getPosition().x + winSize.width >= map->getContentSize().width) {
+        if(map->getContentSize().width - role->getPosition().x < winSize.width/2) {
+            return ;
+        }
+    }
     map->setPosition(Vec2(map->getPosition().x-size.width, map->getPosition().y));
 }
 
@@ -102,27 +113,99 @@ void MoveLayer2::doGoRight(float t) {
     Size winSize = Director::getInstance()->getWinSize();
     Sprite* map = static_cast<Sprite*>(this->getParent()->getChildByName("mainLayer")->getChildByName("map"));
     RoleSprite* role = static_cast<RoleSprite*>(map->getChildByName("role-11"));
+    if(role->getPosition().x >= map->getContentSize().width) {
+        return;
+    }
     role->setPosition(Vec2(role->getPosition().x+5, role->getPosition().y));
     Size size = this->moveSize(role->getPosition());
+    /*if(winSize.width-map->getPosition().x >= map->getContentSize().width/2) {
+        return ;
+    }*/
+    if(map->getContentSize().width/2-map->getPosition().x + winSize.width >= map->getContentSize().width) {
+        return ;
+    }
+    if(map->getPosition().x >= map->getContentSize().width/2) {
+        if(role->getPosition().x <= winSize.width/2) {
+            return ;
+        }
+    }
+
     map->setPosition(Vec2(map->getPosition().x-size.width, map->getPosition().y));
 }
 
 void MoveLayer2::doGoUp(float t) {
-    /*Size winSize = Director::getInstance()->getWinSize();
+    Size winSize = Director::getInstance()->getWinSize();
     Sprite* map = static_cast<Sprite*>(this->getParent()->getChildByName("mainLayer")->getChildByName("map"));
     RoleSprite* role = static_cast<RoleSprite*>(map->getChildByName("role-11"));
-    role->setPosition(Vec2(role->getPosition().x-5, role->getPosition().y));
+    if(role->getPosition().y >= map->getContentSize().height) {
+        return;
+    }
+    role->setPosition(Vec2(role->getPosition().x, role->getPosition().y+5));
     Size size = this->moveSize(role->getPosition());
-    map->setPosition(Vec2(map->getPosition().x+size.width, map->getPosition().y+size.height));*/
+    if(map->getContentSize().height/2-map->getPosition().y + winSize.height >= map->getContentSize().height) {
+        return ;
+    }
+    if(map->getPosition().y >= map->getContentSize().height/2) {
+        if(role->getPosition().y <= winSize.height/2) {
+            return ;
+        }
+    }
+
+    map->setPosition(Vec2(map->getPosition().x, map->getPosition().y-size.height));
 }
 
 void MoveLayer2::doGoDown(float t) {
-    /*Size winSize = Director::getInstance()->getWinSize();
+    Size winSize = Director::getInstance()->getWinSize();
     Sprite* map = static_cast<Sprite*>(this->getParent()->getChildByName("mainLayer")->getChildByName("map"));
     RoleSprite* role = static_cast<RoleSprite*>(map->getChildByName("role-11"));
-    role->setPosition(Vec2(role->getPosition().x-5, role->getPosition().y));
+    log("角色zOrder=%d", role->getLocalZOrder());
+    Vector<Node*> nodes = map->getChildren();
+    bool stop = false;
+    for(Vector<Node*>::iterator iter = nodes.begin(); iter != nodes.end(); iter ++) {
+        Node* node = *iter;
+        log("当前物体为：%s", node->getName().c_str());
+        if(node->getName() == role->getName()){
+            continue;
+        }
+        log("判断物体与角色是否相交");
+        Node* building = node->getChildByName("building");
+        Node* mask = node->getChildByName("mask");
+        if(mask == nullptr) {
+            log("物体无遮罩区域");
+        }
+        if(building && building->getBoundingBox().intersectsRect(role->getBoundingBox())) {
+            log("物体与不可碰撞区域相交");
+            stop = true;
+            break;
+        }
+        if(mask && mask->getBoundingBox().intersectsRect(role->getBoundingBox())) {
+            log("物体与遮罩区域相交");
+            //mask->setLocalZOrder(role->getLocalZOrder()+1);
+            map->reorderChild(node, role->getLocalZOrder()+1);
+            break;
+        } else {
+            log("物体zOrder=%d", node->getLocalZOrder());
+            map->reorderChild(node, role->getLocalZOrder()-1);
+            log("排序后物体zOrder=%d", node->getLocalZOrder());
+        }
+        /*if(role->getBoundingBox().intersectsRect(node->getBoundingBox())) {
+
+        }*/
+    }
+    if(stop || role->getPosition().y <= 0) {
+        return ;
+    }
+    role->setPosition(Vec2(role->getPosition().x, role->getPosition().y-5));
     Size size = this->moveSize(role->getPosition());
-    map->setPosition(Vec2(map->getPosition().x+size.width, map->getPosition().y+size.height));*/
+    if(map->getPosition().y >= map->getContentSize().height/2) {
+        return ;
+    }
+    if(map->getContentSize().height/2-map->getPosition().y + winSize.height >= map->getContentSize().height) {
+        if(map->getContentSize().height - role->getPosition().y < winSize.height/2) {
+            return ;
+        }
+    }
+    map->setPosition(Vec2(map->getPosition().x, map->getPosition().y-size.height));
 }
 
 Vec2 MoveLayer2::parseSysCoordToMapCoord(Vec2 vec2) {
