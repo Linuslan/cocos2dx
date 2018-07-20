@@ -170,6 +170,24 @@ void MoveLayer2::doGoDown(float t) {
         log("判断物体与角色是否相交");
         Node* building = node->getChildByName("building");
         Node* mask = node->getChildByName("mask");
+        float buildingX = building->getPosition().x;
+        float buildingY = building->getPosition().y;
+        float buildingPosX = node->getPosition().x-node->getContentSize().width/2-buildingX;
+        float buildingPosY = node->getPosition().y-node->getContentSize().height/2-buildingY;
+        Rect buildingRect(buildingPosX-building->getContentSize().width,
+                          buildingPosY-building->getContentSize().height,
+                          building->getContentSize().width,
+                          building->getContentSize().height);
+        log("建筑的位置为：");
+        float maskX = building->getPosition().x;
+        float maskY = building->getPosition().y;
+        float maskPosX = node->getPosition().x-node->getContentSize().width/2-maskX;
+        float maskPosY = node->getPosition().y-node->getContentSize().height/2-maskY;
+        Rect maskRect(maskPosX-mask->getContentSize().width,
+                      maskPosY-mask->getContentSize().height,
+                      mask->getContentSize().width,
+                      mask->getContentSize().height);
+
         if(mask == nullptr) {
             log("物体无遮罩区域");
         }

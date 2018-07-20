@@ -21,6 +21,9 @@ bool HomeLayer::init() {
         log("bgSize.width=%f, bgSize.height=%f", bgSize.width, bgSize.height);
         bg->setPosition(winSize/2);
         this->addChild(bg);
+        TMXTiledMap* map = TMXTiledMap::create("images/home/home.tmx");
+        TMXObjectGroup* group = map->getObjectGroup("computer");
+        ValueMap valueMap = group->getObject("computer");
 
         RoleSprite* role = RoleSprite::create();
         role->setName("role-11");
