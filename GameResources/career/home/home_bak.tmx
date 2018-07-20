@@ -43,7 +43,7 @@
  </layer>
  <layer name="collision" width="96" height="36">
   <data encoding="base64" compression="zlib">
-   eJzt1bERgCAQAEFbsP8eqJExNuARmePhdoZIo/sXy30JVOyPsj/L/iz7s+zPsj/L/iz7s+zPsj/L/iz7s+zPsj8r0v95J3rUp9Ws1dX+YyL9W8/t/93IveJ9tCb7s3r+16cd+691Vut/2nwVY3eW/VlZ+u842yx3/67f1sz+GeZKy7L/u7I/y/4s+7Psrz/M2iP3Ksb+bxXyAaTc
+   eJztwTEBAAAAwqD1T20ND6AAAAAAAAAAAAAAAAAAeDQ2AAAB
   </data>
  </layer>
  <layer name="mask" width="96" height="36">
