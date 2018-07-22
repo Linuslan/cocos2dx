@@ -1,0 +1,7 @@
+{
+  "1":{"min":0, "max":10, "probability":40},
+  "2":{"min":10, "max":15, "probability":30},
+  "3":{"min":15, "max":20, "probability":15},
+  "4":{"min":20, "max":25, "probability":10},
+  "5":{"min":25, "max":30, "probability":5}
+}

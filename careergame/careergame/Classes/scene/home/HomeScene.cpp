@@ -16,6 +16,7 @@ bool HomeScene::init() {
         this->addChild(headerLayer);
         headerLayer->setLocalZOrder(100);
         MoveLayer2* moveLayer = MoveLayer2::create();
+        moveLayer->setName("moveLayer");
         this->addChild(moveLayer);
         moveLayer->setLocalZOrder(100);
         /*Layer* mapLayer = Layer::create();
@@ -32,6 +33,7 @@ bool HomeScene::init() {
         mapBg->addChild(kitchenTable);*/
         HomeLayer* homeLayer = HomeLayer::create();
         this->addChild(homeLayer);
+        moveLayer->setUnwalkableY(homeLayer->getChildByName("map")->getContentSize().height*0.4);
     } catch(std::exception& ex) {
         log("初始化家场景异常，%s", ex.what());
     }

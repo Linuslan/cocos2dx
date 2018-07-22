@@ -15,7 +15,7 @@ bool LoginLayer::init() {
     Size winSize = Director::getInstance()->getWinSize();
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 visibleOrigin = Director::getInstance()->getVisibleOrigin();
-    log("winSize.width=%f, winSize.height=%f, visible.width=%f, visible.height=%f, original.x=%f, original.y=%f",
+    log("careergame login winSize.width=%f, winSize.height=%f, visible.width=%f, visible.height=%f, original.x=%f, original.y=%f",
         winSize.width, winSize.height, visibleSize.width, visibleSize.height, visibleOrigin.x, visibleOrigin.y);
     Sprite* bg = Sprite::create("images/login/login_bg.png");
     this->addChild(bg);
@@ -40,6 +40,7 @@ bool LoginLayer::init() {
     this->addChild(loginBtn);
     //按钮点击事件，实现点击时放大缩小的效果
     loginBtn->addClickEventListener([this](Ref* ref){
+        log("careergame 点击了登录按钮");
         ui::Button* btn = static_cast<ui::Button*>(this->getChildByTag(1));
         ScaleTo* scaleTo = ScaleTo::create(0.1, 1);
         ScaleTo* scaleTo1 = ScaleTo::create(0.1, 0.8);

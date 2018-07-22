@@ -31,8 +31,8 @@ void HomeComputerBtn::doClick(Ref* ref) {
     log("点击了电脑");
     BaseBtn::doClick(ref);
     Size winSize = Director::getInstance()->getWinSize();
-    HomeLayer* layer = static_cast<HomeLayer*>(this->getParent());
-    HomeScene* scene = static_cast<HomeScene*>(layer->getParent());
+    Sprite* map = static_cast<Sprite*>(this->getParent());
+    HomeLayer* layer = static_cast<HomeLayer*>(map->getParent());
     /*DialogLayer* dialog = DialogLayer::create();
     scene->addChild(dialog);
     dialog->setLocalZOrder(11);
@@ -98,12 +98,12 @@ void HomeComputerBtn::doClick(Ref* ref) {
             this->task = pTask;
             dialog->removeAllChildrenWithCleanup(true);
             dialog->removeFromParent();
-            sprite->walk();
+            sprite->setVisible(false);
         });
         listView->pushBackCustomItem(item);
     }
     dialog->addChild(listView);
-    scene->addChild(dialog);
+    layer->getParent()->addChild(dialog);
     log("点击电脑结束");
 }
 

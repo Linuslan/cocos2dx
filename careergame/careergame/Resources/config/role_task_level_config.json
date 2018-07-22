@@ -1,0 +1,11 @@
+{
+  "1":{"money":50, "exp":10, "time":5, "power":5},
+  "2":{"money":100, "exp":15, "time":10, "power":10},
+  "3":{"money":150, "exp":20, "time":15, "power":15},
+  "4":{"money":200, "exp":30, "time":30, "power":20},
+  "5":{"money":250, "exp":40, "time":40, "power":25},
+  "6":{"money":300, "exp":50, "time":50, "power":30},
+  "7":{"money":350, "exp":60, "time":60, "power":35},
+  "8":{"money":400, "exp":70, "time":70, "power":40},
+  "9":{"money":450, "exp":80, "time":80, "power":45}
+}

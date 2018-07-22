@@ -20,13 +20,15 @@ std::vector<rapidjson::Value*>* RoleJobTaskConfig::getTaskList() {
     if(data.empty()) {
         data = RoleJobTaskConfig::init();
     }
-    Document doc;
-    doc.Parse(data.c_str());
-    for(SizeType i = 0; i < doc.Size(); i ++) {
-        rapidjson::Value value = doc[i].GetObject();
-        rapidjson::Value* val = new rapidjson::Value();
-        val->CopyFrom(value, doc.GetAllocator());
-        task->push_back(val);
+    if(!data.empty()) {
+        Document doc;
+        doc.Parse(data.c_str());
+        for(SizeType i = 0; i < doc.Size(); i ++) {
+            rapidjson::Value value = doc[i].GetObject();
+            rapidjson::Value* val = new rapidjson::Value();
+            val->CopyFrom(value, doc.GetAllocator());
+            task->push_back(val);
+        }
     }
     return task;
 }

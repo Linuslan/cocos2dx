@@ -11,6 +11,7 @@ private:
     bool goLeft = false;
     float x = 0.0f;
     float y = 0.0f;
+    float unwalkableY = 0.0f;
 public:
     virtual bool init();
     CREATE_FUNC(MoveLayer2);
@@ -22,5 +23,6 @@ public:
     void autoWalk();
     Vec2 parseSysCoordToMapCoord(Vec2 vec2);
     Size moveSize(Vec2 vec2);   //传入的坐标，计算出屏幕需要移动到该坐标的距离
+    void setUnwalkableY(float y) {this->unwalkableY = y;}
 };
 #endif //PROJ_ANDROID_STUDIO_MOVELAYER2_H

@@ -10,6 +10,7 @@ bool MoveLayer2::init() {
     if(!Layer::init()) {
         return false;
     }
+    //this->setName("moveLayer");
     Size winSize = Director::getInstance()->getWinSize();
     ui::Button* turnLeftBtn = ui::Button::create("images/common/move/turnLeftLight.png");
     turnLeftBtn->setPosition(Vec2(winSize.width*0.05, winSize.height*0.2));
@@ -93,7 +94,103 @@ void MoveLayer2::doGoLeft(float t) {
     Size winSize = Director::getInstance()->getWinSize();
     Sprite* map = static_cast<Sprite*>(this->getParent()->getChildByName("mainLayer")->getChildByName("map"));
     RoleSprite* role = static_cast<RoleSprite*>(map->getChildByName("role-11"));
-    if(role->getPosition().x <= 0) {
+    log("角色zOrder=%d", role->getLocalZOrder());
+    Vector<Node*> nodes = map->getChildren();
+    bool stop = false;
+    for(Vector<Node*>::iterator iter = nodes.begin(); iter != nodes.end(); iter ++) {
+        Node* node = *iter;
+        log("当前物体为：%s", node->getName().c_str());
+        if(node->getName() == role->getName()){
+            continue;
+        }
+        log("判断物体与角色是否相交");
+        Node* building = node->getChildByName("building");
+        Node* mask = node->getChildByName("mask");
+        if(mask == nullptr) {
+            log("物体无遮罩区域");
+        }
+        if(building) {
+            float buildingX = building->getPosition().x;
+            float buildingY = building->getPosition().y;
+            float buildingPosX = node->getPosition().x-(node->getContentSize().width/2-buildingX);
+            float buildingPosY = node->getPosition().y-(node->getContentSize().height/2-buildingY);
+            log("================打印建筑位置信息===============");
+            log("node.size.width/2=%f, node.x=%f, node.size.height/2=%f,"
+                        " node.y=%f, buildingX=%f, buildingY=%f, buildingPosX=%f, buildingPosY=%f"
+                    , node->getContentSize().width/2, node->getPosition().x, node->getContentSize().height/2, node->getPosition().y
+                    , buildingX, buildingY, buildingPosX, buildingPosY);
+            log("预计建筑的位置为：x=%f, y=%f, width=%f, height=%f",
+                buildingPosX-building->getContentSize().width/2,
+                buildingPosY-building->getContentSize().height/2,
+                building->getContentSize().width,
+                building->getContentSize().height);
+            Rect buildingRect(buildingPosX-building->getContentSize().width/2,
+                              buildingPosY-building->getContentSize().height/2,
+                              building->getContentSize().width,
+                              building->getContentSize().height);
+            log("建筑的位置为：x=%f, y=%f, x2=%f, y2=%f",
+                buildingRect.getMinX(), buildingRect.getMinY(), buildingRect.getMaxX(), buildingRect.getMaxY());
+            log("角色的位置为：x=%f, y=%f, x2=%f, y2=%f", role->getBoundingBox().getMinX()
+                    , role->getBoundingBox().getMinY(), role->getBoundingBox().getMaxX()
+                    , role->getBoundingBox().getMaxY());
+            if(buildingRect.intersectsRect(role->getBoundingBox())
+                    && buildingRect.getMinX() < role->getBoundingBox().getMaxX() - 5) {
+                log("物体与不可碰撞区域相交");
+                stop = true;
+                break;
+            }
+        } else {
+            log("物体最小x=%f, 角色最大x=%f", node->getBoundingBox().getMinX(), role->getBoundingBox().getMaxX() - 5);
+            if(node->getBoundingBox().intersectsRect(role->getBoundingBox())
+               && node->getBoundingBox().getMinX() < role->getBoundingBox().getMaxX() - 5) {
+                stop = true;
+                break;
+            }
+        }
+        if(mask) {
+            float maskX = mask->getPosition().x;
+            float maskY = mask->getPosition().y;
+            float maskPosX = node->getPosition().x-(node->getContentSize().width/2-maskX);
+            float maskPosY = node->getPosition().y-(node->getContentSize().height/2-maskY);
+            log("================打印遮罩位置信息===============");
+            log("node.size.width/2=%f, node.x=%f, node.size.height/2=%f,"
+                        " node.y=%f, maskX=%f, maskY=%f, maskPosX=%f, maskPosY=%f"
+                    , node->getContentSize().width/2, node->getPosition().x, node->getContentSize().height/2, node->getPosition().y
+                    , maskX, maskY, maskPosX, maskPosY);
+            log("预计遮罩的位置为：x=%f, y=%f, width=%f, height=%f",
+                maskPosX-mask->getContentSize().width/2,
+                maskPosY-mask->getContentSize().height/2,
+                mask->getContentSize().width,
+                mask->getContentSize().height);
+            Rect maskRect(maskPosX-mask->getContentSize().width/2,
+                          maskPosY-mask->getContentSize().height/2,
+                          mask->getContentSize().width,
+                          mask->getContentSize().height);
+            log("遮罩的位置为：x=%f, y=%f, x2=%f, y2=%f",
+                maskRect.getMinX(), maskRect.getMinY(), maskRect.getMaxX(), maskRect.getMaxY());
+            log("角色的位置为：x=%f, y=%f, x2=%f, y2=%f", role->getBoundingBox().getMinX()
+                    , role->getBoundingBox().getMinY(), role->getBoundingBox().getMaxX()
+                    , role->getBoundingBox().getMaxY());
+            if(maskRect.intersectsRect(role->getBoundingBox())) {
+                log("物体与遮罩区域相交");
+                //mask->setLocalZOrder(role->getLocalZOrder()+1);
+                map->reorderChild(node, role->getLocalZOrder()+1);
+                break;
+            } else {
+                log("物体zOrder=%d", node->getLocalZOrder());
+                map->reorderChild(node, role->getLocalZOrder()-1);
+                log("排序后物体zOrder=%d", node->getLocalZOrder());
+            }
+        } else {
+            log("物体zOrder=%d", node->getLocalZOrder());
+            map->reorderChild(node, role->getLocalZOrder()-1);
+            log("排序后物体zOrder=%d", node->getLocalZOrder());
+        }
+        /*if(role->getBoundingBox().intersectsRect(node->getBoundingBox())) {
+
+        }*/
+    }
+    if(stop || role->getPosition().x <= 0) {
         return ;
     }
     role->setPosition(Vec2(role->getPosition().x-5, role->getPosition().y));
@@ -113,8 +210,103 @@ void MoveLayer2::doGoRight(float t) {
     Size winSize = Director::getInstance()->getWinSize();
     Sprite* map = static_cast<Sprite*>(this->getParent()->getChildByName("mainLayer")->getChildByName("map"));
     RoleSprite* role = static_cast<RoleSprite*>(map->getChildByName("role-11"));
-    if(role->getPosition().x >= map->getContentSize().width) {
-        return;
+    log("角色zOrder=%d", role->getLocalZOrder());
+    Vector<Node*> nodes = map->getChildren();
+    bool stop = false;
+    for(Vector<Node*>::iterator iter = nodes.begin(); iter != nodes.end(); iter ++) {
+        Node* node = *iter;
+        log("当前物体为：%s", node->getName().c_str());
+        if(node->getName() == role->getName()){
+            continue;
+        }
+        log("判断物体与角色是否相交");
+        Node* building = node->getChildByName("building");
+        Node* mask = node->getChildByName("mask");
+        if(mask == nullptr) {
+            log("物体无遮罩区域");
+        }
+        if(building) {
+            float buildingX = building->getPosition().x;
+            float buildingY = building->getPosition().y;
+            float buildingPosX = node->getPosition().x-(node->getContentSize().width/2-buildingX);
+            float buildingPosY = node->getPosition().y-(node->getContentSize().height/2-buildingY);
+            log("================打印建筑位置信息===============");
+            log("node.size.width/2=%f, node.x=%f, node.size.height/2=%f,"
+                        " node.y=%f, buildingX=%f, buildingY=%f, buildingPosX=%f, buildingPosY=%f"
+                    , node->getContentSize().width/2, node->getPosition().x, node->getContentSize().height/2, node->getPosition().y
+                    , buildingX, buildingY, buildingPosX, buildingPosY);
+            log("预计建筑的位置为：x=%f, y=%f, width=%f, height=%f",
+                buildingPosX-building->getContentSize().width/2,
+                buildingPosY-building->getContentSize().height/2,
+                building->getContentSize().width,
+                building->getContentSize().height);
+            Rect buildingRect(buildingPosX-building->getContentSize().width/2,
+                              buildingPosY-building->getContentSize().height/2,
+                              building->getContentSize().width,
+                              building->getContentSize().height);
+            log("建筑的位置为：x=%f, y=%f, x2=%f, y2=%f",
+                buildingRect.getMinX(), buildingRect.getMinY(), buildingRect.getMaxX(), buildingRect.getMaxY());
+            log("角色的位置为：x=%f, y=%f, x2=%f, y2=%f", role->getBoundingBox().getMinX()
+                    , role->getBoundingBox().getMinY(), role->getBoundingBox().getMaxX()
+                    , role->getBoundingBox().getMaxY());
+            if(buildingRect.intersectsRect(role->getBoundingBox())
+                    && buildingRect.getMaxX() > role->getBoundingBox().getMinX() + 5) {
+                log("物体与不可碰撞区域相交");
+                stop = true;
+                break;
+            }
+        } else {
+            if(node->getBoundingBox().intersectsRect(role->getBoundingBox())
+               && node->getBoundingBox().getMaxX() > role->getBoundingBox().getMinX() + 5) {
+                stop = true;
+                break;
+            }
+        }
+        if(mask) {
+            float maskX = mask->getPosition().x;
+            float maskY = mask->getPosition().y;
+            float maskPosX = node->getPosition().x-(node->getContentSize().width/2-maskX);
+            float maskPosY = node->getPosition().y-(node->getContentSize().height/2-maskY);
+            log("================打印遮罩位置信息===============");
+            log("node.size.width/2=%f, node.x=%f, node.size.height/2=%f,"
+                        " node.y=%f, maskX=%f, maskY=%f, maskPosX=%f, maskPosY=%f"
+                    , node->getContentSize().width/2, node->getPosition().x, node->getContentSize().height/2, node->getPosition().y
+                    , maskX, maskY, maskPosX, maskPosY);
+            log("预计遮罩的位置为：x=%f, y=%f, width=%f, height=%f",
+                maskPosX-mask->getContentSize().width/2,
+                maskPosY-mask->getContentSize().height/2,
+                mask->getContentSize().width,
+                mask->getContentSize().height);
+            Rect maskRect(maskPosX-mask->getContentSize().width/2,
+                          maskPosY-mask->getContentSize().height/2,
+                          mask->getContentSize().width,
+                          mask->getContentSize().height);
+            log("遮罩的位置为：x=%f, y=%f, x2=%f, y2=%f",
+                maskRect.getMinX(), maskRect.getMinY(), maskRect.getMaxX(), maskRect.getMaxY());
+            log("角色的位置为：x=%f, y=%f, x2=%f, y2=%f", role->getBoundingBox().getMinX()
+                    , role->getBoundingBox().getMinY(), role->getBoundingBox().getMaxX()
+                    , role->getBoundingBox().getMaxY());
+            if(maskRect.intersectsRect(role->getBoundingBox())) {
+                log("物体与遮罩区域相交");
+                //mask->setLocalZOrder(role->getLocalZOrder()+1);
+                map->reorderChild(node, role->getLocalZOrder()+1);
+                break;
+            } else {
+                log("物体zOrder=%d", node->getLocalZOrder());
+                map->reorderChild(node, role->getLocalZOrder()-1);
+                log("排序后物体zOrder=%d", node->getLocalZOrder());
+            }
+        } else {
+            log("物体zOrder=%d", node->getLocalZOrder());
+            map->reorderChild(node, role->getLocalZOrder()-1);
+            log("排序后物体zOrder=%d", node->getLocalZOrder());
+        }
+        /*if(role->getBoundingBox().intersectsRect(node->getBoundingBox())) {
+
+        }*/
+    }
+    if(stop || role->getPosition().x >= map->getContentSize().width) {
+        return ;
     }
     role->setPosition(Vec2(role->getPosition().x+5, role->getPosition().y));
     Size size = this->moveSize(role->getPosition());
@@ -137,8 +329,104 @@ void MoveLayer2::doGoUp(float t) {
     Size winSize = Director::getInstance()->getWinSize();
     Sprite* map = static_cast<Sprite*>(this->getParent()->getChildByName("mainLayer")->getChildByName("map"));
     RoleSprite* role = static_cast<RoleSprite*>(map->getChildByName("role-11"));
-    if(role->getPosition().y >= map->getContentSize().height) {
-        return;
+    log("角色zOrder=%d", role->getLocalZOrder());
+    Vector<Node*> nodes = map->getChildren();
+    bool stop = false;
+    for(Vector<Node*>::iterator iter = nodes.begin(); iter != nodes.end(); iter ++) {
+        Node* node = *iter;
+        log("当前物体为：%s", node->getName().c_str());
+        if(node->getName() == role->getName()){
+            continue;
+        }
+        log("判断物体与角色是否相交");
+        Node* building = node->getChildByName("building");
+        Node* mask = node->getChildByName("mask");
+        if(mask == nullptr) {
+            log("物体无遮罩区域");
+        }
+        if(building) {
+            float buildingX = building->getPosition().x;
+            float buildingY = building->getPosition().y;
+            float buildingPosX = node->getPosition().x-(node->getContentSize().width/2-buildingX);
+            float buildingPosY = node->getPosition().y-(node->getContentSize().height/2-buildingY);
+            log("================打印建筑位置信息===============");
+            log("node.size.width/2=%f, node.x=%f, node.size.height/2=%f,"
+                        " node.y=%f, buildingX=%f, buildingY=%f, buildingPosX=%f, buildingPosY=%f"
+                    , node->getContentSize().width/2, node->getPosition().x, node->getContentSize().height/2, node->getPosition().y
+                    , buildingX, buildingY, buildingPosX, buildingPosY);
+            log("预计建筑的位置为：x=%f, y=%f, width=%f, height=%f",
+                buildingPosX-building->getContentSize().width/2,
+                buildingPosY-building->getContentSize().height/2,
+                building->getContentSize().width,
+                building->getContentSize().height);
+            Rect buildingRect(buildingPosX-building->getContentSize().width/2,
+                              buildingPosY-building->getContentSize().height/2,
+                              building->getContentSize().width,
+                              building->getContentSize().height);
+            log("建筑的位置为：x=%f, y=%f, x2=%f, y2=%f",
+                buildingRect.getMinX(), buildingRect.getMinY(), buildingRect.getMaxX(), buildingRect.getMaxY());
+            log("角色的位置为：x=%f, y=%f, x2=%f, y2=%f", role->getBoundingBox().getMinX()
+                    , role->getBoundingBox().getMinY(), role->getBoundingBox().getMaxX()
+                    , role->getBoundingBox().getMaxY());
+            if(buildingRect.intersectsRect(role->getBoundingBox())
+                    && buildingRect.getMaxY() > role->getBoundingBox().getMinY() + 5) {
+                log("物体与不可碰撞区域相交");
+                stop = true;
+                break;
+            }
+        } else {
+            if(node->getBoundingBox().intersectsRect(role->getBoundingBox())
+               && node->getBoundingBox().getMaxY() > role->getBoundingBox().getMinY() + 5) {
+                stop = true;
+                break;
+            }
+        }
+        if(mask) {
+            float maskX = mask->getPosition().x;
+            float maskY = mask->getPosition().y;
+            float maskPosX = node->getPosition().x-(node->getContentSize().width/2-maskX);
+            float maskPosY = node->getPosition().y-(node->getContentSize().height/2-maskY);
+            log("================打印遮罩位置信息===============");
+            log("node.size.width/2=%f, node.x=%f, node.size.height/2=%f,"
+                        " node.y=%f, maskX=%f, maskY=%f, maskPosX=%f, maskPosY=%f"
+                    , node->getContentSize().width/2, node->getPosition().x, node->getContentSize().height/2, node->getPosition().y
+                    , maskX, maskY, maskPosX, maskPosY);
+            log("预计遮罩的位置为：x=%f, y=%f, width=%f, height=%f",
+                maskPosX-mask->getContentSize().width/2,
+                maskPosY-mask->getContentSize().height/2,
+                mask->getContentSize().width,
+                mask->getContentSize().height);
+            Rect maskRect(maskPosX-mask->getContentSize().width/2,
+                          maskPosY-mask->getContentSize().height/2,
+                          mask->getContentSize().width,
+                          mask->getContentSize().height);
+            log("遮罩的位置为：x=%f, y=%f, x2=%f, y2=%f",
+                maskRect.getMinX(), maskRect.getMinY(), maskRect.getMaxX(), maskRect.getMaxY());
+            log("角色的位置为：x=%f, y=%f, x2=%f, y2=%f", role->getBoundingBox().getMinX()
+                    , role->getBoundingBox().getMinY(), role->getBoundingBox().getMaxX()
+                    , role->getBoundingBox().getMaxY());
+            if(maskRect.intersectsRect(role->getBoundingBox())) {
+                log("物体与遮罩区域相交");
+                //mask->setLocalZOrder(role->getLocalZOrder()+1);
+                map->reorderChild(node, role->getLocalZOrder()+1);
+                break;
+            } else {
+                log("物体zOrder=%d", node->getLocalZOrder());
+                map->reorderChild(node, role->getLocalZOrder()-1);
+                log("排序后物体zOrder=%d", node->getLocalZOrder());
+            }
+        } else {
+            log("物体zOrder=%d", node->getLocalZOrder());
+            map->reorderChild(node, role->getLocalZOrder()-1);
+            log("排序后物体zOrder=%d", node->getLocalZOrder());
+        }
+        /*if(role->getBoundingBox().intersectsRect(node->getBoundingBox())) {
+
+        }*/
+    }
+    if(stop || role->getPosition().y >= map->getContentSize().height
+            || role->getPosition().y >= this->unwalkableY) {
+        return ;
     }
     role->setPosition(Vec2(role->getPosition().x, role->getPosition().y+5));
     Size size = this->moveSize(role->getPosition());
@@ -170,37 +458,80 @@ void MoveLayer2::doGoDown(float t) {
         log("判断物体与角色是否相交");
         Node* building = node->getChildByName("building");
         Node* mask = node->getChildByName("mask");
-        float buildingX = building->getPosition().x;
-        float buildingY = building->getPosition().y;
-        float buildingPosX = node->getPosition().x-node->getContentSize().width/2-buildingX;
-        float buildingPosY = node->getPosition().y-node->getContentSize().height/2-buildingY;
-        Rect buildingRect(buildingPosX-building->getContentSize().width,
-                          buildingPosY-building->getContentSize().height,
-                          building->getContentSize().width,
-                          building->getContentSize().height);
-        log("建筑的位置为：");
-        float maskX = building->getPosition().x;
-        float maskY = building->getPosition().y;
-        float maskPosX = node->getPosition().x-node->getContentSize().width/2-maskX;
-        float maskPosY = node->getPosition().y-node->getContentSize().height/2-maskY;
-        Rect maskRect(maskPosX-mask->getContentSize().width,
-                      maskPosY-mask->getContentSize().height,
-                      mask->getContentSize().width,
-                      mask->getContentSize().height);
-
         if(mask == nullptr) {
             log("物体无遮罩区域");
         }
-        if(building && building->getBoundingBox().intersectsRect(role->getBoundingBox())) {
-            log("物体与不可碰撞区域相交");
-            stop = true;
-            break;
+        if(building) {
+            float buildingX = building->getPosition().x;
+            float buildingY = building->getPosition().y;
+            float buildingPosX = node->getPosition().x-(node->getContentSize().width/2-buildingX);
+            float buildingPosY = node->getPosition().y-(node->getContentSize().height/2-buildingY);
+            log("================打印建筑位置信息===============");
+            log("node.size.width/2=%f, node.x=%f, node.size.height/2=%f,"
+                        " node.y=%f, buildingX=%f, buildingY=%f, buildingPosX=%f, buildingPosY=%f"
+                    , node->getContentSize().width/2, node->getPosition().x, node->getContentSize().height/2, node->getPosition().y
+                    , buildingX, buildingY, buildingPosX, buildingPosY);
+            log("预计建筑的位置为：x=%f, y=%f, width=%f, height=%f",
+                buildingPosX-building->getContentSize().width/2,
+                buildingPosY-building->getContentSize().height/2,
+                building->getContentSize().width,
+                building->getContentSize().height);
+            Rect buildingRect(buildingPosX-building->getContentSize().width/2,
+                              buildingPosY-building->getContentSize().height/2,
+                              building->getContentSize().width,
+                              building->getContentSize().height);
+            log("建筑的位置为：x=%f, y=%f, x2=%f, y2=%f",
+                buildingRect.getMinX(), buildingRect.getMinY(), buildingRect.getMaxX(), buildingRect.getMaxY());
+            log("角色的位置为：x=%f, y=%f, x2=%f, y2=%f", role->getBoundingBox().getMinX()
+                    , role->getBoundingBox().getMinY(), role->getBoundingBox().getMaxX()
+                    , role->getBoundingBox().getMaxY());
+            if(buildingRect.intersectsRect(role->getBoundingBox())
+                    && buildingRect.getMinY() < role->getBoundingBox().getMaxY() - 5) {
+                log("物体与不可碰撞区域相交");
+                stop = true;
+                break;
+            }
+        } else {
+            if(node->getBoundingBox().intersectsRect(role->getBoundingBox())
+               && node->getBoundingBox().getMinY() < role->getBoundingBox().getMaxY() - 5) {
+                stop = true;
+                break;
+            }
         }
-        if(mask && mask->getBoundingBox().intersectsRect(role->getBoundingBox())) {
-            log("物体与遮罩区域相交");
-            //mask->setLocalZOrder(role->getLocalZOrder()+1);
-            map->reorderChild(node, role->getLocalZOrder()+1);
-            break;
+        if(mask) {
+            float maskX = mask->getPosition().x;
+            float maskY = mask->getPosition().y;
+            float maskPosX = node->getPosition().x-(node->getContentSize().width/2-maskX);
+            float maskPosY = node->getPosition().y-(node->getContentSize().height/2-maskY);
+            log("================打印遮罩位置信息===============");
+            log("node.size.width/2=%f, node.x=%f, node.size.height/2=%f,"
+                        " node.y=%f, maskX=%f, maskY=%f, maskPosX=%f, maskPosY=%f"
+                    , node->getContentSize().width/2, node->getPosition().x, node->getContentSize().height/2, node->getPosition().y
+                    , maskX, maskY, maskPosX, maskPosY);
+            log("预计遮罩的位置为：x=%f, y=%f, width=%f, height=%f",
+                maskPosX-mask->getContentSize().width/2,
+                maskPosY-mask->getContentSize().height/2,
+                mask->getContentSize().width,
+                mask->getContentSize().height);
+            Rect maskRect(maskPosX-mask->getContentSize().width/2,
+                          maskPosY-mask->getContentSize().height/2,
+                          mask->getContentSize().width,
+                          mask->getContentSize().height);
+            log("遮罩的位置为：x=%f, y=%f, x2=%f, y2=%f",
+                maskRect.getMinX(), maskRect.getMinY(), maskRect.getMaxX(), maskRect.getMaxY());
+            log("角色的位置为：x=%f, y=%f, x2=%f, y2=%f", role->getBoundingBox().getMinX()
+                    , role->getBoundingBox().getMinY(), role->getBoundingBox().getMaxX()
+                    , role->getBoundingBox().getMaxY());
+            if(maskRect.intersectsRect(role->getBoundingBox())) {
+                log("物体与遮罩区域相交");
+                //mask->setLocalZOrder(role->getLocalZOrder()+1);
+                map->reorderChild(node, role->getLocalZOrder()+1);
+                break;
+            } else {
+                log("物体zOrder=%d", node->getLocalZOrder());
+                map->reorderChild(node, role->getLocalZOrder()-1);
+                log("排序后物体zOrder=%d", node->getLocalZOrder());
+            }
         } else {
             log("物体zOrder=%d", node->getLocalZOrder());
             map->reorderChild(node, role->getLocalZOrder()-1);

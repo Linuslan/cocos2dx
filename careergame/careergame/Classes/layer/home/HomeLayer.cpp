@@ -6,6 +6,7 @@
 #include "HomeComputerBtn.h"
 #include "KitchenTableBtn.h"
 #include "HomeBedBtn.h"
+#include "MoveLayer2.h"
 bool HomeLayer::init() {
     if(!Layer::init()) {
         return false;
@@ -14,16 +15,15 @@ bool HomeLayer::init() {
         this->setName("mainLayer");
         Size winSize = Director::getInstance()->getWinSize();
         log("winSize.width=%f, winSize.height=%f, 开始创建角色", winSize.width, winSize.height);
-
         Sprite* bg = Sprite::create("images/home/home.png");
         bg->setName("map");
         Size bgSize = bg->getContentSize();
         log("bgSize.width=%f, bgSize.height=%f", bgSize.width, bgSize.height);
         bg->setPosition(winSize/2);
         this->addChild(bg);
-        TMXTiledMap* map = TMXTiledMap::create("images/home/home.tmx");
+        /*TMXTiledMap* map = TMXTiledMap::create("images/home/home.tmx");
         TMXObjectGroup* group = map->getObjectGroup("computer");
-        ValueMap valueMap = group->getObject("computer");
+        ValueMap valueMap = group->getObject("computer");*/
 
         RoleSprite* role = RoleSprite::create();
         role->setName("role-11");
