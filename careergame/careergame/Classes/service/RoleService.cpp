@@ -9,7 +9,7 @@
 #include "json/stringbuffer.h"
 using namespace rapidjson;
 Role* RoleService::loadRoleById(int id) {
-    std::string roleStr = UserDefault::getInstance()->getStringForKey("role");
+    std::string roleStr = UserDefault::getInstance()->getStringForKey("role-11");
     Document document;
     document.Parse(roleStr.c_str());
     StringBuffer buffer;

@@ -12,10 +12,11 @@ class Role : public BaseEntity {
 private:
     //玩家等级
     int level=0;    //玩家角色当前等级
-    int hp=100; //玩家角色当前的生命值
-    int mp=100; //玩家角色当前的体力值
-    int exp=0;  //玩家角色当前的经验值
-    int money=0;    //玩家角色存款
+    float hp=100; //玩家角色当前的生命值
+    float mp=100; //玩家角色当前的体力值
+    float exp=0;  //玩家角色当前的经验值
+    float money=0;    //玩家角色存款
+    float power = 0;  //玩家角色当前的体力值
     std::string name;   //玩家角色的名称
     int type;   //玩家角色的职业类型，0：无职业；1：程序员；2：画家；
 public:
@@ -24,20 +25,24 @@ public:
     int getMp() {return mp;}
     int getExp() {return exp;}
     void setLevel(int level) {this->level=level;}
-    void setHp(int hp) {this->hp = hp;}
-    void setMp(int mp) {this->mp = mp;}
-    void setExp(int exp) {this->exp = exp;}
+    void setHp(float hp) {this->hp = hp;}
+    void setMp(float mp) {this->mp = mp;}
+    void setExp(float exp) {this->exp = exp;}
     void levelUp() {this->level = this->level + 1;}
-    void hpIncrease(int hp) {this->hp = this->hp + hp;}
-    void hpReduce(int hp) {this->hp = this->hp - hp;}
-    void mpIncrease(int hp) {this->mp = this->mp + mp;}
-    void mpReduce(int mp) {this->mp = this->mp - mp;}
-    void expIncrease(int exp) {this->exp = this->exp + exp;}
+    void hpIncrease(float hp) {this->hp = this->hp + hp;}
+    void hpReduce(float hp) {this->hp = this->hp - hp;}
+    void mpIncrease(float hp) {this->mp = this->mp + mp;}
+    void mpReduce(float mp) {this->mp = this->mp - mp;}
+    void expIncrease(float exp) {this->exp = this->exp + exp;}
     void setName(std::string name) {this->name=name;}
     std::string getName() {return this->name;}
     int getMoney() {return this->money;}
-    void addMoney(int money) {this->money = this->money + money;}
+    void addMoney(float money) {this->money = this->money + money;}
     void setType(int type) {this->type = type;}
     int getType() {return this->type;}
+    void setPower(float power) {this->power = power;}
+    int getPower() {return this->power;}
+    void powerIncrease(float power) {this->power = this->power + power;}
+    void powerReduce(float power) {this->power = this->power - power;}
 };
 #endif //PROJ_ANDROID_STUDIO_ROLE_H

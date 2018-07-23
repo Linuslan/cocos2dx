@@ -2,6 +2,7 @@
 // Created by LinusLan on 2018/6/13.
 //
 
+#include "RoleLevelConfig.h"
 #include "RoleSprite.h"
 bool RoleSprite::init() {
     log("进入角色初始化方法");
@@ -10,6 +11,8 @@ bool RoleSprite::init() {
     }
     try {
         log("开始初始化角色");
+        this->roleService = new RoleService();
+        this->role = this->roleService->loadRoleById(1);
         SpriteFrameCache* sfc = SpriteFrameCache::getInstance();
         sfc->addSpriteFramesWithFile("images/role/walk/role.plist", "images/role/walk/role.png");
         this->standFront();
@@ -21,22 +24,27 @@ bool RoleSprite::init() {
 }
 
 void RoleSprite::standFront() {
+    RoleSprite::unscheduleAllCallbacks();
     this->stopAllActions();
     Vector<SpriteFrame*> frames;
     SpriteFrameCache* sfc = SpriteFrameCache::getInstance();
     SpriteFrame* frame = sfc->getSpriteFrameByName("stand-front.png");
     this->setSpriteFrame(frame);
+    RoleSprite::schedule(schedule_selector(RoleSprite::standUpdate), 60.0, kRepeatForever, 0.5);
 }
 
 void RoleSprite::standBack() {
+    RoleSprite::unscheduleAllCallbacks();
     this->stopAllActions();
     Vector<SpriteFrame*> frames;
     SpriteFrameCache* sfc = SpriteFrameCache::getInstance();
     SpriteFrame* frame = sfc->getSpriteFrameByName("stand-back.png");
     this->setSpriteFrame(frame);
+    RoleSprite::schedule(schedule_selector(RoleSprite::standUpdate), 60.0, kRepeatForever, 0.5);
 }
 
 void RoleSprite::standSide() {
+    RoleSprite::unscheduleAllCallbacks();
     //log("开始侧面站立");
     //this->stopAllActionsByTag(2);
     this->stopAllActions();
@@ -44,9 +52,11 @@ void RoleSprite::standSide() {
     SpriteFrameCache* sfc = SpriteFrameCache::getInstance();
     SpriteFrame* frame = sfc->getSpriteFrameByName("stand-side.png");
     this->setSpriteFrame(frame);
+    RoleSprite::schedule(schedule_selector(RoleSprite::standUpdate), 60.0, kRepeatForever, 0.5);
 }
 
 void RoleSprite::walk() {
+    RoleSprite::unscheduleAllCallbacks();
     startDo = false;
     this->stopAllActions();
     SpriteFrameCache* sfc = SpriteFrameCache::getInstance();
@@ -69,9 +79,11 @@ void RoleSprite::walk() {
     action->setTag(2);
     this->runAction(action);
     //scheduleUpdate();
+    RoleSprite::schedule(schedule_selector(RoleSprite::walkUpdate), 60.0, kRepeatForever, 0.5);
 }
 
 void RoleSprite::walkUp() {
+    RoleSprite::unscheduleAllCallbacks();
     this->stopAllActions();
     SpriteFrameCache* sfc = SpriteFrameCache::getInstance();
     Vector<SpriteFrame*> frames;
@@ -83,9 +95,11 @@ void RoleSprite::walkUp() {
     RepeatForever* action = RepeatForever::create(animate);
     action->setTag(3);
     this->runAction(action);
+    RoleSprite::schedule(schedule_selector(RoleSprite::walkUpdate), 60.0, kRepeatForever, 0.5);
 }
 
 void RoleSprite::walkDown() {
+    RoleSprite::unscheduleAllCallbacks();
     this->stopAllActions();
     SpriteFrameCache* sfc = SpriteFrameCache::getInstance();
     Vector<SpriteFrame*> frames;
@@ -97,6 +111,7 @@ void RoleSprite::walkDown() {
     RepeatForever* action = RepeatForever::create(animate);
     action->setTag(4);
     this->runAction(action);
+    RoleSprite::schedule(schedule_selector(RoleSprite::walkUpdate), 60.0, kRepeatForever, 0.5);
 }
 
 void RoleSprite::update(float t) {
@@ -151,4 +166,68 @@ void RoleSprite::update(float t) {
     } catch(std::exception& ex) {
         log("获取参数异常：%s", ex.what());
     }
+}
+
+void RoleSprite::sleep() {
+    RoleSprite::unscheduleAllCallbacks();
+    RoleSprite::schedule(schedule_selector(RoleSprite::sleepUpdate), 60.0, kRepeatForever, 0.5);
+}
+
+void RoleSprite::sleepUpdate(float a) {
+    float mpIncrease = 5/100;   //睡觉状态每分钟恢复5%的mp
+    float powerReduce = 0.1/100;   //睡觉状态每分钟消耗0.1%的能量
+    //获取角色当前的mp和power
+    float mp = this->role->getMp();
+    float hp = this->role->getHp();
+    float power = this->role->getPower();
+    mp = mp + mp*mpIncrease;
+    float maxMp = RoleLevelConfig::getIntByName(StringUtils::format("%d", role->getLevel()), "mp");
+    if(mp > maxMp) {
+        mp = maxMp;
+    }
+    this->role->setMp(mp);
+    power = power - power*powerReduce;
+    if(power < 0) {
+        power = 0;
+    }
+    this->role->setPower(power);
+    this->role->setMp(mp);
+    this->roleService->updateRole(role);
+}
+
+void RoleSprite::walkUpdate(float a) {
+    float mpReduce = 1/100; //角色走路时每分钟消耗的精力
+    float powerReduce = 1/100;    //角色走路时每分钟消耗的体力
+    //获取角色当前的mp和power
+    float mp = this->role->getMp();
+    float power = this->role->getPower();
+    mp = mp - mp*mpReduce;
+    power = power - power*powerReduce;
+    if(mp < 0) {
+        mp = 0;
+    }
+    if(power < 0) {
+        power = 0;
+    }
+    this->role->setPower(power);
+    this->role->setMp(mp);
+    this->roleService->updateRole(role);
+}
+
+void RoleSprite::standUpdate(float a) {
+    float mpReduce = 0.5/100;
+    float powerReduce = 0.5/100;
+    float mp = this->role->getMp();
+    float power = this->role->getPower();
+    mp = mp - mp*mpReduce;
+    power = power - power*powerReduce;
+    if(mp < 0) {
+        mp = 0;
+    }
+    if(power < 0) {
+        power = 0;
+    }
+    this->role->setPower(power);
+    this->role->setMp(mp);
+    this->roleService->updateRole(role);
 }
