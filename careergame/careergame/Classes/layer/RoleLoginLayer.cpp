@@ -2,8 +2,13 @@
 // Created by LinusLan on 2018/5/21.
 //
 
+#include <unistd.h>
 #include "RoleLoginLayer.h"
 #include "RoleJobTaskConfig.h"
+#include "time.h"
+#include "RoleTaskLevelConfig.h"
+#include "RoleService.h"
+#include "Role.h"
 bool RoleLoginLayer::init() {
     std::string occupation[] = {"程序员", "画家", "设计师", "教师", "投资人"};
     if(!Layer::init()) {
@@ -83,7 +88,38 @@ bool RoleLoginLayer::init() {
         }), nullptr);
         btn->runAction(sequence);
         log("login...%d", btn->getTag());
+        this->threadStart();
     });
     RoleJobTaskConfig::getTaskList();
     return true;
+}
+
+int RoleLoginLayer::threadStart() {
+    int errCode = 0;
+    do {
+        pthread_attr_t attr;
+        errCode = pthread_attr_init(&attr);
+        CC_BREAK_IF(errCode != 0);
+        errCode = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+        if(errCode != 0) {
+            pthread_attr_destroy(&attr);
+            break;
+        }
+        errCode = pthread_create(&thread, &attr, thread_function, this);
+    } while(0);
+    return errCode;
+}
+
+void* RoleLoginLayer::thread_function(void *arg) {
+    while(true) {
+        log("===============启动线程================");
+        srand(time(nullptr));
+        int time = rand()/60 + 10;  //生成下次执行该任务的时间间隔
+        time = time * 60;
+        sleep(time);
+        RoleService* roleService = new RoleService();
+        Role* role = roleService->loadRoleById(1);
+        std::string levelConfig = RoleTaskLevelConfig::getByLevel(StringUtils::format("%d", role->getLevel()));
+    }
+    return NULL;
 }

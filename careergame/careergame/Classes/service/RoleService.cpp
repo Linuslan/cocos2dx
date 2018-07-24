@@ -40,5 +40,5 @@ void RoleService::updateRole(Role* role) {
     rapidjson::Writer<StringBuffer> writer(buffer);
     document.Accept(writer);
     log("角色生成的json：%s", buffer.GetString());
-    UserDefault::getInstance()->setStringForKey("role", buffer.GetString());
+    UserDefault::getInstance()->setStringForKey("role-11", buffer.GetString());
 }
