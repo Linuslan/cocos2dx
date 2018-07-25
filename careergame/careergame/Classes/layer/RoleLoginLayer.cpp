@@ -3,12 +3,18 @@
 //
 
 #include <unistd.h>
+#include <Classes/config/TaskListConfig.h>
+#include <Classes/config/RoleTaskListConfig.h>
+#include <Classes/config/IdConfig.h>
 #include "RoleLoginLayer.h"
 #include "RoleJobTaskConfig.h"
 #include "time.h"
 #include "RoleTaskLevelConfig.h"
 #include "RoleService.h"
 #include "Role.h"
+#include "TaskDifficultyLevelConfig.h"
+#include "Task.h"
+#include "TaskListService.h"
 bool RoleLoginLayer::init() {
     std::string occupation[] = {"程序员", "画家", "设计师", "教师", "投资人"};
     if(!Layer::init()) {
@@ -119,7 +125,98 @@ void* RoleLoginLayer::thread_function(void *arg) {
         sleep(time);
         RoleService* roleService = new RoleService();
         Role* role = roleService->loadRoleById(1);
-        std::string levelConfig = RoleTaskLevelConfig::getByLevel(StringUtils::format("%d", role->getLevel()));
+        std::string level = StringUtils::format("%d", role->getLevel());
+        //玩家等级对应的任务生成的配置信息
+        std::string levelConfig = RoleTaskLevelConfig::getByLevel(level);
+        //玩家已领取的任务列表
+        std::string roleTaskList = RoleTaskListConfig::getByLevel(level);
+        //得到用户当前等级，系统已经生成多少的任务了
+        std::string levelTaskList = TaskListConfig::getByLevel(level);
+        float difficulty1 = 0.0;
+        float difficulty2 = 0.0;
+        float difficulty3 = 0.0;
+        float difficulty4 = 0.0;
+        float difficulty5 = 0.0;
+        if(!levelTaskList.empty()) {
+            std::vector<rapidjson::Value> acceptedList;
+            std::vector<rapidjson::Value> unacceptedList;
+
+            Document doc;
+            doc.Parse(levelTaskList.c_str());
+            for(rapidjson::Value::ValueIterator iter = doc.Begin(); iter != doc.End(); iter ++) {
+                rapidjson::Value value = (*iter).GetObject();
+                if(0 == value["status"].GetInt()) { //未领取的，则加入到未领取的集合中
+                    unacceptedList.push_back(value);
+                } else if(1 == value["status"].GetInt()) {  //已领取的加入到已领取的集合中
+                    acceptedList.push_back(value);
+                }
+                int difficultyLevel = value["difficultyLevel"].GetInt();
+                switch(difficultyLevel) {
+                    case 1: difficulty1 ++; break;
+                    case 2: difficulty2 ++; break;
+                    case 3: difficulty3 ++; break;
+                    case 4: difficulty4 ++; break;
+                    case 5: difficulty5 ++; break;
+                }
+            }
+            //如果有大于5个任务未领取，则不再生成新任务
+            if(unacceptedList.size() >= 5) {
+                continue;
+            }
+        }
+
+        difficulty1 = difficulty1 <= 0 ? 1 : difficulty1;
+        difficulty2 = difficulty2 <= 0 ? 1 : difficulty2;
+        difficulty3 = difficulty3 <= 0 ? 1 : difficulty3;
+        difficulty4 = difficulty4 <= 0 ? 1 : difficulty4;
+        difficulty5 = difficulty5 <= 0 ? 1 : difficulty5;
+        int difficulty1Probability = TaskDifficultyLevelConfig::getIntByName("1", "probability");
+        int difficulty2Probability = TaskDifficultyLevelConfig::getIntByName("2", "probability");
+        int difficulty3Probability = TaskDifficultyLevelConfig::getIntByName("3", "probability");
+        int difficulty4Probability = TaskDifficultyLevelConfig::getIntByName("4", "probability");
+        int difficulty5Probability = TaskDifficultyLevelConfig::getIntByName("5", "probability");
+        std::string difficultyLevel = "1";
+        float rate1 = difficulty1/difficulty1Probability;
+        float rate2 = difficulty2/difficulty2Probability;
+        float rate3 = difficulty3/difficulty3Probability;
+        float rate4 = difficulty4/difficulty4Probability;
+        float rate5 = difficulty5/difficulty5Probability;
+        float rateArr[5] = {rate1, rate2, rate3, rate4, rate5};
+        float min = rate1;
+        for(int i = 0; i < 5; i ++) {
+            if(rateArr[i] < min) {
+                min = rateArr[i];
+                difficultyLevel = StringUtils::format("%d", i);
+            }
+        }
+        int minConfig = TaskDifficultyLevelConfig::getIntByName(difficultyLevel, "min");
+        int maxConfig = TaskDifficultyLevelConfig::getIntByName(difficultyLevel, "max");
+        float rateConfig = (rand()%maxConfig + minConfig)/100.0f;  //在最大值和最小值中取一个随机值，得到浮动的值
+        char* taskNameArr[]={"第一中学线上教育系统", "XX公司官网开发", "XX公司官网维护", "XX公司OA系统开发", "市第一医院医疗管理系统开发"};
+        char* taskName = taskNameArr[rand()%5+0];
+        Document levelConfigDoc;
+        levelConfigDoc.Parse(levelConfig.c_str());
+        int originalMoney = levelConfigDoc["money"].GetInt();
+        int originalExp = levelConfigDoc["exp"].GetInt();
+        int originalTime = levelConfigDoc["time"].GetInt();
+        int originalPower = levelConfigDoc["power"].GetInt();
+        int originalMp = levelConfigDoc["mp"].GetInt();
+        int money = originalMoney + originalMoney*rateConfig;
+        int exp = originalExp + originalExp*rateConfig;
+        Task* task = new Task();
+        task->setId(IdConfig::getIdByKey("taskId"));
+        task->setMp(originalMp);
+        task->setPower(originalPower);
+        task->setName(taskName);
+        task->setTime(originalTime);
+        task->setMoney(money);
+        task->setExp(exp);
+        task->setLevel(role->getLevel());
+        task->setStatus(0);
+        TaskListService* taskListService = new TaskListService();
+        taskListService->addTask(task);
+        delete taskListService;
+        delete task;
     }
     return NULL;
 }

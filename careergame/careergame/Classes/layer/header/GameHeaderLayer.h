@@ -15,5 +15,6 @@ class GameHeaderLayer: public Layer {
 public:
     virtual bool init();
     CREATE_FUNC(GameHeaderLayer);
+    void showTaskList();
 };
 #endif //PROJ_ANDROID_STUDIO_GAMEHEADERLayer_H
