@@ -10,12 +10,14 @@
 #include "RoleService.h"
 #include "cocos-ext.h"
 #include "RoleJobTaskService.h"
+#include "RoleTaskListService.h"
 class HomeComputerBtn:public BaseBtn {
 private:
     HomeComputerWorkBtn* workBtn;
     RoleService* roleService = nullptr;
     RoleJobTaskService* roleJobTaskService = nullptr;
-    RoleJobTask* task = nullptr;
+    RoleTask* task = nullptr;
+    RoleTaskListService* roleTaskListService = nullptr;
 public:
     virtual bool init();
     CREATE_FUNC(HomeComputerBtn);

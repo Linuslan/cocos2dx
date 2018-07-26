@@ -3,10 +3,21 @@
 //
 
 #include "RoleTaskListConfig.h"
+#include <cocos2d/external/json/stringbuffer.h>
+#include <cocos2d/external/json/writer.h>
 std::string RoleTaskListConfig::init() {
-    std::string data = FileUtils::getInstance()->getStringFromFile("config/role_task_list_config.json");
+    std::string writePath = RoleTaskListConfig::getFilePath();
+    std::string data = FileUtils::getInstance()->getStringFromFile(writePath);
     UserDefault::getInstance()->setStringForKey("RoleTaskListConfig", data);
     log("获取到的数据已设置到本地存储中为：%s", data.c_str());
+    return data;
+}
+
+std::string RoleTaskListConfig::getData() {
+    std::string data = UserDefault::getInstance()->getStringForKey("TaskListConfig");
+    if(data.empty()) {
+        data = RoleTaskListConfig::init();
+    }
     return data;
 }
 
@@ -17,7 +28,11 @@ std::string RoleTaskListConfig::getByLevel(std::string level) {
     }
     Document doc;
     doc.Parse(data.c_str());
-    return doc[level.c_str()].GetString();
+    StringBuffer buffer;
+    rapidjson::Writer<StringBuffer> write(buffer);
+    doc[level.c_str()].Accept(write);
+    log("得到玩家等级%s已领取的任务列表为：%s", level.c_str(), buffer.GetString());
+    return buffer.GetString();
 }
 
 std::string RoleTaskListConfig::getStringByName(std::string level, std::string key) {
@@ -61,4 +76,13 @@ std::string RoleTaskListConfig::getFilePath() {
         log("创建文件错误：%s", error.what());
     }
     return writePath;
+}
+
+bool RoleTaskListConfig::updateTaskList(std::string data) {
+    std::string filePath = RoleTaskListConfig::getFilePath();
+    log("配置路径为：%s", filePath.c_str());
+    bool isWrited = FileUtils::getInstance()->writeStringToFile(data, filePath);
+    log("写入到文件成功, %d", isWrited);
+    UserDefault::getInstance()->setStringForKey("RoleTaskListConfig", data);
+    return isWrited;
 }

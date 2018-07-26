@@ -20,6 +20,6 @@ public:
     static std::string getStringByName(std::string level, std::string key);
     static int getIntByName(std::string level, std::string key);
     static std::string getFilePath();
-    static bool updateTaskList(Document doc);
+    static bool updateTaskList(std::string data);
 };
 #endif //PROJ_ANDROID_STUDIO_TASKLISTCONFIG_H

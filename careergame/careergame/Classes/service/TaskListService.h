@@ -12,5 +12,6 @@ class TaskListService: public BaseService {
 public:
     void addTask(Task* task);
     std::vector<Task*>* getTaskList();
+    bool updateTask(Task* task);
 };
 #endif //PROJ_ANDROID_STUDIO_TASKLISTSERVICE_H

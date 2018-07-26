@@ -3,10 +3,12 @@
 //
 
 #include <Classes/layer/DialogLayer.h>
+#include <Classes/service/RoleTaskListService.h>
 #include "GameHeaderLayer.h"
 #include "RoleService.h"
 #include "RoleJobConfig.h"
 #include "TaskListService.h"
+#include "IdConfig.h"
 bool GameHeaderLayer::init() {
     if(!Layer::init()) {
         return false;
@@ -115,6 +117,16 @@ void GameHeaderLayer::showTaskList() {
         ui::Button* button = static_cast<ui::Button*>(item->getChildByName("btn"));
         button->addClickEventListener([this, pTask, dialog](Ref* ref){
             Document doc;
+            RoleTaskListService* roleTaskListService = new RoleTaskListService();
+            RoleTask* roleTask = roleTaskListService->createRoleTask(pTask);
+            roleTaskListService->addTask(roleTask);
+            //更新任务为已领取
+            pTask->setStatus(1);
+            TaskListService* taskListService = new TaskListService();
+            taskListService->updateTask(pTask);
+            delete roleTask;
+            delete roleTaskListService;
+            delete taskListService;
             log("点击了按钮开始工作, pvalue地址为：%0x, id=%d", pTask, pTask->getId());
         });
         listView->pushBackCustomItem(item);

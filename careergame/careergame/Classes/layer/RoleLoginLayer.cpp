@@ -120,8 +120,9 @@ void* RoleLoginLayer::thread_function(void *arg) {
     while(true) {
         log("===============启动线程================");
         srand(time(nullptr));
-        int time = rand()/60 + 10;  //生成下次执行该任务的时间间隔
-        time = time * 60;
+        int time = rand()%60 + 10;  //生成下次执行该任务的时间间隔
+        //time = time * 60;
+        log("睡眠时间为：%d", time);
         sleep(time);
         RoleService* roleService = new RoleService();
         Role* role = roleService->loadRoleById(1);
@@ -137,7 +138,9 @@ void* RoleLoginLayer::thread_function(void *arg) {
         float difficulty3 = 0.0;
         float difficulty4 = 0.0;
         float difficulty5 = 0.0;
+        log("判断用户当前等级任务列表是否为空");
         if(!levelTaskList.empty()) {
+            log("用户当前等级任务列表为空");
             std::vector<rapidjson::Value> acceptedList;
             std::vector<rapidjson::Value> unacceptedList;
 
@@ -146,9 +149,9 @@ void* RoleLoginLayer::thread_function(void *arg) {
             for(rapidjson::Value::ValueIterator iter = doc.Begin(); iter != doc.End(); iter ++) {
                 rapidjson::Value value = (*iter).GetObject();
                 if(0 == value["status"].GetInt()) { //未领取的，则加入到未领取的集合中
-                    unacceptedList.push_back(value);
+                    unacceptedList.push_back((*iter).GetObject());
                 } else if(1 == value["status"].GetInt()) {  //已领取的加入到已领取的集合中
-                    acceptedList.push_back(value);
+                    acceptedList.push_back((*iter).GetObject());
                 }
                 int difficultyLevel = value["difficultyLevel"].GetInt();
                 switch(difficultyLevel) {

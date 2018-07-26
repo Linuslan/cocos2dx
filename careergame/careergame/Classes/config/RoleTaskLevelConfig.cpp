@@ -3,6 +3,8 @@
 //
 
 #include "RoleTaskLevelConfig.h"
+#include <cocos2d/external/json/stringbuffer.h>
+#include <cocos2d/external/json/writer.h>
 std::string RoleTaskLevelConfig::init() {
     std::string data = FileUtils::getInstance()->getStringFromFile("config/role_task_level_config.json");
     UserDefault::getInstance()->setStringForKey("RoleTaskLevelConfig", data);
@@ -17,7 +19,11 @@ std::string RoleTaskLevelConfig::getByLevel(std::string level) {
     }
     Document doc;
     doc.Parse(data.c_str());
-    return doc[level.c_str()].GetString();
+    StringBuffer buffer;
+    rapidjson::Writer<StringBuffer> writer(buffer);
+    doc[level.c_str()].Accept(writer);
+    log("得到角色等级%s配置的信息为：%s", level.c_str(), buffer.GetString());
+    return buffer.GetString();
 }
 
 std::string RoleTaskLevelConfig::getStringByName(std::string level, std::string key) {

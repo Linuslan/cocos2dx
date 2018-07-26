@@ -15,6 +15,7 @@ bool HomeComputerBtn::init() {
     this->setName("computer");
     this->roleService = new RoleService();
     this->roleJobTaskService = new RoleJobTaskService();
+    this->roleTaskListService = new RoleTaskListService();
     Size size = this->getContentSize();
     Sprite* computerTable1 = Sprite::create("images/home/computer_table_1.png");
     computerTable1->setName("mask");
@@ -78,10 +79,10 @@ void HomeComputerBtn::doClick(Ref* ref) {
     // set all items layout gravity
     listView->setGravity(ui::ListView::Gravity::CENTER_VERTICAL);
     //std::vector<rapidjson::Value*>* jsonArray = RoleJobTaskConfig::getTaskList();
-    std::vector<RoleJobTask*>* taskList = this->roleJobTaskService->getTasks();
+    std::vector<RoleTask*>* taskList = this->roleTaskListService->getTaskList();
     //initial the data
-    for(std::vector<RoleJobTask*>::iterator iter = taskList->begin(); iter != taskList->end(); iter++) {
-        RoleJobTask* pTask = (*iter);
+    for(std::vector<RoleTask*>::iterator iter = taskList->begin(); iter != taskList->end(); iter++) {
+        RoleTask* pTask = (*iter);
         log("原始value的地址为：%0x", pTask);
         //rapidjson::Value value = (*pvalue).GetObject();
         std::string name = pTask->getName();
@@ -126,11 +127,11 @@ void HomeComputerBtn::update(float t) {
             this->roleService->updateRole(role);
             log("task地址为：%0x", task);
             log("开始计算时间");
-            int spendTime = task->getTimeSpend() + 1;
+            int spendTime = task->getTime() + 1;
             log("时间加1，得到时间为：%d", spendTime);
-            task->setTimeSpend(spendTime);
+            task->setTime(spendTime);
             log("增加时间成功：%d", spendTime);
-            this->roleJobTaskService->updateTask(task);
+            this->roleTaskListService->updateTask(task);
         }
     }
 }

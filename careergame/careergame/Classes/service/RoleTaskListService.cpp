@@ -1,18 +1,34 @@
 //
-// Created by LinusLan on 2018/7/25.
+// Created by LinusLan on 2018/7/26.
 //
 
-#include "TaskListService.h"
+#include "RoleTaskListService.h"
 #include "json/rapidjson.h"
 #include "json/document.h"
 #include "cocos2d.h"
-#include "TaskListConfig.h"
+#include "RoleTaskListConfig.h"
+#include "IdConfig.h"
 #include <cocos2d/external/json/stringbuffer.h>
 #include <cocos2d/external/json/writer.h>
 USING_NS_CC;
 using namespace rapidjson;
-void TaskListService::addTask(Task *task) {
-    std::string taskList = TaskListConfig::getData();
+RoleTask* RoleTaskListService::createRoleTask(Task *task) {
+    RoleTask* roleTask = new RoleTask();
+    int id = IdConfig::getIdByKey("roleTaskId");
+    roleTask->setId(id);
+    roleTask->setMp(task->getMp());
+    roleTask->setPower(task->getPower());
+    roleTask->setName(task->getName());
+    roleTask->setTime(task->getTime());
+    roleTask->setMoney(task->getMoney());
+    roleTask->setExp(task->getExp());
+    roleTask->setStatus(0);
+    roleTask->setLevel(task->getLevel());
+    roleTask->setTaskId(task->getId());
+    return roleTask;
+}
+void RoleTaskListService::addTask(RoleTask *task) {
+    std::string taskList = RoleTaskListConfig::getData();
     Document doc;
     doc.Parse(taskList.c_str());
     rapidjson::Value newTask(kObjectType);
@@ -26,6 +42,7 @@ void TaskListService::addTask(Task *task) {
     newTask.AddMember(rapidjson::Value("mp", doc.GetAllocator()), rapidjson::Value(task->getMp()), doc.GetAllocator());
     newTask.AddMember(rapidjson::Value("level", doc.GetAllocator()), rapidjson::Value(task->getLevel()), doc.GetAllocator());
     newTask.AddMember(rapidjson::Value("status", doc.GetAllocator()), rapidjson::Value(task->getStatus()), doc.GetAllocator());
+    newTask.AddMember(rapidjson::Value("taskId", doc.GetAllocator()), rapidjson::Value(task->getId()), doc.GetAllocator());
     std::string level = StringUtils::format("%s", task->getLevel());
     if(doc[level.c_str()].IsNull()) {
         rapidjson::Value levelList(kArrayType);
@@ -36,12 +53,12 @@ void TaskListService::addTask(Task *task) {
     rapidjson::Writer<StringBuffer> writer(buffer);
     doc.Accept(writer);
     log("角色任务更新后的json：%s", buffer.GetString());
-    TaskListConfig::updateTaskList(buffer.GetString());
+    RoleTaskListConfig::updateTaskList(buffer.GetString());
 }
 
-std::vector<Task*>* TaskListService::getTaskList() {
-    std::vector<Task*>* vector = new std::vector<Task*> ();
-    std::string taskList = TaskListConfig::getData();
+std::vector<RoleTask*>* RoleTaskListService::getTaskList() {
+    std::vector<RoleTask*>* vector = new std::vector<RoleTask*> ();
+    std::string taskList = RoleTaskListConfig::getData();
     Document doc;
     doc.Parse(taskList.c_str());
     for(rapidjson::Value::ValueIterator iter = doc.Begin(); iter != doc.End(); iter ++) {
@@ -54,12 +71,14 @@ std::vector<Task*>* TaskListService::getTaskList() {
             if(taskJson.IsNull()) {
                 continue;
             }
-            Task* task = new Task();
+            RoleTask* task = new RoleTask();
             task->setLevel(taskJson["level"].GetInt());
             task->setStatus(taskJson["status"].GetInt());
             task->setExp(taskJson["exp"].GetInt());
             task->setMoney(taskJson["money"].GetInt());
             task->setTime(taskJson["time"].GetInt());
+            task->setId(taskJson["id"].GetInt());
+            task->setTaskId(taskJson["taskId"].GetInt());
             const char* nameCh = taskJson["name"].GetString();
             char name[sizeof(nameCh)+1];
             strcpy(name, nameCh);
@@ -72,8 +91,8 @@ std::vector<Task*>* TaskListService::getTaskList() {
     return vector;
 }
 
-bool TaskListService::updateTask(Task *task) {
-    std::string taskList = TaskListConfig::getData();
+bool RoleTaskListService::updateTask(RoleTask *task) {
+    std::string taskList = RoleTaskListConfig::getData();
     Document doc;
     doc.Parse(taskList.c_str());
     rapidjson::Value newTask(kObjectType);
@@ -87,6 +106,7 @@ bool TaskListService::updateTask(Task *task) {
     newTask.AddMember(rapidjson::Value("mp", doc.GetAllocator()), rapidjson::Value(task->getMp()), doc.GetAllocator());
     newTask.AddMember(rapidjson::Value("level", doc.GetAllocator()), rapidjson::Value(task->getLevel()), doc.GetAllocator());
     newTask.AddMember(rapidjson::Value("status", doc.GetAllocator()), rapidjson::Value(task->getStatus()), doc.GetAllocator());
+    newTask.AddMember(rapidjson::Value("taskId", doc.GetAllocator()), rapidjson::Value(task->getId()), doc.GetAllocator());
     std::string level = StringUtils::format("%s", task->getLevel());
     if(doc[level.c_str()].IsNull()) {
         rapidjson::Value levelList(kArrayType);
@@ -103,6 +123,7 @@ bool TaskListService::updateTask(Task *task) {
     StringBuffer buffer;
     rapidjson::Writer<StringBuffer> writer(buffer);
     doc.Accept(writer);
-    log("任务更新后的json：%s", buffer.GetString());
-    TaskListConfig::updateTaskList(buffer.GetString());
+    log("角色任务更新后的json：%s", buffer.GetString());
+    RoleTaskListConfig::updateTaskList(buffer.GetString());
+    return true;
 }

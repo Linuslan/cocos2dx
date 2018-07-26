@@ -28,7 +28,11 @@ std::string TaskListConfig::getByLevel(std::string level) {
     }
     Document doc;
     doc.Parse(data.c_str());
-    return doc[level.c_str()].GetString();
+    StringBuffer buffer;
+    rapidjson::Writer<StringBuffer> writer(buffer);
+    doc[level.c_str()].Accept(writer);
+    log("得到的系统已生成的任务列表字符串为：%s", buffer.GetString());
+    return buffer.GetString();
 }
 
 std::string TaskListConfig::getStringByName(std::string level, std::string key) {
@@ -74,15 +78,11 @@ std::string TaskListConfig::getFilePath() {
     return writePath;
 }
 
-bool TaskListConfig::updateTaskList(Document doc) {
-    StringBuffer buffer;
-    rapidjson::Writer<StringBuffer> writer(buffer);
-    doc.Accept(writer);
-    log("角色任务更新后的json：%s", buffer.GetString());
+bool TaskListConfig::updateTaskList(std::string data) {
     std::string filePath = TaskListConfig::getFilePath();
     log("配置路径为：%s", filePath.c_str());
-    bool isWrited = FileUtils::getInstance()->writeStringToFile(buffer.GetString(), filePath);
+    bool isWrited = FileUtils::getInstance()->writeStringToFile(data, filePath);
     log("写入到文件成功, %d", isWrited);
-    UserDefault::getInstance()->setStringForKey("TaskListConfig", buffer.GetString());
+    UserDefault::getInstance()->setStringForKey("TaskListConfig", data);
     return isWrited;
 }
