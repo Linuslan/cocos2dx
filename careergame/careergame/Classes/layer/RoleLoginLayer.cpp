@@ -120,8 +120,9 @@ void* RoleLoginLayer::thread_function(void *arg) {
     while(true) {
         log("===============启动线程================");
         srand(time(nullptr));
-        int time = rand()%60 + 10;  //生成下次执行该任务的时间间隔
+        //int time = rand()%60 + 10;  //生成下次执行该任务的时间间隔
         //time = time * 60;
+        int time = rand()%10 + 5;  //生成下次执行该任务的时间间隔
         log("睡眠时间为：%d", time);
         sleep(time);
         RoleService* roleService = new RoleService();

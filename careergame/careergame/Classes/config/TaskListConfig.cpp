@@ -22,12 +22,15 @@ std::string TaskListConfig::getData() {
 }
 
 std::string TaskListConfig::getByLevel(std::string level) {
-    std::string data = UserDefault::getInstance()->getStringForKey("TaskListConfig");
+    std::string data = getData();
     if(data.empty()) {
-        data = TaskListConfig::init();
+        return "";
     }
     Document doc;
     doc.Parse(data.c_str());
+    if(doc[level.c_str()].IsNull()) {
+        return "";
+    }
     StringBuffer buffer;
     rapidjson::Writer<StringBuffer> writer(buffer);
     doc[level.c_str()].Accept(writer);
@@ -36,22 +39,28 @@ std::string TaskListConfig::getByLevel(std::string level) {
 }
 
 std::string TaskListConfig::getStringByName(std::string level, std::string key) {
-    std::string data = UserDefault::getInstance()->getStringForKey("TaskListConfig");
+    std::string data = getData();
     if(data.empty()) {
-        data = TaskListConfig::init();
+        return "";
     }
     Document doc;
     doc.Parse(data.c_str());
+    if(doc[level.c_str()].IsNull() || doc[level.c_str()].GetObject()[key.c_str()].IsNull()) {
+        return "";
+    }
     return doc[level.c_str()].GetObject()[key.c_str()].GetString();
 }
 
 int TaskListConfig::getIntByName(std::string level, std::string key) {
-    std::string data = UserDefault::getInstance()->getStringForKey("TaskListConfig");
+    std::string data = getData();
     if(data.empty()) {
-        data = TaskListConfig::init();
+        return 0;
     }
     Document doc;
     doc.Parse(data.c_str());
+    if(doc[level.c_str()].IsNull() || doc[level.c_str()].GetObject()[key.c_str()].IsNull()) {
+        return 0;
+    }
     return doc[level.c_str()].GetObject()[key.c_str()].GetInt();
 }
 

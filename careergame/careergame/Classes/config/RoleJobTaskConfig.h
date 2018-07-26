@@ -4,6 +4,7 @@
 
 #ifndef PROJ_ANDROID_STUDIO_ROLEJOBTASKCONFIG_H
 #define PROJ_ANDROID_STUDIO_ROLEJOBTASKCONFIG_H
+
 #include "json/rapidjson.h"
 #include "json/document.h"
 #include "cocos2d.h"

@@ -5,6 +5,7 @@
 #include "IdConfig.h"
 #include <cocos2d/external/json/stringbuffer.h>
 #include <cocos2d/external/json/writer.h>
+
 std::string IdConfig::init() {
     std::string writePath = IdConfig::getFilePath();
     std::string data = FileUtils::getInstance()->getStringFromFile(writePath);

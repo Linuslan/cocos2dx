@@ -22,12 +22,15 @@ std::string RoleTaskListConfig::getData() {
 }
 
 std::string RoleTaskListConfig::getByLevel(std::string level) {
-    std::string data = UserDefault::getInstance()->getStringForKey("RoleTaskListConfig");
+    std::string data = getData();
     if(data.empty()) {
-        data = RoleTaskListConfig::init();
+        return "";
     }
     Document doc;
     doc.Parse(data.c_str());
+    if(doc[level.c_str()].IsNull()) {
+        return "";
+    }
     StringBuffer buffer;
     rapidjson::Writer<StringBuffer> write(buffer);
     doc[level.c_str()].Accept(write);
@@ -36,22 +39,29 @@ std::string RoleTaskListConfig::getByLevel(std::string level) {
 }
 
 std::string RoleTaskListConfig::getStringByName(std::string level, std::string key) {
-    std::string data = UserDefault::getInstance()->getStringForKey("RoleTaskListConfig");
+    std::string data = getData();
     if(data.empty()) {
-        data = RoleTaskListConfig::init();
+        return "";
     }
     Document doc;
     doc.Parse(data.c_str());
-    return doc[level.c_str()].GetObject()[key.c_str()].GetString();
+    if(!doc[level.c_str()].IsNull() && !doc[level.c_str()].GetObject()[key.c_str()].IsNull()) {
+        return doc[level.c_str()].GetObject()[key.c_str()].GetString();
+    } else {
+        return "";
+    }
 }
 
 int RoleTaskListConfig::getIntByName(std::string level, std::string key) {
-    std::string data = UserDefault::getInstance()->getStringForKey("RoleTaskListConfig");
+    std::string data = getData();
     if(data.empty()) {
-        data = RoleTaskListConfig::init();
+        return 0;
     }
     Document doc;
     doc.Parse(data.c_str());
+    if(doc[level.c_str()].IsNull() || doc[level.c_str()].GetObject()[key.c_str()].IsNull()) {
+        return 0;
+    }
     return doc[level.c_str()].GetObject()[key.c_str()].GetInt();
 }
 

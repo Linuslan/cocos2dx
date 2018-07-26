@@ -31,8 +31,14 @@ std::string RoleTaskLevelConfig::getStringByName(std::string level, std::string 
     if(data.empty()) {
         data = RoleTaskLevelConfig::init();
     }
+    if(data.empty()) {
+        return "";
+    }
     Document doc;
     doc.Parse(data.c_str());
+    if(doc[level.c_str()].IsNull() || doc[level.c_str()].GetObject()[key.c_str()].IsNull()) {
+        return "";
+    }
     return doc[level.c_str()].GetObject()[key.c_str()].GetString();
 }
 
@@ -41,7 +47,13 @@ int RoleTaskLevelConfig::getIntByName(std::string level, std::string key) {
     if(data.empty()) {
         data = RoleTaskLevelConfig::init();
     }
+    if(data.empty()) {
+        return 0;
+    }
     Document doc;
     doc.Parse(data.c_str());
+    if(doc[level.c_str()].IsNull() || doc[level.c_str()].GetObject()[key.c_str()].IsNull()) {
+        return 0;
+    }
     return doc[level.c_str()].GetObject()[key.c_str()].GetInt();
 }
