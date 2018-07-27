@@ -41,7 +41,7 @@ bool GameHeaderLayer::init() {
         this->addChild(lvDisplayLbl);
         lvDisplayLbl->setPosition(Vec2(winSize.width*0.35, headerHeight));
 
-        Sprite* email = Sprite::create("images/gameheader/email.png");
+        ui::Button* email = ui::Button::create("images/gameheader/email.png");
         email->setPosition(Vec2(winSize.width*0.88, headerHeight));
         email->setScale(0.07);
         FadeIn* fadeIn = FadeIn::create(0.5);
@@ -49,6 +49,7 @@ bool GameHeaderLayer::init() {
         //Sequence* sequence = Sequence::create(fadeIn, fadeOut, nullptr);
         Sequence* sequence = Sequence::create(fadeIn, nullptr);
         email->runAction(RepeatForever::create(sequence));
+        email->addClickEventListener(CC_CALLBACK_1(GameHeaderLayer::showTaskList, this));
         this->addChild(email);
         ui::Button* quitBtn = ui::Button::create("CloseNormal.png", "CloseSelected.png");
         quitBtn->setPosition(Vec2(winSize.width*0.9, headerHeight));
@@ -63,7 +64,7 @@ bool GameHeaderLayer::init() {
     return true;
 }
 
-void GameHeaderLayer::showTaskList() {
+void GameHeaderLayer::showTaskList(Ref* ref) {
     Size winSize = Director::getInstance()->getWinSize();
     TaskListService* taskListService = new TaskListService();
     std::vector<Task*>* taskList = taskListService->getTaskList();
@@ -107,13 +108,14 @@ void GameHeaderLayer::showTaskList() {
         Task* pTask = (*iter);
         log("原始value的地址为：%0x", pTask);
         //rapidjson::Value value = (*pvalue).GetObject();
-        std::string name = pTask->getName();
+        char* name = pTask->getName();
+        log("系统任务名称为：%s", name);
         int id = pTask->getId();
         ui::Widget* item = default_item->clone();
         item->setContentSize(size);
         item->setTag(id);
         ui::Text* label = static_cast<ui::Text*>(item->getChildByName("label"));
-        label->setString(name.c_str());
+        label->setString(name);
         ui::Button* button = static_cast<ui::Button*>(item->getChildByName("btn"));
         button->addClickEventListener([this, pTask, dialog](Ref* ref){
             Document doc;
@@ -132,6 +134,10 @@ void GameHeaderLayer::showTaskList() {
         listView->pushBackCustomItem(item);
     }
     dialog->addChild(listView);
+    this->addChild(dialog);
+    log("系统任务展示成功，开始清楚内存对象");
     delete taskListService;
-    delete[] taskList;
+    log("taskListService删除成功");
+    delete taskList;
+    log("taskList删除成功");
 }

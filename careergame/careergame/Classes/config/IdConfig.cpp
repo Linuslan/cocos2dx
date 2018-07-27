@@ -10,7 +10,7 @@ std::string IdConfig::init() {
     std::string writePath = IdConfig::getFilePath();
     std::string data = FileUtils::getInstance()->getStringFromFile(writePath);
     UserDefault::getInstance()->setStringForKey("IdConfig", data);
-    log("获取到的数据已设置到本地存储中为：%s", data.c_str());
+    log("获取到ID配置的数据已设置到本地存储中为：%s", data.c_str());
     return data;
 }
 
@@ -31,6 +31,9 @@ int IdConfig::getIntByName(std::string key) {
     }
     Document doc;
     doc.Parse(data.c_str());
+    if(doc.HasMember(key.c_str())) {
+        doc.AddMember(rapidjson::Value(key.c_str(), doc.GetAllocator()), rapidjson::Value(1), doc.GetAllocator());
+    }
     return doc[key.c_str()].GetInt();
 }
 
@@ -58,16 +61,31 @@ std::string IdConfig::getFilePath() {
 }
 
 void IdConfig::increaseIdByKey(std::string key) {
+    Document doc;
     std::string data = UserDefault::getInstance()->getStringForKey("IdConfig");
     if(data.empty()) {
         data = IdConfig::init();
     }
-    Document doc;
-    doc.Parse(data.c_str());
-    rapidjson::Value value = doc[key.c_str()].GetObject();
-    value = value.GetInt() + 1;
+    if(data.empty()) {
+        log("获取到的id配置为空");
+        doc.SetObject();
+    } else {
+        doc.Parse(data.c_str());
+    }
+
+    if(!doc.HasMember(key.c_str())) {
+        log("doc[key]为空，新增一条记录");
+        doc.AddMember(rapidjson::Value(key.c_str(), doc.GetAllocator()), rapidjson::Value(0), doc.GetAllocator());
+    }
+    log("doc[key]获取记录成功");
+    int id = doc[key.c_str()].GetInt();
+    log("doc[key]=%d", id);
+    id = id + 1;
+    log("doc[key]增加1后的值为:%d", id);
     doc.RemoveMember(key.c_str());
-    doc.AddMember(rapidjson::Value(key.c_str(), doc.GetAllocator()), value, doc.GetAllocator());
+    log("doc移除%s", key.c_str());
+    doc.AddMember(rapidjson::Value(key.c_str(), doc.GetAllocator()), rapidjson::Value(id), doc.GetAllocator());
+    log("doc新增%s成功", key.c_str());
     StringBuffer buffer;
     rapidjson::Writer<StringBuffer> writer(buffer);
     doc.Accept(writer);
@@ -80,7 +98,7 @@ void IdConfig::increaseIdByKey(std::string key) {
 }
 
 int IdConfig::getIdByKey(std::string key) {
-    int id = IdConfig::getIntByName(key);
     increaseIdByKey(key);
+    int id = IdConfig::getIntByName(key);
     return id;
 }

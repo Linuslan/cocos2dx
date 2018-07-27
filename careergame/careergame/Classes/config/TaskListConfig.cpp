@@ -9,7 +9,7 @@ std::string TaskListConfig::init() {
     std::string writePath = TaskListConfig::getFilePath();
     std::string data = FileUtils::getInstance()->getStringFromFile(writePath);
     UserDefault::getInstance()->setStringForKey("TaskListConfig", data);
-    log("获取到的数据已设置到本地存储中为：%s", data.c_str());
+    log("获取到系统任务列表数据已设置到本地存储中为：%s", data.c_str());
     return data;
 }
 

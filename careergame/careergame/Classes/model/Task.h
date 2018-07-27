@@ -18,6 +18,7 @@ private:
     int mp = 0; //需要消耗的MP
     int level = 0;  //等级
     int status = 0;
+    int difficultyLevel = 0;
 public:
     void setId(int id) {this->id = id;}
     int getId() {return this->id;}
@@ -37,5 +38,7 @@ public:
     int getLevel() {return this->level;}
     void setStatus(int status) {this->status = status;}
     int getStatus() {return this->status;}
+    void setDifficultyLevel(int difficultyLevel) {this->difficultyLevel = difficultyLevel;}
+    int getDifficultyLevel() {return this->difficultyLevel;}
 };
 #endif //PROJ_ANDROID_STUDIO_TASK_H
