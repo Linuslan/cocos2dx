@@ -66,18 +66,26 @@ void RoleTaskListService::addTask(RoleTask *task) {
 std::vector<RoleTask*>* RoleTaskListService::getTaskList() {
     std::vector<RoleTask*>* vector = new std::vector<RoleTask*> ();
     std::string taskList = RoleTaskListConfig::getData();
+    log("获取到的角色任务列表为：%s", taskList.c_str());
     Document doc;
     doc.Parse(taskList.c_str());
-    for(rapidjson::Value::ValueIterator iter = doc.Begin(); iter != doc.End(); iter ++) {
-        rapidjson::Value list = (*iter).GetArray();
-        if(list.IsNull()) {
+    for(rapidjson::Value::MemberIterator iter = doc.MemberBegin(); iter != doc.MemberEnd(); iter ++) {
+        log("进入角色任务循环，当前任务等级为：%s, value类型为：%d", iter->name.GetString(), iter->value.GetType());
+        if(iter->value.Empty()) {
+            log("value为空");
             continue;
         }
-        for(rapidjson::Value::ValueIterator iter2 = list.Begin(); iter != list.End(); iter ++) {
-            rapidjson::Value taskJson = (*iter2).GetObject();
+        log("value不为空，开始展示任务");
+        rapidjson::Value& list = iter->value;
+        for(rapidjson::Value::ValueIterator iter2 = list.Begin(); iter2 != list.End(); iter2 ++) {
+            log("进入角色任务等级为%s的任务循环", iter->name.GetString());
+            rapidjson::Value& taskJson = (*iter2);
+            log("当前角色任务id为：%d, 名称为：%s", taskJson["id"].GetInt(), taskJson["name"].GetString());
             if(taskJson.IsNull()) {
+                log("当前任务为空");
                 continue;
             }
+            log("当前任务不为空");
             RoleTask* task = new RoleTask();
             task->setLevel(taskJson["level"].GetInt());
             task->setStatus(taskJson["status"].GetInt());
@@ -88,11 +96,12 @@ std::vector<RoleTask*>* RoleTaskListService::getTaskList() {
             task->setTaskId(taskJson["taskId"].GetInt());
             task->setDifficultyLevel(taskJson["difficultyLevel"].GetInt());
             const char* nameCh = taskJson["name"].GetString();
-            char name[sizeof(nameCh)+1];
+            char* name = new char[strlen(nameCh)+1]();
             strcpy(name, nameCh);
             task->setName(name);
             task->setPower(taskJson["power"].GetInt());
             task->setMp(taskJson["mp"].GetInt());
+            log("生成角色任务对象成功");
             vector->push_back(task);
         }
     }
@@ -122,7 +131,7 @@ bool RoleTaskListService::updateTask(RoleTask *task) {
         doc.AddMember(rapidjson::Value(level.c_str(), doc.GetAllocator()), levelList, doc.GetAllocator());
     }
     for(rapidjson::Value::ValueIterator iter = doc[level.c_str()].GetArray().Begin(); iter != doc[level.c_str()].GetArray().End(); iter ++) {
-        rapidjson::Value value = (*iter).GetObject();
+        rapidjson::Value& value = (*iter);
         if(value["id"].GetInt() == task->getId()) {
             doc[level.c_str()].GetArray().Erase(iter);
             break;

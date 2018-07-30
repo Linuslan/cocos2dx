@@ -139,26 +139,26 @@ void* RoleLoginLayer::thread_function(void *arg) {
         float difficulty3 = 0.0;
         float difficulty4 = 0.0;
         float difficulty5 = 0.0;
-        log("判断用户当前等级系统任务列表是否为空");
+        //log("判断用户当前等级系统任务列表是否为空");
         if(!levelTaskList.empty()) {
-            log("用户当前等级系统任务列表不为空");
+            //log("用户当前等级系统任务列表不为空");
             std::vector<rapidjson::Value> acceptedList;
             std::vector<rapidjson::Value> unacceptedList;
 
             Document doc;
             doc.Parse(levelTaskList.c_str());
             for(rapidjson::Value::ValueIterator iter = doc.Begin(); iter != doc.End(); iter ++) {
-                log("进入系统任务循环判断");
+                //log("进入系统任务循环判断");
                 rapidjson::Value value = (*iter).GetObject();
                 if(0 == value["status"].GetInt()) { //未领取的，则加入到未领取的集合中
-                    log("将任务加入未领取任务列表");
+                    //log("将任务加入未领取任务列表");
                     unacceptedList.push_back((*iter).GetObject());
                 } else if(1 == value["status"].GetInt()) {  //已领取的加入到已领取的集合中
-                    log("将任务加入已领取任务列表");
+                    //log("将任务加入已领取任务列表");
                     acceptedList.push_back((*iter).GetObject());
                 }
                 int difficultyLevel = value["difficultyLevel"].GetInt();
-                log("难度等级为%d", difficultyLevel);
+                //log("难度等级为%d", difficultyLevel);
                 switch(difficultyLevel) {
                     case 1: difficulty1 ++; break;
                     case 2: difficulty2 ++; break;
@@ -199,9 +199,9 @@ void* RoleLoginLayer::thread_function(void *arg) {
         }
         int minConfig = TaskDifficultyLevelConfig::getIntByName(difficultyLevel, "min");
         int maxConfig = TaskDifficultyLevelConfig::getIntByName(difficultyLevel, "max");
-        log("得到难度的最小值为%d，最大值为%d", minConfig, maxConfig);
+        //log("得到难度的最小值为%d，最大值为%d", minConfig, maxConfig);
         float rateConfig = (rand()%maxConfig + minConfig)/100.0f;  //在最大值和最小值中取一个随机值，得到浮动的值
-        log("最终算出的浮动随机值为：%f", rateConfig);
+        //log("最终算出的浮动随机值为：%f", rateConfig);
         char* taskNameArr[]={"第一中学线上教育系统", "XX公司官网开发", "XX公司官网维护", "XX公司OA系统开发", "市第一医院医疗管理系统开发"};
         char* taskName = taskNameArr[rand()%5+0];
         Document levelConfigDoc;
@@ -225,9 +225,9 @@ void* RoleLoginLayer::thread_function(void *arg) {
         task->setStatus(0);
         task->setDifficultyLevel(atoi(difficultyLevel.c_str()));
         TaskListService* taskListService = new TaskListService();
-        log("开始新增任务");
+        //log("开始新增任务");
         taskListService->addTask(task);
-        log("新增任务成功");
+        //log("新增任务成功");
         delete taskListService;
         delete task;
     }

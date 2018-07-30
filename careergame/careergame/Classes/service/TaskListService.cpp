@@ -79,6 +79,7 @@ std::vector<Task*>* TaskListService::getTaskList() {
                 continue;
             }
             Task* task = new Task();
+            task->setId(taskJson["id"].GetInt());
             task->setLevel(taskJson["level"].GetInt());
             task->setStatus(taskJson["status"].GetInt());
             task->setExp(taskJson["exp"].GetInt());
@@ -102,7 +103,7 @@ std::vector<Task*>* TaskListService::getTaskList() {
 
 bool TaskListService::updateTask(Task *task) {
     std::string taskList = TaskListConfig::getData();
-    log("获取到的系统任务为：%s", taskList.c_str());
+    log("领取的任务id为：%d, 获取到的系统任务为：%s", task->getId(), taskList.c_str());
     Document doc;
     doc.Parse(taskList.c_str());
     rapidjson::Value newTask(kObjectType);
@@ -123,7 +124,8 @@ bool TaskListService::updateTask(Task *task) {
         doc.AddMember(rapidjson::Value(level.c_str(), doc.GetAllocator()), levelList, doc.GetAllocator());
     }
     for(rapidjson::Value::ValueIterator iter = doc[level.c_str()].GetArray().Begin(); iter != doc[level.c_str()].GetArray().End(); iter ++) {
-        rapidjson::Value value = (*iter).GetObject();
+        rapidjson::Value& value = (*iter);
+        log("循环到等级为%s的系统任务列表的id为：%d，名称为：%s", level.c_str(), value["id"].GetInt(), value["name"].GetString());
         if(value["id"].GetInt() == task->getId()) {
             log("系统任务id%d和玩家领取的任务id%d相同，删除该系统任务id对应的任务，重新新增", value["id"].GetInt(), task->getId());
             doc[level.c_str()].GetArray().Erase(iter);

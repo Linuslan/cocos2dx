@@ -89,9 +89,9 @@ std::string TaskListConfig::getFilePath() {
 
 bool TaskListConfig::updateTaskList(std::string data) {
     std::string filePath = TaskListConfig::getFilePath();
-    log("配置路径为：%s", filePath.c_str());
+    //log("配置路径为：%s", filePath.c_str());
     bool isWrited = FileUtils::getInstance()->writeStringToFile(data, filePath);
-    log("写入到文件成功, %d", isWrited);
+    //log("写入到文件成功, %d", isWrited);
     UserDefault::getInstance()->setStringForKey("TaskListConfig", data);
     return isWrited;
 }

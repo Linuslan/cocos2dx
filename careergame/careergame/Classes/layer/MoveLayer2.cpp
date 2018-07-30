@@ -20,14 +20,14 @@ bool MoveLayer2::init() {
         if(type == ui::Widget::TouchEventType::BEGAN) {
             role->setFlippedX(false);
             role->walk();
-            log("开始移动");
+            //log("开始移动");
             schedule(schedule_selector(MoveLayer2::doGoLeft));
         } else if(type == ui::Widget::TouchEventType::MOVED) {
-            log("移动中");
+            //log("移动中");
         } else if(type == ui::Widget::TouchEventType::ENDED) {
             role->standSide();
             unschedule(schedule_selector(MoveLayer2::doGoLeft));
-            log("移动结束");
+            //log("移动结束");
         }
     });
 
@@ -39,14 +39,14 @@ bool MoveLayer2::init() {
         if(type == ui::Widget::TouchEventType::BEGAN) {
             //role->setFlippedX(true);
             role->walkUp();
-            log("开始移动");
+            //log("开始移动");
             schedule(schedule_selector(MoveLayer2::doGoUp));
         } else if(type == ui::Widget::TouchEventType::MOVED) {
-            log("移动中");
+            //log("移动中");
         } else if(type == ui::Widget::TouchEventType::ENDED) {
             role->standBack();
             unschedule(schedule_selector(MoveLayer2::doGoUp));
-            log("移动结束");
+            //log("移动结束");
         }
     });
 
@@ -58,14 +58,14 @@ bool MoveLayer2::init() {
         if(type == ui::Widget::TouchEventType::BEGAN) {
             role->setFlippedX(true);
             role->walk();
-            log("开始移动");
+            //log("开始移动");
             schedule(schedule_selector(MoveLayer2::doGoRight));
         } else if(type == ui::Widget::TouchEventType::MOVED) {
-            log("移动中");
+            //log("移动中");
         } else if(type == ui::Widget::TouchEventType::ENDED) {
             role->standSide();
             unschedule(schedule_selector(MoveLayer2::doGoRight));
-            log("移动结束");
+            //log("移动结束");
         }
     });
 
@@ -77,14 +77,14 @@ bool MoveLayer2::init() {
         if(type == ui::Widget::TouchEventType::BEGAN) {
             //role->setFlippedX(true);
             role->walkDown();
-            log("开始移动");
+            //log("开始移动");
             schedule(schedule_selector(MoveLayer2::doGoDown));
         } else if(type == ui::Widget::TouchEventType::MOVED) {
-            log("移动中");
+            //log("移动中");
         } else if(type == ui::Widget::TouchEventType::ENDED) {
             role->standFront();
             unschedule(schedule_selector(MoveLayer2::doGoDown));
-            log("移动结束");
+            //log("移动结束");
         }
     });
     return true;
@@ -94,28 +94,28 @@ void MoveLayer2::doGoLeft(float t) {
     Size winSize = Director::getInstance()->getWinSize();
     Sprite* map = static_cast<Sprite*>(this->getParent()->getChildByName("mainLayer")->getChildByName("map"));
     RoleSprite* role = static_cast<RoleSprite*>(map->getChildByName("role-11"));
-    log("角色zOrder=%d", role->getLocalZOrder());
+    //log("角色zOrder=%d", role->getLocalZOrder());
     Vector<Node*> nodes = map->getChildren();
     bool stop = false;
     for(Vector<Node*>::iterator iter = nodes.begin(); iter != nodes.end(); iter ++) {
         Node* node = *iter;
-        log("当前物体为：%s", node->getName().c_str());
+        //log("当前物体为：%s", node->getName().c_str());
         if(node->getName() == role->getName()){
             continue;
         }
-        log("判断物体与角色是否相交");
+        //log("判断物体与角色是否相交");
         Node* building = node->getChildByName("building");
         Node* mask = node->getChildByName("mask");
         if(mask == nullptr) {
-            log("物体无遮罩区域");
+            //log("物体无遮罩区域");
         }
         if(building) {
             float buildingX = building->getPosition().x;
             float buildingY = building->getPosition().y;
             float buildingPosX = node->getPosition().x-(node->getContentSize().width/2-buildingX);
             float buildingPosY = node->getPosition().y-(node->getContentSize().height/2-buildingY);
-            log("================打印建筑位置信息===============");
-            log("node.size.width/2=%f, node.x=%f, node.size.height/2=%f,"
+            //log("================打印建筑位置信息===============");
+            /*log("node.size.width/2=%f, node.x=%f, node.size.height/2=%f,"
                         " node.y=%f, buildingX=%f, buildingY=%f, buildingPosX=%f, buildingPosY=%f"
                     , node->getContentSize().width/2, node->getPosition().x, node->getContentSize().height/2, node->getPosition().y
                     , buildingX, buildingY, buildingPosX, buildingPosY);
@@ -123,24 +123,24 @@ void MoveLayer2::doGoLeft(float t) {
                 buildingPosX-building->getContentSize().width/2,
                 buildingPosY-building->getContentSize().height/2,
                 building->getContentSize().width,
-                building->getContentSize().height);
+                building->getContentSize().height);*/
             Rect buildingRect(buildingPosX-building->getContentSize().width/2,
                               buildingPosY-building->getContentSize().height/2,
                               building->getContentSize().width,
                               building->getContentSize().height);
-            log("建筑的位置为：x=%f, y=%f, x2=%f, y2=%f",
+            /*log("建筑的位置为：x=%f, y=%f, x2=%f, y2=%f",
                 buildingRect.getMinX(), buildingRect.getMinY(), buildingRect.getMaxX(), buildingRect.getMaxY());
             log("角色的位置为：x=%f, y=%f, x2=%f, y2=%f", role->getBoundingBox().getMinX()
                     , role->getBoundingBox().getMinY(), role->getBoundingBox().getMaxX()
-                    , role->getBoundingBox().getMaxY());
+                    , role->getBoundingBox().getMaxY());*/
             if(buildingRect.intersectsRect(role->getBoundingBox())
                     && buildingRect.getMinX() < role->getBoundingBox().getMaxX() - 5) {
-                log("物体与不可碰撞区域相交");
+                //log("物体与不可碰撞区域相交");
                 stop = true;
                 break;
             }
         } else {
-            log("物体最小x=%f, 角色最大x=%f", node->getBoundingBox().getMinX(), role->getBoundingBox().getMaxX() - 5);
+            //log("物体最小x=%f, 角色最大x=%f", node->getBoundingBox().getMinX(), role->getBoundingBox().getMaxX() - 5);
             if(node->getBoundingBox().intersectsRect(role->getBoundingBox())
                && node->getBoundingBox().getMinX() < role->getBoundingBox().getMaxX() - 5) {
                 stop = true;
@@ -152,7 +152,7 @@ void MoveLayer2::doGoLeft(float t) {
             float maskY = mask->getPosition().y;
             float maskPosX = node->getPosition().x-(node->getContentSize().width/2-maskX);
             float maskPosY = node->getPosition().y-(node->getContentSize().height/2-maskY);
-            log("================打印遮罩位置信息===============");
+            /*log("================打印遮罩位置信息===============");
             log("node.size.width/2=%f, node.x=%f, node.size.height/2=%f,"
                         " node.y=%f, maskX=%f, maskY=%f, maskPosX=%f, maskPosY=%f"
                     , node->getContentSize().width/2, node->getPosition().x, node->getContentSize().height/2, node->getPosition().y
@@ -161,30 +161,30 @@ void MoveLayer2::doGoLeft(float t) {
                 maskPosX-mask->getContentSize().width/2,
                 maskPosY-mask->getContentSize().height/2,
                 mask->getContentSize().width,
-                mask->getContentSize().height);
+                mask->getContentSize().height);*/
             Rect maskRect(maskPosX-mask->getContentSize().width/2,
                           maskPosY-mask->getContentSize().height/2,
                           mask->getContentSize().width,
                           mask->getContentSize().height);
-            log("遮罩的位置为：x=%f, y=%f, x2=%f, y2=%f",
+            /*log("遮罩的位置为：x=%f, y=%f, x2=%f, y2=%f",
                 maskRect.getMinX(), maskRect.getMinY(), maskRect.getMaxX(), maskRect.getMaxY());
             log("角色的位置为：x=%f, y=%f, x2=%f, y2=%f", role->getBoundingBox().getMinX()
                     , role->getBoundingBox().getMinY(), role->getBoundingBox().getMaxX()
-                    , role->getBoundingBox().getMaxY());
+                    , role->getBoundingBox().getMaxY());*/
             if(maskRect.intersectsRect(role->getBoundingBox())) {
-                log("物体与遮罩区域相交");
+                //log("物体与遮罩区域相交");
                 //mask->setLocalZOrder(role->getLocalZOrder()+1);
                 map->reorderChild(node, role->getLocalZOrder()+1);
                 break;
             } else {
-                log("物体zOrder=%d", node->getLocalZOrder());
+                //log("物体zOrder=%d", node->getLocalZOrder());
                 map->reorderChild(node, role->getLocalZOrder()-1);
-                log("排序后物体zOrder=%d", node->getLocalZOrder());
+                //log("排序后物体zOrder=%d", node->getLocalZOrder());
             }
         } else {
-            log("物体zOrder=%d", node->getLocalZOrder());
+            //log("物体zOrder=%d", node->getLocalZOrder());
             map->reorderChild(node, role->getLocalZOrder()-1);
-            log("排序后物体zOrder=%d", node->getLocalZOrder());
+            //log("排序后物体zOrder=%d", node->getLocalZOrder());
         }
         /*if(role->getBoundingBox().intersectsRect(node->getBoundingBox())) {
 
@@ -210,27 +210,27 @@ void MoveLayer2::doGoRight(float t) {
     Size winSize = Director::getInstance()->getWinSize();
     Sprite* map = static_cast<Sprite*>(this->getParent()->getChildByName("mainLayer")->getChildByName("map"));
     RoleSprite* role = static_cast<RoleSprite*>(map->getChildByName("role-11"));
-    log("角色zOrder=%d", role->getLocalZOrder());
+    //log("角色zOrder=%d", role->getLocalZOrder());
     Vector<Node*> nodes = map->getChildren();
     bool stop = false;
     for(Vector<Node*>::iterator iter = nodes.begin(); iter != nodes.end(); iter ++) {
         Node* node = *iter;
-        log("当前物体为：%s", node->getName().c_str());
+        //log("当前物体为：%s", node->getName().c_str());
         if(node->getName() == role->getName()){
             continue;
         }
-        log("判断物体与角色是否相交");
+        //log("判断物体与角色是否相交");
         Node* building = node->getChildByName("building");
         Node* mask = node->getChildByName("mask");
         if(mask == nullptr) {
-            log("物体无遮罩区域");
+            //log("物体无遮罩区域");
         }
         if(building) {
             float buildingX = building->getPosition().x;
             float buildingY = building->getPosition().y;
             float buildingPosX = node->getPosition().x-(node->getContentSize().width/2-buildingX);
             float buildingPosY = node->getPosition().y-(node->getContentSize().height/2-buildingY);
-            log("================打印建筑位置信息===============");
+            /*log("================打印建筑位置信息===============");
             log("node.size.width/2=%f, node.x=%f, node.size.height/2=%f,"
                         " node.y=%f, buildingX=%f, buildingY=%f, buildingPosX=%f, buildingPosY=%f"
                     , node->getContentSize().width/2, node->getPosition().x, node->getContentSize().height/2, node->getPosition().y
@@ -239,19 +239,19 @@ void MoveLayer2::doGoRight(float t) {
                 buildingPosX-building->getContentSize().width/2,
                 buildingPosY-building->getContentSize().height/2,
                 building->getContentSize().width,
-                building->getContentSize().height);
+                building->getContentSize().height);*/
             Rect buildingRect(buildingPosX-building->getContentSize().width/2,
                               buildingPosY-building->getContentSize().height/2,
                               building->getContentSize().width,
                               building->getContentSize().height);
-            log("建筑的位置为：x=%f, y=%f, x2=%f, y2=%f",
+            /*log("建筑的位置为：x=%f, y=%f, x2=%f, y2=%f",
                 buildingRect.getMinX(), buildingRect.getMinY(), buildingRect.getMaxX(), buildingRect.getMaxY());
             log("角色的位置为：x=%f, y=%f, x2=%f, y2=%f", role->getBoundingBox().getMinX()
                     , role->getBoundingBox().getMinY(), role->getBoundingBox().getMaxX()
-                    , role->getBoundingBox().getMaxY());
+                    , role->getBoundingBox().getMaxY());*/
             if(buildingRect.intersectsRect(role->getBoundingBox())
                     && buildingRect.getMaxX() > role->getBoundingBox().getMinX() + 5) {
-                log("物体与不可碰撞区域相交");
+                //log("物体与不可碰撞区域相交");
                 stop = true;
                 break;
             }
@@ -267,7 +267,7 @@ void MoveLayer2::doGoRight(float t) {
             float maskY = mask->getPosition().y;
             float maskPosX = node->getPosition().x-(node->getContentSize().width/2-maskX);
             float maskPosY = node->getPosition().y-(node->getContentSize().height/2-maskY);
-            log("================打印遮罩位置信息===============");
+            /*log("================打印遮罩位置信息===============");
             log("node.size.width/2=%f, node.x=%f, node.size.height/2=%f,"
                         " node.y=%f, maskX=%f, maskY=%f, maskPosX=%f, maskPosY=%f"
                     , node->getContentSize().width/2, node->getPosition().x, node->getContentSize().height/2, node->getPosition().y
@@ -276,30 +276,30 @@ void MoveLayer2::doGoRight(float t) {
                 maskPosX-mask->getContentSize().width/2,
                 maskPosY-mask->getContentSize().height/2,
                 mask->getContentSize().width,
-                mask->getContentSize().height);
+                mask->getContentSize().height);*/
             Rect maskRect(maskPosX-mask->getContentSize().width/2,
                           maskPosY-mask->getContentSize().height/2,
                           mask->getContentSize().width,
                           mask->getContentSize().height);
-            log("遮罩的位置为：x=%f, y=%f, x2=%f, y2=%f",
+            /*log("遮罩的位置为：x=%f, y=%f, x2=%f, y2=%f",
                 maskRect.getMinX(), maskRect.getMinY(), maskRect.getMaxX(), maskRect.getMaxY());
             log("角色的位置为：x=%f, y=%f, x2=%f, y2=%f", role->getBoundingBox().getMinX()
                     , role->getBoundingBox().getMinY(), role->getBoundingBox().getMaxX()
-                    , role->getBoundingBox().getMaxY());
+                    , role->getBoundingBox().getMaxY());*/
             if(maskRect.intersectsRect(role->getBoundingBox())) {
-                log("物体与遮罩区域相交");
+                //log("物体与遮罩区域相交");
                 //mask->setLocalZOrder(role->getLocalZOrder()+1);
                 map->reorderChild(node, role->getLocalZOrder()+1);
                 break;
             } else {
-                log("物体zOrder=%d", node->getLocalZOrder());
+                //log("物体zOrder=%d", node->getLocalZOrder());
                 map->reorderChild(node, role->getLocalZOrder()-1);
-                log("排序后物体zOrder=%d", node->getLocalZOrder());
+                //log("排序后物体zOrder=%d", node->getLocalZOrder());
             }
         } else {
-            log("物体zOrder=%d", node->getLocalZOrder());
+            //log("物体zOrder=%d", node->getLocalZOrder());
             map->reorderChild(node, role->getLocalZOrder()-1);
-            log("排序后物体zOrder=%d", node->getLocalZOrder());
+            //log("排序后物体zOrder=%d", node->getLocalZOrder());
         }
         /*if(role->getBoundingBox().intersectsRect(node->getBoundingBox())) {
 
@@ -329,27 +329,27 @@ void MoveLayer2::doGoUp(float t) {
     Size winSize = Director::getInstance()->getWinSize();
     Sprite* map = static_cast<Sprite*>(this->getParent()->getChildByName("mainLayer")->getChildByName("map"));
     RoleSprite* role = static_cast<RoleSprite*>(map->getChildByName("role-11"));
-    log("角色zOrder=%d", role->getLocalZOrder());
+    //log("角色zOrder=%d", role->getLocalZOrder());
     Vector<Node*> nodes = map->getChildren();
     bool stop = false;
     for(Vector<Node*>::iterator iter = nodes.begin(); iter != nodes.end(); iter ++) {
         Node* node = *iter;
-        log("当前物体为：%s", node->getName().c_str());
+        //log("当前物体为：%s", node->getName().c_str());
         if(node->getName() == role->getName()){
             continue;
         }
-        log("判断物体与角色是否相交");
+        //log("判断物体与角色是否相交");
         Node* building = node->getChildByName("building");
         Node* mask = node->getChildByName("mask");
         if(mask == nullptr) {
-            log("物体无遮罩区域");
+            //log("物体无遮罩区域");
         }
         if(building) {
             float buildingX = building->getPosition().x;
             float buildingY = building->getPosition().y;
             float buildingPosX = node->getPosition().x-(node->getContentSize().width/2-buildingX);
             float buildingPosY = node->getPosition().y-(node->getContentSize().height/2-buildingY);
-            log("================打印建筑位置信息===============");
+            /*log("================打印建筑位置信息===============");
             log("node.size.width/2=%f, node.x=%f, node.size.height/2=%f,"
                         " node.y=%f, buildingX=%f, buildingY=%f, buildingPosX=%f, buildingPosY=%f"
                     , node->getContentSize().width/2, node->getPosition().x, node->getContentSize().height/2, node->getPosition().y
@@ -358,19 +358,19 @@ void MoveLayer2::doGoUp(float t) {
                 buildingPosX-building->getContentSize().width/2,
                 buildingPosY-building->getContentSize().height/2,
                 building->getContentSize().width,
-                building->getContentSize().height);
+                building->getContentSize().height);*/
             Rect buildingRect(buildingPosX-building->getContentSize().width/2,
                               buildingPosY-building->getContentSize().height/2,
                               building->getContentSize().width,
                               building->getContentSize().height);
-            log("建筑的位置为：x=%f, y=%f, x2=%f, y2=%f",
+            /*log("建筑的位置为：x=%f, y=%f, x2=%f, y2=%f",
                 buildingRect.getMinX(), buildingRect.getMinY(), buildingRect.getMaxX(), buildingRect.getMaxY());
             log("角色的位置为：x=%f, y=%f, x2=%f, y2=%f", role->getBoundingBox().getMinX()
                     , role->getBoundingBox().getMinY(), role->getBoundingBox().getMaxX()
-                    , role->getBoundingBox().getMaxY());
+                    , role->getBoundingBox().getMaxY());*/
             if(buildingRect.intersectsRect(role->getBoundingBox())
                     && buildingRect.getMaxY() > role->getBoundingBox().getMinY() + 5) {
-                log("物体与不可碰撞区域相交");
+                //log("物体与不可碰撞区域相交");
                 stop = true;
                 break;
             }
@@ -386,7 +386,7 @@ void MoveLayer2::doGoUp(float t) {
             float maskY = mask->getPosition().y;
             float maskPosX = node->getPosition().x-(node->getContentSize().width/2-maskX);
             float maskPosY = node->getPosition().y-(node->getContentSize().height/2-maskY);
-            log("================打印遮罩位置信息===============");
+            /*log("================打印遮罩位置信息===============");
             log("node.size.width/2=%f, node.x=%f, node.size.height/2=%f,"
                         " node.y=%f, maskX=%f, maskY=%f, maskPosX=%f, maskPosY=%f"
                     , node->getContentSize().width/2, node->getPosition().x, node->getContentSize().height/2, node->getPosition().y
@@ -395,30 +395,30 @@ void MoveLayer2::doGoUp(float t) {
                 maskPosX-mask->getContentSize().width/2,
                 maskPosY-mask->getContentSize().height/2,
                 mask->getContentSize().width,
-                mask->getContentSize().height);
+                mask->getContentSize().height);*/
             Rect maskRect(maskPosX-mask->getContentSize().width/2,
                           maskPosY-mask->getContentSize().height/2,
                           mask->getContentSize().width,
                           mask->getContentSize().height);
-            log("遮罩的位置为：x=%f, y=%f, x2=%f, y2=%f",
+            /*log("遮罩的位置为：x=%f, y=%f, x2=%f, y2=%f",
                 maskRect.getMinX(), maskRect.getMinY(), maskRect.getMaxX(), maskRect.getMaxY());
             log("角色的位置为：x=%f, y=%f, x2=%f, y2=%f", role->getBoundingBox().getMinX()
                     , role->getBoundingBox().getMinY(), role->getBoundingBox().getMaxX()
-                    , role->getBoundingBox().getMaxY());
+                    , role->getBoundingBox().getMaxY());*/
             if(maskRect.intersectsRect(role->getBoundingBox())) {
-                log("物体与遮罩区域相交");
+                //log("物体与遮罩区域相交");
                 //mask->setLocalZOrder(role->getLocalZOrder()+1);
                 map->reorderChild(node, role->getLocalZOrder()+1);
                 break;
             } else {
-                log("物体zOrder=%d", node->getLocalZOrder());
+                //log("物体zOrder=%d", node->getLocalZOrder());
                 map->reorderChild(node, role->getLocalZOrder()-1);
-                log("排序后物体zOrder=%d", node->getLocalZOrder());
+                //log("排序后物体zOrder=%d", node->getLocalZOrder());
             }
         } else {
-            log("物体zOrder=%d", node->getLocalZOrder());
+            //log("物体zOrder=%d", node->getLocalZOrder());
             map->reorderChild(node, role->getLocalZOrder()-1);
-            log("排序后物体zOrder=%d", node->getLocalZOrder());
+            //log("排序后物体zOrder=%d", node->getLocalZOrder());
         }
         /*if(role->getBoundingBox().intersectsRect(node->getBoundingBox())) {
 
@@ -446,27 +446,27 @@ void MoveLayer2::doGoDown(float t) {
     Size winSize = Director::getInstance()->getWinSize();
     Sprite* map = static_cast<Sprite*>(this->getParent()->getChildByName("mainLayer")->getChildByName("map"));
     RoleSprite* role = static_cast<RoleSprite*>(map->getChildByName("role-11"));
-    log("角色zOrder=%d", role->getLocalZOrder());
+    //log("角色zOrder=%d", role->getLocalZOrder());
     Vector<Node*> nodes = map->getChildren();
     bool stop = false;
     for(Vector<Node*>::iterator iter = nodes.begin(); iter != nodes.end(); iter ++) {
         Node* node = *iter;
-        log("当前物体为：%s", node->getName().c_str());
+        //log("当前物体为：%s", node->getName().c_str());
         if(node->getName() == role->getName()){
             continue;
         }
-        log("判断物体与角色是否相交");
+        //log("判断物体与角色是否相交");
         Node* building = node->getChildByName("building");
         Node* mask = node->getChildByName("mask");
         if(mask == nullptr) {
-            log("物体无遮罩区域");
+            //log("物体无遮罩区域");
         }
         if(building) {
             float buildingX = building->getPosition().x;
             float buildingY = building->getPosition().y;
             float buildingPosX = node->getPosition().x-(node->getContentSize().width/2-buildingX);
             float buildingPosY = node->getPosition().y-(node->getContentSize().height/2-buildingY);
-            log("================打印建筑位置信息===============");
+            /*log("================打印建筑位置信息===============");
             log("node.size.width/2=%f, node.x=%f, node.size.height/2=%f,"
                         " node.y=%f, buildingX=%f, buildingY=%f, buildingPosX=%f, buildingPosY=%f"
                     , node->getContentSize().width/2, node->getPosition().x, node->getContentSize().height/2, node->getPosition().y
@@ -475,19 +475,19 @@ void MoveLayer2::doGoDown(float t) {
                 buildingPosX-building->getContentSize().width/2,
                 buildingPosY-building->getContentSize().height/2,
                 building->getContentSize().width,
-                building->getContentSize().height);
+                building->getContentSize().height);*/
             Rect buildingRect(buildingPosX-building->getContentSize().width/2,
                               buildingPosY-building->getContentSize().height/2,
                               building->getContentSize().width,
                               building->getContentSize().height);
-            log("建筑的位置为：x=%f, y=%f, x2=%f, y2=%f",
+            /*log("建筑的位置为：x=%f, y=%f, x2=%f, y2=%f",
                 buildingRect.getMinX(), buildingRect.getMinY(), buildingRect.getMaxX(), buildingRect.getMaxY());
             log("角色的位置为：x=%f, y=%f, x2=%f, y2=%f", role->getBoundingBox().getMinX()
                     , role->getBoundingBox().getMinY(), role->getBoundingBox().getMaxX()
-                    , role->getBoundingBox().getMaxY());
+                    , role->getBoundingBox().getMaxY());*/
             if(buildingRect.intersectsRect(role->getBoundingBox())
                     && buildingRect.getMinY() < role->getBoundingBox().getMaxY() - 5) {
-                log("物体与不可碰撞区域相交");
+                //log("物体与不可碰撞区域相交");
                 stop = true;
                 break;
             }
@@ -503,7 +503,7 @@ void MoveLayer2::doGoDown(float t) {
             float maskY = mask->getPosition().y;
             float maskPosX = node->getPosition().x-(node->getContentSize().width/2-maskX);
             float maskPosY = node->getPosition().y-(node->getContentSize().height/2-maskY);
-            log("================打印遮罩位置信息===============");
+            /*log("================打印遮罩位置信息===============");
             log("node.size.width/2=%f, node.x=%f, node.size.height/2=%f,"
                         " node.y=%f, maskX=%f, maskY=%f, maskPosX=%f, maskPosY=%f"
                     , node->getContentSize().width/2, node->getPosition().x, node->getContentSize().height/2, node->getPosition().y
@@ -512,30 +512,30 @@ void MoveLayer2::doGoDown(float t) {
                 maskPosX-mask->getContentSize().width/2,
                 maskPosY-mask->getContentSize().height/2,
                 mask->getContentSize().width,
-                mask->getContentSize().height);
+                mask->getContentSize().height);*/
             Rect maskRect(maskPosX-mask->getContentSize().width/2,
                           maskPosY-mask->getContentSize().height/2,
                           mask->getContentSize().width,
                           mask->getContentSize().height);
-            log("遮罩的位置为：x=%f, y=%f, x2=%f, y2=%f",
+            /*log("遮罩的位置为：x=%f, y=%f, x2=%f, y2=%f",
                 maskRect.getMinX(), maskRect.getMinY(), maskRect.getMaxX(), maskRect.getMaxY());
             log("角色的位置为：x=%f, y=%f, x2=%f, y2=%f", role->getBoundingBox().getMinX()
                     , role->getBoundingBox().getMinY(), role->getBoundingBox().getMaxX()
-                    , role->getBoundingBox().getMaxY());
+                    , role->getBoundingBox().getMaxY());*/
             if(maskRect.intersectsRect(role->getBoundingBox())) {
-                log("物体与遮罩区域相交");
+                //log("物体与遮罩区域相交");
                 //mask->setLocalZOrder(role->getLocalZOrder()+1);
                 map->reorderChild(node, role->getLocalZOrder()+1);
                 break;
             } else {
-                log("物体zOrder=%d", node->getLocalZOrder());
+                //log("物体zOrder=%d", node->getLocalZOrder());
                 map->reorderChild(node, role->getLocalZOrder()-1);
-                log("排序后物体zOrder=%d", node->getLocalZOrder());
+                //log("排序后物体zOrder=%d", node->getLocalZOrder());
             }
         } else {
-            log("物体zOrder=%d", node->getLocalZOrder());
+            //log("物体zOrder=%d", node->getLocalZOrder());
             map->reorderChild(node, role->getLocalZOrder()-1);
-            log("排序后物体zOrder=%d", node->getLocalZOrder());
+            //log("排序后物体zOrder=%d", node->getLocalZOrder());
         }
         /*if(role->getBoundingBox().intersectsRect(node->getBoundingBox())) {
 
@@ -558,30 +558,30 @@ void MoveLayer2::doGoDown(float t) {
 }
 
 Vec2 MoveLayer2::parseSysCoordToMapCoord(Vec2 vec2) {
-    log("物体原坐标为：x=%f, y=%f", vec2.x, vec2.y);
+    //log("物体原坐标为：x=%f, y=%f", vec2.x, vec2.y);
     Sprite* map = static_cast<Sprite*>(this->getParent()->getChildByName("mainLayer")->getChildByName("map"));
     Size mapSize = map->getContentSize();
     Vec2 mapPosition = map->getPosition();
-    log("地图中心宽为：mapSize.width/2=%f, 物体相对地图的坐标为：vec2.x=%f", mapSize.width/2, vec2.x);
+    //log("地图中心宽为：mapSize.width/2=%f, 物体相对地图的坐标为：vec2.x=%f", mapSize.width/2, vec2.x);
     float xDiff = mapSize.width/2-vec2.x;
-    log("地图中心到物体坐标的水平距离为：%f", xDiff);
+    //log("地图中心到物体坐标的水平距离为：%f", xDiff);
     float x = mapPosition.x - xDiff;
-    log("得到物体相对于屏幕的x坐标为：%f", x);
+    //log("得到物体相对于屏幕的x坐标为：%f", x);
 
-    log("地图中心宽为：mapSize.height/2=%f, 物体相对地图的坐标为：vec2.y=%f", mapSize.height/2, vec2.y);
+    //log("地图中心宽为：mapSize.height/2=%f, 物体相对地图的坐标为：vec2.y=%f", mapSize.height/2, vec2.y);
     float yDiff = mapSize.height/2-vec2.y;
-    log("地图中心到物体坐标的垂直距离为：%f", yDiff);
+    //log("地图中心到物体坐标的垂直距离为：%f", yDiff);
     float y = mapPosition.y - yDiff;
-    log("得到物体相对于屏幕的y坐标为：%f", y);
+    //log("得到物体相对于屏幕的y坐标为：%f", y);
     return Vec2(x, y);
 }
 
 Size MoveLayer2::moveSize(Vec2 vec2) {
     Size winSize = Director::getInstance()->getWinSize();
     Vec2 pos = this->parseSysCoordToMapCoord(vec2);
-    log("得到的系统坐标为：x=%f, y=%f", pos.x, pos.y);
+    //log("得到的系统坐标为：x=%f, y=%f", pos.x, pos.y);
     float width = pos.x-winSize.width/2;
     float height = pos.y-winSize.height/2;
-    log("需要移动的距离为：width=%f, height=%f", width, height);
+    //log("需要移动的距离为：width=%f, height=%f", width, height);
     return Size(width, height);
 }

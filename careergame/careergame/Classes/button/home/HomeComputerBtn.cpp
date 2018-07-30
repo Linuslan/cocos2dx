@@ -41,7 +41,7 @@ void HomeComputerBtn::doClick(Ref* ref) {
     dialog->addChild(workBtn);
     workBtn->setPosition(winSize/2);
     workBtn->setLocalZOrder(12);*/
-    RoleSprite* sprite = static_cast<RoleSprite*>(layer->getChildByName("role-11"));
+    RoleSprite* sprite = static_cast<RoleSprite*>(map->getChildByName("role-11"));
     sprite->setTargetObj(this);
 
     DialogLayer* dialog = DialogLayer::create();
@@ -104,7 +104,7 @@ void HomeComputerBtn::doClick(Ref* ref) {
         listView->pushBackCustomItem(item);
     }
     dialog->addChild(listView);
-    layer->getParent()->addChild(dialog);
+    layer->addChild(dialog);
     log("点击电脑结束");
 }
 
