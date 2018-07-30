@@ -118,9 +118,11 @@ void GameHeaderLayer::showTaskList(Ref* ref) {
         label->setString(name);
         ui::Button* button = static_cast<ui::Button*>(item->getChildByName("btn"));
         button->addClickEventListener([this, pTask, dialog](Ref* ref){
+            log("领取系统任务id为：%d，任务名称为：%s", pTask->getId(), pTask->getName());
             Document doc;
             RoleTaskListService* roleTaskListService = new RoleTaskListService();
             RoleTask* roleTask = roleTaskListService->createRoleTask(pTask);
+            log("领取系统任务，创建的角色任务id为：%d, 名称为：%s, taskId为：%d", roleTask->getId(), roleTask->getName(), roleTask->getTaskId());
             roleTaskListService->addTask(roleTask);
             //更新任务为已领取
             pTask->setStatus(1);

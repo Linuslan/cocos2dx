@@ -14,7 +14,7 @@ std::string RoleTaskListConfig::init() {
 }
 
 std::string RoleTaskListConfig::getData() {
-    std::string data = UserDefault::getInstance()->getStringForKey("TaskListConfig");
+    std::string data = UserDefault::getInstance()->getStringForKey("RoleTaskListConfig");
     if(data.empty()) {
         data = RoleTaskListConfig::init();
     }

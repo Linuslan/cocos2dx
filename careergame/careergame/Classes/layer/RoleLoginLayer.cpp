@@ -94,7 +94,7 @@ bool RoleLoginLayer::init() {
         }), nullptr);
         btn->runAction(sequence);
         log("login...%d", btn->getTag());
-        //this->threadStart();
+        this->threadStart();
     });
     RoleJobTaskConfig::getTaskList();
     return true;

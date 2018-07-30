@@ -102,6 +102,7 @@ std::vector<Task*>* TaskListService::getTaskList() {
 
 bool TaskListService::updateTask(Task *task) {
     std::string taskList = TaskListConfig::getData();
+    log("获取到的系统任务为：%s", taskList.c_str());
     Document doc;
     doc.Parse(taskList.c_str());
     rapidjson::Value newTask(kObjectType);
@@ -124,6 +125,7 @@ bool TaskListService::updateTask(Task *task) {
     for(rapidjson::Value::ValueIterator iter = doc[level.c_str()].GetArray().Begin(); iter != doc[level.c_str()].GetArray().End(); iter ++) {
         rapidjson::Value value = (*iter).GetObject();
         if(value["id"].GetInt() == task->getId()) {
+            log("系统任务id%d和玩家领取的任务id%d相同，删除该系统任务id对应的任务，重新新增", value["id"].GetInt(), task->getId());
             doc[level.c_str()].GetArray().Erase(iter);
             break;
         }
@@ -132,6 +134,6 @@ bool TaskListService::updateTask(Task *task) {
     StringBuffer buffer;
     rapidjson::Writer<StringBuffer> writer(buffer);
     doc.Accept(writer);
-    log("任务更新后的json：%s", buffer.GetString());
+    log("系统任务更新后的json：%s", buffer.GetString());
     TaskListConfig::updateTaskList(buffer.GetString());
 }

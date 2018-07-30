@@ -31,7 +31,12 @@ RoleTask* RoleTaskListService::createRoleTask(Task *task) {
 void RoleTaskListService::addTask(RoleTask *task) {
     std::string taskList = RoleTaskListConfig::getData();
     Document doc;
-    doc.Parse(taskList.c_str());
+    if(!taskList.empty()) {
+        doc.Parse(taskList.c_str());
+    } else {
+        doc.SetObject();
+    }
+
     rapidjson::Value newTask(kObjectType);
     newTask.SetObject();
     newTask.AddMember(rapidjson::Value("id", doc.GetAllocator()), rapidjson::Value(task->getId()), doc.GetAllocator());
@@ -46,7 +51,7 @@ void RoleTaskListService::addTask(RoleTask *task) {
     newTask.AddMember(rapidjson::Value("taskId", doc.GetAllocator()), rapidjson::Value(task->getId()), doc.GetAllocator());
     newTask.AddMember(rapidjson::Value("difficultyLevel", doc.GetAllocator()), rapidjson::Value(task->getDifficultyLevel()), doc.GetAllocator());
     std::string level = StringUtils::format("%d", task->getLevel());
-    if(doc[level.c_str()].IsNull()) {
+    if(!doc.HasMember(level.c_str())) {
         rapidjson::Value levelList(kArrayType);
         doc.AddMember(rapidjson::Value(level.c_str(), doc.GetAllocator()), levelList, doc.GetAllocator());
     }
