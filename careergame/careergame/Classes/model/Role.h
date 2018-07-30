@@ -21,9 +21,9 @@ private:
     int type;   //玩家角色的职业类型，0：无职业；1：程序员；2：画家；
 public:
     int getLevel() {return level;}
-    int getHp() {return hp;}
-    int getMp() {return mp;}
-    int getExp() {return exp;}
+    float getHp() {return hp;}
+    float getMp() {return mp;}
+    float getExp() {return exp;}
     void setLevel(int level) {this->level=level;}
     void setHp(float hp) {this->hp = hp;}
     void setMp(float mp) {this->mp = mp;}
@@ -41,7 +41,7 @@ public:
     void setType(int type) {this->type = type;}
     int getType() {return this->type;}
     void setPower(float power) {this->power = power;}
-    int getPower() {return this->power;}
+    float getPower() {return this->power;}
     void powerIncrease(float power) {this->power = this->power + power;}
     void powerReduce(float power) {this->power = this->power - power;}
 };

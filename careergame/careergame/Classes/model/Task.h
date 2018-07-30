@@ -20,6 +20,7 @@ private:
     int status = 0;
     int difficultyLevel = 0;
 public:
+    ~Task();
     void setId(int id) {this->id = id;}
     int getId() {return this->id;}
     void setName(char* name) {this->name = name;}

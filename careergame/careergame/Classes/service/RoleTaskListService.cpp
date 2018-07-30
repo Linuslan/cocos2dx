@@ -26,6 +26,7 @@ RoleTask* RoleTaskListService::createRoleTask(Task *task) {
     roleTask->setLevel(task->getLevel());
     roleTask->setTaskId(task->getId());
     roleTask->setDifficultyLevel(task->getDifficultyLevel());
+    roleTask->setTimeSpend(0);
     return roleTask;
 }
 void RoleTaskListService::addTask(RoleTask *task) {
@@ -50,6 +51,7 @@ void RoleTaskListService::addTask(RoleTask *task) {
     newTask.AddMember(rapidjson::Value("status", doc.GetAllocator()), rapidjson::Value(task->getStatus()), doc.GetAllocator());
     newTask.AddMember(rapidjson::Value("taskId", doc.GetAllocator()), rapidjson::Value(task->getId()), doc.GetAllocator());
     newTask.AddMember(rapidjson::Value("difficultyLevel", doc.GetAllocator()), rapidjson::Value(task->getDifficultyLevel()), doc.GetAllocator());
+    newTask.AddMember(rapidjson::Value("timeSpend", doc.GetAllocator()), rapidjson::Value(task->getTimeSpend()), doc.GetAllocator());
     std::string level = StringUtils::format("%d", task->getLevel());
     if(!doc.HasMember(level.c_str())) {
         rapidjson::Value levelList(kArrayType);
@@ -95,6 +97,11 @@ std::vector<RoleTask*>* RoleTaskListService::getTaskList() {
             task->setId(taskJson["id"].GetInt());
             task->setTaskId(taskJson["taskId"].GetInt());
             task->setDifficultyLevel(taskJson["difficultyLevel"].GetInt());
+            int timeSpend = 0;
+            if(taskJson.HasMember("timeSpend")) {
+                timeSpend = taskJson["timeSpend"].GetInt();
+            }
+            task->setTimeSpend(timeSpend);
             const char* nameCh = taskJson["name"].GetString();
             char* name = new char[strlen(nameCh)+1]();
             strcpy(name, nameCh);
@@ -125,6 +132,7 @@ bool RoleTaskListService::updateTask(RoleTask *task) {
     newTask.AddMember(rapidjson::Value("status", doc.GetAllocator()), rapidjson::Value(task->getStatus()), doc.GetAllocator());
     newTask.AddMember(rapidjson::Value("taskId", doc.GetAllocator()), rapidjson::Value(task->getId()), doc.GetAllocator());
     newTask.AddMember(rapidjson::Value("difficultyLevel", doc.GetAllocator()), rapidjson::Value(task->getDifficultyLevel()), doc.GetAllocator());
+    newTask.AddMember(rapidjson::Value("timeSpend", doc.GetAllocator()), rapidjson::Value(task->getTimeSpend()), doc.GetAllocator());
     std::string level = StringUtils::format("%d", task->getLevel());
     if(doc[level.c_str()].IsNull()) {
         rapidjson::Value levelList(kArrayType);

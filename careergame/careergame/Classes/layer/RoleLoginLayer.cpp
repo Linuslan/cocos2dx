@@ -120,9 +120,9 @@ void* RoleLoginLayer::thread_function(void *arg) {
     while(true) {
         log("===============启动线程================");
         srand(time(nullptr));
-        //int time = rand()%60 + 10;  //生成下次执行该任务的时间间隔
-        //time = time * 60;
-        int time = rand()%10 + 5;  //生成下次执行该任务的时间间隔
+        int time = rand()%60 + 10;  //生成下次执行该任务的时间间隔
+        time = time * 60;
+        //int time = rand()%10 + 5;  //生成下次执行该任务的时间间隔
         log("睡眠时间为：%d", time);
         sleep(time);
         RoleService* roleService = new RoleService();
@@ -203,7 +203,9 @@ void* RoleLoginLayer::thread_function(void *arg) {
         float rateConfig = (rand()%maxConfig + minConfig)/100.0f;  //在最大值和最小值中取一个随机值，得到浮动的值
         //log("最终算出的浮动随机值为：%f", rateConfig);
         char* taskNameArr[]={"第一中学线上教育系统", "XX公司官网开发", "XX公司官网维护", "XX公司OA系统开发", "市第一医院医疗管理系统开发"};
-        char* taskName = taskNameArr[rand()%5+0];
+        char* taskNameTemp = taskNameArr[rand()%5+0];
+        char* taskName = new char[strlen(taskNameTemp) + 1]();
+        strcpy(taskName, taskNameTemp);
         Document levelConfigDoc;
         levelConfigDoc.Parse(levelConfig.c_str());
         int originalMoney = levelConfigDoc["money"].GetInt();
@@ -225,11 +227,13 @@ void* RoleLoginLayer::thread_function(void *arg) {
         task->setStatus(0);
         task->setDifficultyLevel(atoi(difficultyLevel.c_str()));
         TaskListService* taskListService = new TaskListService();
-        //log("开始新增任务");
+        log("开始新增任务");
         taskListService->addTask(task);
-        //log("新增任务成功");
+        log("新增任务成功");
         delete taskListService;
+        log("删除taskListService成功");
         delete task;
+        log("删除task成功");
     }
     return NULL;
 }

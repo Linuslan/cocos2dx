@@ -3,3 +3,6 @@
 //
 
 #include "RoleTask.h"
+RoleTask::~RoleTask() {
+
+}

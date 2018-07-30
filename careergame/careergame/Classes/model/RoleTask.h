@@ -11,9 +11,13 @@
 class RoleTask : public Task {
 private:
     int taskId;
+    int timeSpend=0;
 public:
     void setTaskId(int taskId) {this->taskId = taskId;}
     int getTaskId() {return this->taskId;}
+    void setTimeSpend(int timeSpend) {this->timeSpend = timeSpend;}
+    int getTimeSpend() {return this->timeSpend;}
+    ~RoleTask();
 };
 
 

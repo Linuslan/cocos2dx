@@ -102,6 +102,10 @@ void HomeWorkLayer::update(float t) {
             log("task地址为：%0x", task);
             log("开始计算时间");
             int spendTime = task->getTimeSpend() + 1;
+            if(spendTime >= task->getTime()) {
+                spendTime = task->getTime();
+
+            }
             log("时间加1，得到时间为：%d", spendTime);
             task->setTimeSpend(spendTime);
             log("增加时间成功：%d", spendTime);

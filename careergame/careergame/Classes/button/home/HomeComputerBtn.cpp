@@ -2,6 +2,7 @@
 // Created by LinusLan on 2018/6/20.
 //
 
+#include <Classes/config/RoleLevelConfig.h>
 #include "HomeComputerBtn.h"
 #include "HomeLayer.h"
 #include "HomeScene.h"
@@ -93,14 +94,21 @@ void HomeComputerBtn::doClick(Ref* ref) {
         ui::Text* label = static_cast<ui::Text*>(item->getChildByName("label"));
         label->setString(name.c_str());
         ui::Button* button = static_cast<ui::Button*>(item->getChildByName("btn"));
-        button->addClickEventListener([this, pTask, dialog, sprite](Ref* ref){
-            Document doc;
-            log("点击了按钮开始工作, pvalue地址为：%0x, id=%d", pTask, pTask->getId());
-            this->task = pTask;
-            dialog->removeAllChildrenWithCleanup(true);
-            dialog->removeFromParent();
-            sprite->setVisible(false);
-        });
+        if(pTask->getStatus() == 1) {
+            button->setVisible(false);
+        } else {
+            button->addClickEventListener([this, pTask, dialog, sprite](Ref* ref){
+                Document doc;
+                log("点击了按钮开始工作, pvalue地址为：%0x, id=%d", pTask, pTask->getId());
+                this->task = pTask;
+                this->isWork = true;
+                dialog->removeAllChildrenWithCleanup(true);
+                dialog->removeFromParent();
+                sprite->setVisible(false);
+                schedule(schedule_selector(HomeComputerBtn::update), 60.0);
+                sprite->unscheduleAllCallbacks();
+            });
+        }
         listView->pushBackCustomItem(item);
     }
     dialog->addChild(listView);
@@ -118,20 +126,44 @@ void HomeComputerBtn::callback() {
  * @param t
  */
 void HomeComputerBtn::update(float t) {
-    log("准备开始执行任务");
-    if(nullptr != task) {
-        log("开始执行工作任务");
+    log("HomeComputerBtn 准备开始执行工作任务");
+    if(nullptr != task && isWork) {
+        log("HomeComputerBtn 开始执行工作任务");
         Role* role = this->roleService->loadRoleById(1);
-        if(role->getMp() >= 20) {
-            role->mpReduce(20); //一分钟减20的体力
-            this->roleService->updateRole(role);
-            log("task地址为：%0x", task);
-            log("开始计算时间");
-            int spendTime = task->getTime() + 1;
-            log("时间加1，得到时间为：%d", spendTime);
-            task->setTime(spendTime);
-            log("增加时间成功：%d", spendTime);
-            this->roleTaskListService->updateTask(task);
+        std::string levelStr = StringUtils::format("%d", role->getLevel());
+        int totalMp = RoleLevelConfig::getIntByName(levelStr, "mp");
+        int totalPower = RoleLevelConfig::getIntByName(levelStr, "power");
+        int totalExp = RoleLevelConfig::getIntByName(levelStr, "exp");
+        log("HomeComputerBtn 开始计算时间");
+        int spendTime = task->getTimeSpend() + 1;
+        log("HomeComputerBtn 时间加1，得到时间为：%d，游戏需要花费的时间为：%d", spendTime, task->getTime());
+        if(spendTime >= task->getTime()) {
+            spendTime = task->getTime();
+            isWork = false;
+            log("HomeComputerBtn 提醒玩家任务完成，并给玩家增加经验和资金");
+            role->expIncrease(task->getExp());
+            role->addMoney(task->getMoney());
+            if(role->getExp()>= totalExp) {
+                role->levelUp();
+                float restExp = role->getExp()-totalExp;
+                log("HomeComputerBtn 升级后的玩家等级为：%d，剩余经验为：%f", role->getLevel(), restExp);
+                role->setExp(restExp);
+            }
+            task->setStatus(1); //将状态改为已完成
         }
+        task->setTimeSpend(spendTime);
+        log("HomeComputerBtn 增加时间成功：%d", spendTime);
+        log("HomeComputerBtn 玩家等级为：%d, 升级需要的经验为：%d，玩家当前经验：%f", role->getLevel(), totalExp, role->getExp());
+        int mpReduce = totalMp*task->getMp()/100;
+        int powerReduce = totalPower*task->getPower()/100;
+        if(role->getMp() < mpReduce || role->getPower() < powerReduce) {
+            log("HomeComputerBtn 精力和体力不足，提醒用户补充食物和睡眠，同时中断任务");
+            isWork = false;
+            return ;
+        }
+        role->mpReduce(mpReduce); //一分钟减20的体力
+        role->powerReduce(powerReduce);
+        this->roleTaskListService->updateTask(task);
+        this->roleService->updateRole(role);
     }
 }

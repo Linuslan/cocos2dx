@@ -16,5 +16,6 @@ public:
     virtual bool init();
     CREATE_FUNC(GameHeaderLayer);
     void showTaskList(Ref* ref);
+    void update(float t);
 };
 #endif //PROJ_ANDROID_STUDIO_GAMEHEADERLayer_H

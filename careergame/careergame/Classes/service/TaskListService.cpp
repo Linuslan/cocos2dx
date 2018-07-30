@@ -14,7 +14,7 @@ using namespace rapidjson;
 void TaskListService::addTask(Task *task) {
     Document doc;
     std::string taskList = TaskListConfig::getData();
-    log("获取到的系统生成的任务列表为：%s", taskList.c_str());
+    log("TaskListService::addTask 获取到的系统生成的任务列表为：%s", taskList.c_str());
     if(taskList.empty()) {
         log("获取到的系统生成的任务列表为空");
         doc.SetObject();
@@ -56,7 +56,7 @@ void TaskListService::addTask(Task *task) {
     StringBuffer buffer;
     rapidjson::Writer<StringBuffer> writer(buffer);
     doc.Accept(writer);
-    log("系统任务列表更新后的json：%s", buffer.GetString());
+    log("TaskListService::addTask 系统任务列表更新后的json：%s", buffer.GetString());
     TaskListConfig::updateTaskList(buffer.GetString());
 }
 
@@ -136,6 +136,6 @@ bool TaskListService::updateTask(Task *task) {
     StringBuffer buffer;
     rapidjson::Writer<StringBuffer> writer(buffer);
     doc.Accept(writer);
-    log("系统任务更新后的json：%s", buffer.GetString());
+    log("TaskListService::updateTask 系统任务更新后的json：%s", buffer.GetString());
     TaskListConfig::updateTaskList(buffer.GetString());
 }

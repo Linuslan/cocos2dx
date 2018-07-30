@@ -174,6 +174,7 @@ void RoleSprite::sleep() {
 }
 
 void RoleSprite::sleepUpdate(float a) {
+    this->role = this->roleService->loadRoleById(1);
     float mpIncrease = 5/100;   //睡觉状态每分钟恢复5%的mp
     float powerReduce = 0.1/100;   //睡觉状态每分钟消耗0.1%的能量
     //获取角色当前的mp和power
@@ -196,6 +197,7 @@ void RoleSprite::sleepUpdate(float a) {
 }
 
 void RoleSprite::walkUpdate(float a) {
+    this->role = this->roleService->loadRoleById(1);
     float mpReduce = 1/100; //角色走路时每分钟消耗的精力
     float powerReduce = 1/100;    //角色走路时每分钟消耗的体力
     //获取角色当前的mp和power
@@ -215,6 +217,7 @@ void RoleSprite::walkUpdate(float a) {
 }
 
 void RoleSprite::standUpdate(float a) {
+    this->role = this->roleService->loadRoleById(1);
     float mpReduce = 0.5/100;
     float powerReduce = 0.5/100;
     float mp = this->role->getMp();

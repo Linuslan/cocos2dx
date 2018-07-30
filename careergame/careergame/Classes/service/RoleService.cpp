@@ -18,11 +18,12 @@ Role* RoleService::loadRoleById(int id) {
     log("获取到的角色json：%s", buffer.GetString());
     Role* role = new Role();
     role->setName(document["name"].GetString());
-    role->setExp(document["exp"].GetInt());
-    role->setHp(document["hp"].GetInt());
-    role->setMp(document["mp"].GetInt());
+    role->setExp(document["exp"].GetFloat());
+    role->setHp(document["hp"].GetFloat());
+    role->setMp(document["mp"].GetFloat());
     role->setLevel(document["level"].GetInt());
     role->setType(document["type"].GetInt());
+    role->setPower(document["power"].GetFloat());
     return role;
 }
 
@@ -36,6 +37,7 @@ void RoleService::updateRole(Role* role) {
     document.AddMember(rapidjson::Value("mp", allocator), rapidjson::Value(role->getMp()), allocator);
     document.AddMember(rapidjson::Value("level", allocator), rapidjson::Value(role->getLevel()), allocator);
     document.AddMember(rapidjson::Value("type", allocator), rapidjson::Value(role->getType()), allocator);
+    document.AddMember(rapidjson::Value("power", allocator), rapidjson::Value(role->getPower()), allocator);
     StringBuffer buffer;
     rapidjson::Writer<StringBuffer> writer(buffer);
     document.Accept(writer);

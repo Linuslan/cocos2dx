@@ -18,6 +18,7 @@ private:
     RoleJobTaskService* roleJobTaskService = nullptr;
     RoleTask* task = nullptr;
     RoleTaskListService* roleTaskListService = nullptr;
+    bool isWork = true;
 public:
     virtual bool init();
     CREATE_FUNC(HomeComputerBtn);

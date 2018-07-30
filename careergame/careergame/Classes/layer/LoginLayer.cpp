@@ -1,6 +1,7 @@
 //
 // Created by LinusLan on 2018/5/18.
 //
+#include <Classes/config/RoleLevelConfig.h>
 #include "LoginLayer.h"
 #include "GameConfig.h"
 #include "iostream"
@@ -60,12 +61,17 @@ bool LoginLayer::init() {
     quitBtn->addClickEventListener([](Ref* ref){
         exit(0);
     });
+    std::string levelStr = StringUtils::format("%d", 2);
+    int mp = RoleLevelConfig::getIntByName(levelStr.c_str(), "mp");
+    int hp = RoleLevelConfig::getIntByName(levelStr.c_str(), "hp");
+    int power = RoleLevelConfig::getIntByName(levelStr.c_str(), "power");
     Role* role = new Role();
     role->setType(1);
     role->setLevel(2);
-    role->setMp(100);
-    role->setHp(100);
-    role->setExp(200);
+    role->setMp(mp);
+    role->setHp(hp);
+    role->setPower(power);
+    role->setExp(0);
     role->setName("哼哈");
     RoleService* roleService = new RoleService();
     roleService->updateRole(role);
