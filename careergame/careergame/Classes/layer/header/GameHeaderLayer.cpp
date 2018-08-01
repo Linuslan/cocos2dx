@@ -6,6 +6,9 @@
 #include <Classes/service/RoleTaskListService.h>
 #include <Classes/config/RoleLevelConfig.h>
 #include <Classes/common/NumberUtils.h>
+#include <cocos2d/cocos/ui/UIPageView.h>
+#include <cocos2d/cocos/ui/UIHBox.h>
+#include <cocos2d/cocos/ui/UIVBox.h>
 #include "GameHeaderLayer.h"
 #include "RoleService.h"
 #include "RoleJobConfig.h"
@@ -89,6 +92,15 @@ bool GameHeaderLayer::init() {
         });
         this->addChild(quitBtn);
         schedule(schedule_selector(GameHeaderLayer::update), 1.0);
+
+        ui::Button* shop = ui::Button::create("images/gameheader/email.png");
+        shop->setPosition(Vec2(winSize.width*0.95, headerHeight));
+        shop->setScale(0.07);
+        //FadeOut* fadeOut = FadeOut::create(0.5);
+        //Sequence* sequence = Sequence::create(fadeIn, fadeOut, nullptr);
+        shop->runAction(RepeatForever::create(sequence));
+        shop->addClickEventListener(CC_CALLBACK_1(GameHeaderLayer::showShop, this));
+        this->addChild(shop);
     } catch (std::exception& ex) {
         log("初始化游戏头异常，%s", ex.what());
     }
@@ -201,4 +213,77 @@ void GameHeaderLayer::update(float t) {
     int power = RoleLevelConfig::getIntByName(levelStr, "power");
     //float rolePower = linuslan::NumberUtils::formatDecimal(role->getPower(), 2);
     powerLbl->setString("POWER："+StringUtils::format("%.2f", role->getPower())+"/"+StringUtils::format("%d", power));
+}
+
+/*void GameHeaderLayer::showShop(Ref *ref) {
+    DialogLayer* dialog = DialogLayer::create();
+    Size winSize = Director::getInstance()->getWinSize();
+    ui::PageView* pageView = ui::PageView::create();
+    pageView->setIndicatorEnabled(true);
+    pageView->setDirection(ui::PageView::Direction::VERTICAL);
+    pageView->setContentSize(Size(600.0f, 600.0f));
+    pageView->setPosition((winSize - pageView->getContentSize()) / 2.0f);
+    pageView->removeAllItems();
+
+    int pageCount = 4;
+    for (int i = 0; i < pageCount; ++i)
+    {
+        ui::Layout* layout = ui::Layout::create();
+        layout->setContentSize(Size(240.0f, 130.0f));
+
+        ui::ImageView* imageView = ui::ImageView::create("test/clippingHead.jpg");
+        imageView->setScale9Enabled(true);
+        imageView->setContentSize(Size(100, 100));
+        imageView->setPosition(Vec2(layout->getContentSize().width / 2.0f, layout->getContentSize().height / 2.0f));
+        layout->addChild(imageView);
+
+        ui::Text* label = ui::Text::create(StringUtils::format("page %d",(i+1)), "fonts/Marker Felt.ttf", 30);
+        label->setColor(Color3B(192, 192, 192));
+        label->setPosition(Vec2(layout->getContentSize().width / 2.0f, layout->getContentSize().height / 2.0f));
+        layout->addChild(label);
+
+        pageView->insertCustomItem(layout, i);
+    }
+    dialog->addChild(pageView);
+    this->addChild(dialog);
+}*/
+
+void GameHeaderLayer::showShop(Ref *ref) {
+    Size winSize = Director::getInstance()->getWinSize();
+    DialogLayer* dialog = DialogLayer::create();
+    ui::ListView* listView = ui::ListView::create();
+    listView->setDirection(ui::ScrollView::Direction::VERTICAL);
+    listView->setBounceEnabled(true);
+    listView->setBackGroundImage("test/white_bg.png");
+    listView->setBackGroundColorOpacity(200);
+    listView->setBackGroundImageScale9Enabled(true);
+    listView->setContentSize(Size(700, 700));
+    listView->setPosition(Vec2(winSize.width*0.5, winSize.height*0.5));
+    listView->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+    listView->setScrollBarPositionFromCorner(Vec2(7, 7));
+    listView->setMagneticType(ui::ListView::MagneticType::BOTH_END);
+    listView->setGravity(ui::ListView::Gravity::CENTER_VERTICAL);
+    listView->setItemsMargin(0);
+    for(int j = 0; j < 6; j ++) {
+        //ui::Layout* default_item = ui::Layout::create();
+        ui::HBox* hbox = ui::HBox::create();
+        hbox->setContentSize(Size(700, 200));   //需要设置大小，否则渲染的时候，无法判断大小，无法定位位置，则所有的hbox全在第一行
+        for(int i = 0; i < 6; i ++) {
+            ui::VBox* innerBox = ui::VBox::create();
+            innerBox->setContentSize(Size(110, 200));
+            hbox->addChild(innerBox);
+            ui::ImageView* imageView = ui::ImageView::create("test/clippingHead.jpg");
+            imageView->setScale9Enabled(true);
+            imageView->setContentSize(Size(100, 100));
+            imageView->setPosition(Vec2(innerBox->getContentSize().width / 2.0f, innerBox->getContentSize().height / 2.0f));
+            innerBox->addChild(imageView);
+            ui::Text* label = ui::Text::create(StringUtils::format("page %d-%d",(j+1), (i+1)), "fonts/Marker Felt.ttf", 30);
+            label->setColor(Color3B(192, 192, 192));
+            label->setPosition(Vec2(innerBox->getContentSize().width / 2.0f, innerBox->getContentSize().height / 2.0f));
+            innerBox->addChild(label);
+        }
+        listView->insertCustomItem(hbox, j);
+    }
+    dialog->addChild(listView);
+    this->addChild(dialog);
 }
