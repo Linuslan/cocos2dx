@@ -97,6 +97,13 @@ bool RoleLoginLayer::init() {
         this->threadStart();
     });
     RoleJobTaskConfig::getTaskList();
+    /*ui::Button* test = ui::Button::create("images/login/login_btn.png");
+    Label* label1 = Label::createWithSystemFont("测试", "", 50);
+    label1->setColor(Color3B::BLACK);
+    test->addChild(label1);
+    label1->setPosition(test->getContentSize()/2);
+    this->addChild(test);
+    test->setPosition(Vec2(300, 300));*/
     return true;
 }
 
