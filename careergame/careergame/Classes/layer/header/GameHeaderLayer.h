@@ -18,5 +18,7 @@ public:
     void showTaskList(Ref* ref);
     void update(float t);
     void showShop(Ref* ref);
+    Node* showFurniture();
+    Node* showFood();
 };
 #endif //PROJ_ANDROID_STUDIO_GAMEHEADERLayer_H

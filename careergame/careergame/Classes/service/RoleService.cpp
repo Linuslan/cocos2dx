@@ -15,7 +15,7 @@ Role* RoleService::loadRoleById(int id) {
     StringBuffer buffer;
     rapidjson::Writer<StringBuffer> writer(buffer);
     document.Accept(writer);
-    log("获取到的角色json：%s", buffer.GetString());
+    //log("获取到的角色json：%s", buffer.GetString());
     Role* role = new Role();
     role->setName(document["name"].GetString());
     role->setExp(document["exp"].GetFloat());
@@ -41,6 +41,6 @@ void RoleService::updateRole(Role* role) {
     StringBuffer buffer;
     rapidjson::Writer<StringBuffer> writer(buffer);
     document.Accept(writer);
-    log("角色生成的json：%s", buffer.GetString());
+    //log("角色生成的json：%s", buffer.GetString());
     UserDefault::getInstance()->setStringForKey("role-11", buffer.GetString());
 }

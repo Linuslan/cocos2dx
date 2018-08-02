@@ -1,0 +1,30 @@
+{
+  "furniture":[{
+    "name":"冰箱-小",
+    "type": 1,
+    "space": 3,
+    "price": 800
+  }, {
+    "name":"冰箱-中",
+    "space": 6,
+    "type": 1,
+    "price": 1600
+  }, {
+    "name":"冰箱-大",
+    "space": 9,
+    "type": 1,
+    "price": 2400
+  }, {
+    "name":"显示器",
+    "type": 2,
+    "price": 1300
+  }, {
+    "name":"CPU",
+    "type": 2,
+    "price": 800
+  }, {
+    "name":"主机箱",
+    "type": 2,
+    "price": 100
+  }]
+}

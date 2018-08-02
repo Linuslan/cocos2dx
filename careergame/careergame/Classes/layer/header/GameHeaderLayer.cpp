@@ -5,10 +5,9 @@
 #include <Classes/layer/DialogLayer.h>
 #include <Classes/service/RoleTaskListService.h>
 #include <Classes/config/RoleLevelConfig.h>
-#include <Classes/common/NumberUtils.h>
-#include <cocos2d/cocos/ui/UIPageView.h>
 #include <cocos2d/cocos/ui/UIHBox.h>
 #include <cocos2d/cocos/ui/UIVBox.h>
+#include <Classes/ui/TabView.h>
 #include "GameHeaderLayer.h"
 #include "RoleService.h"
 #include "RoleJobConfig.h"
@@ -251,6 +250,24 @@ void GameHeaderLayer::update(float t) {
 void GameHeaderLayer::showShop(Ref *ref) {
     Size winSize = Director::getInstance()->getWinSize();
     DialogLayer* dialog = DialogLayer::create();
+    TabView* tabView = TabView::create();
+    std::vector<TabModel*>* tabs = new std::vector<TabModel*> ();
+    ui::ListView* furnitureList = static_cast<ui::ListView*>(this->showFurniture());
+    TabModel* furnitureModel = new TabModel("家具城", furnitureList);
+    tabs->push_back(furnitureModel);
+
+    ui::ListView* foodList = static_cast<ui::ListView*>(this->showFood());
+    TabModel* foodModel = new TabModel("食材城", foodList);
+    tabs->push_back(foodModel);
+
+    tabView->initTab(tabs);
+    dialog->addChild(tabView);
+    tabView->setPosition(winSize/2);
+    this->addChild(dialog);
+}
+
+Node* GameHeaderLayer::showFurniture() {
+    Size winSize = Director::getInstance()->getWinSize();
     ui::ListView* listView = ui::ListView::create();
     listView->setDirection(ui::ScrollView::Direction::VERTICAL);
     listView->setBounceEnabled(true);
@@ -265,25 +282,78 @@ void GameHeaderLayer::showShop(Ref *ref) {
     listView->setGravity(ui::ListView::Gravity::CENTER_VERTICAL);
     listView->setItemsMargin(0);
     for(int j = 0; j < 6; j ++) {
-        //ui::Layout* default_item = ui::Layout::create();
         ui::HBox* hbox = ui::HBox::create();
         hbox->setContentSize(Size(700, 200));   //需要设置大小，否则渲染的时候，无法判断大小，无法定位位置，则所有的hbox全在第一行
+        ui::LinearLayoutParameter *parameter = ui::LinearLayoutParameter::create();
+        parameter->setMargin(ui::Margin(3,5,5,5));
         for(int i = 0; i < 6; i ++) {
             ui::VBox* innerBox = ui::VBox::create();
-            innerBox->setContentSize(Size(110, 200));
+            innerBox->setContentSize(Size(110, 150));
             hbox->addChild(innerBox);
             ui::ImageView* imageView = ui::ImageView::create("test/clippingHead.jpg");
             imageView->setScale9Enabled(true);
+            imageView->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
             imageView->setContentSize(Size(100, 100));
-            imageView->setPosition(Vec2(innerBox->getContentSize().width / 2.0f, innerBox->getContentSize().height / 2.0f));
             innerBox->addChild(imageView);
-            ui::Text* label = ui::Text::create(StringUtils::format("page %d-%d",(j+1), (i+1)), "fonts/Marker Felt.ttf", 30);
-            label->setColor(Color3B(192, 192, 192));
-            label->setPosition(Vec2(innerBox->getContentSize().width / 2.0f, innerBox->getContentSize().height / 2.0f));
-            innerBox->addChild(label);
+            ui::Text* name = ui::Text::create("家具"+StringUtils::format("%d", i), "", 30);
+            name->setColor(Color3B::BLACK);
+            ui::LinearLayoutParameter* textParam = ui::LinearLayoutParameter::create();
+            textParam->setMargin(ui::Margin(10, 0, 10, 0));
+            name->setLayoutParameter(textParam);
+            innerBox->addChild(name);
+            ui::Button* buy = ui::Button::create("images/login/sure.png");
+            buy->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+            buy->setScale(0.3);
+            innerBox->addChild(buy);
+            innerBox->setLayoutParameter(parameter);
         }
         listView->insertCustomItem(hbox, j);
     }
-    dialog->addChild(listView);
-    this->addChild(dialog);
+    return listView;
+}
+
+Node* GameHeaderLayer::showFood() {
+    Size winSize = Director::getInstance()->getWinSize();
+    ui::ListView* listView = ui::ListView::create();
+    listView->setDirection(ui::ScrollView::Direction::VERTICAL);
+    listView->setBounceEnabled(true);
+    listView->setBackGroundImage("test/white_bg.png");
+    listView->setBackGroundColorOpacity(200);
+    listView->setBackGroundImageScale9Enabled(true);
+    listView->setContentSize(Size(700, 700));
+    listView->setPosition(Vec2(winSize.width*0.5, winSize.height*0.5));
+    listView->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+    listView->setScrollBarPositionFromCorner(Vec2(7, 7));
+    listView->setMagneticType(ui::ListView::MagneticType::BOTH_END);
+    listView->setGravity(ui::ListView::Gravity::CENTER_VERTICAL);
+    listView->setItemsMargin(0);
+    for(int j = 0; j < 6; j ++) {
+        ui::HBox* hbox = ui::HBox::create();
+        hbox->setContentSize(Size(700, 200));   //需要设置大小，否则渲染的时候，无法判断大小，无法定位位置，则所有的hbox全在第一行
+        ui::LinearLayoutParameter *parameter = ui::LinearLayoutParameter::create();
+        parameter->setMargin(ui::Margin(3,5,5,5));
+        for(int i = 0; i < 6; i ++) {
+            ui::VBox* innerBox = ui::VBox::create();
+            innerBox->setContentSize(Size(110, 150));
+            hbox->addChild(innerBox);
+            ui::ImageView* imageView = ui::ImageView::create("test/clippingHead.jpg");
+            imageView->setScale9Enabled(true);
+            imageView->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+            imageView->setContentSize(Size(100, 100));
+            innerBox->addChild(imageView);
+            ui::Text* name = ui::Text::create("食材"+StringUtils::format("%d", i), "", 30);
+            name->setColor(Color3B::BLACK);
+            ui::LinearLayoutParameter* textParam = ui::LinearLayoutParameter::create();
+            textParam->setMargin(ui::Margin(10, 0, 10, 0));
+            name->setLayoutParameter(textParam);
+            innerBox->addChild(name);
+            ui::Button* buy = ui::Button::create("images/login/sure.png");
+            buy->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+            buy->setScale(0.3);
+            innerBox->addChild(buy);
+            innerBox->setLayoutParameter(parameter);
+        }
+        listView->insertCustomItem(hbox, j);
+    }
+    return listView;
 }

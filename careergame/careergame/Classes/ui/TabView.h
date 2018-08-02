@@ -17,17 +17,21 @@ public:
     TabModel(std::string title, Node* ct);
     ~TabModel();
     std::string* getName() {return name;}
+    ui::Button* getHeader() {return header;}
+    Node* getContent() {return content;}
 };
 class TabView : public Sprite {
 private:
     int tabCount;   //设置标签页的个数
     std::vector<TabModel*>* tabs = nullptr;
-    virtual bool init();
+    Sprite* headerPanel = nullptr;
+    Sprite* contentPanel = nullptr;
 public:
     TabView();
     ~TabView();
+    virtual bool init();
     bool initTab(std::vector<TabModel*>* tabModels);
     CREATE_FUNC(TabView);
-    void pushBackTab(std::string title, Node* content);
+    bool pushBackTab(std::string title, Node* content);
 };
 #endif //PROJ_ANDROID_STUDIO_TABVIEW_H
