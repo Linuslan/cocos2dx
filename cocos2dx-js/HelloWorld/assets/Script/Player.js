@@ -62,6 +62,18 @@ cc.Class({
         this.setInputControl();
     },
 
+    update: function(dt) {
+    	if(this.accLeft) {
+    		this.xSpeed -= this.accel*dt;
+    	} else if(this.accRight) {
+    		this.xSpeed += this.accel*dt;
+    	}
+    	if(Math.abs(this.xSpeed) > this.maxMoveSpeed) {
+    		this.xSpeed = this.maxMoveSpeed * this.xSpeed / Math.abs(this.xSpeed);
+    	}
+    	this.node.x += this.xSpeed * dt;
+    },
+
     start () {
 
     },
