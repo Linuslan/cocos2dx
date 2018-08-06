@@ -17,14 +17,17 @@
   }, {
     "name":"显示器",
     "type": 2,
+    "workAddition": 1,  //1%加成
     "price": 1300
   }, {
     "name":"CPU",
     "type": 2,
-    "price": 800
+    "workAddition": 3,  //3%加成
+    "price": 3000
   }, {
-    "name":"主机箱",
+    "name":"主板",
     "type": 2,
-    "price": 100
+    "workAddition": 1,  //1%加成
+    "price": 1000
   }]
 }
