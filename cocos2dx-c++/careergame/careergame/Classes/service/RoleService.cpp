@@ -2,6 +2,7 @@
 // Created by LinusLan on 2018/6/25.
 //
 
+#include <Classes/config/RoleConfig.h>
 #include "RoleService.h"
 #include "json/rapidjson.h"
 #include "json/document.h"
@@ -43,4 +44,7 @@ void RoleService::updateRole(Role* role) {
     document.Accept(writer);
     //log("角色生成的json：%s", buffer.GetString());
     UserDefault::getInstance()->setStringForKey("role-11", buffer.GetString());
+    std::string filePath = RoleConfig::getFilePath();
+    bool isWrited = FileUtils::getInstance()->writeStringToFile(buffer.GetString(), filePath);
+    log("写入角色数据到文件成功：%d", isWrited);
 }
