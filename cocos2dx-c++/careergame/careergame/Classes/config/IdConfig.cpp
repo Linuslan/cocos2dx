@@ -31,7 +31,7 @@ int IdConfig::getIntByName(std::string key) {
     }
     Document doc;
     doc.Parse(data.c_str());
-    if(doc.HasMember(key.c_str())) {
+    if(!doc.HasMember(key.c_str())) {
         doc.AddMember(rapidjson::Value(key.c_str(), doc.GetAllocator()), rapidjson::Value(1), doc.GetAllocator());
     }
     return doc[key.c_str()].GetInt();
