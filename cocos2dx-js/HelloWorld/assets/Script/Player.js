@@ -15,19 +15,51 @@ cc.Class({
         jumpHeight: 0,
         jumpDuration: 0,
         maxMoveSpeed: 0,
-        accel: 0
+        accel: 0,
+        jumpAudio: {
+        	default: null,
+        	url: cc.AudioClip
+        }
     },
 
     setJumpAction: function() {
         var jumpUp = cc.moveBy(this.jumpDuration, cc.p(0, this.jumpHeight)).easing(cc.easeCubicActionOut());
         var jumpDown = cc.moveBy(this.jumpDuration, cc.p(0, -this.jumpHeight)).easing(cc.easeCubicActionIn());
-        return cc.repeatForever(cc.sequence(jumpUp, jumpDown));
+        var callback = cc.callFunc(this.playJumpSound, this);
+        return cc.repeatForever(cc.sequence(jumpUp, jumpDown, callback));
     },
-    setInputControl: function() {
+    playJumpSound: function() {
+    	cc.audioEngine.playEffect(this.jumpAudio, false);
+    },
+    onKeyDown (event) {
+        // set a flag when key pressed
+        switch(event.keyCode) {
+            case cc.KEY.a:
+                this.accLeft = true;
+                break;
+            case cc.KEY.d:
+                this.accRight = true;
+                break;
+        }
+    },
+
+    onKeyUp (event) {
+        // unset a flag when key released
+        switch(event.keyCode) {
+            case cc.KEY.a:
+                this.accLeft = false;
+                break;
+            case cc.KEY.d:
+                this.accRight = false;
+                break;
+        }
+    },
+    /*setInputControl: function() {
         var self = this;
         cc.eventManager.addListener({
             event: cc.EventListener.KEYBOARD,
             onKeyPressed: function(keyCode, event) {
+            	log("按钮按下");
                 switch(keyCode) {
                     case cc.KEY.a: {
                         self.accLeft = true;
@@ -50,16 +82,18 @@ cc.Class({
                 }
             }
         }, self.node);
-    },
+    },*/
     // LIFE-CYCLE CALLBACKS:
 
     onLoad: function() {
+    	//this.setInputControl();
         this.jumpAction = this.setJumpAction();
         this.node.runAction(this.jumpAction);
         this.accRight = false;
         this.accLeft = false;
         this.xSpeed = 0;
-        this.setInputControl();
+        cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
+        cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
     },
 
     update: function(dt) {
@@ -72,6 +106,11 @@ cc.Class({
     		this.xSpeed = this.maxMoveSpeed * this.xSpeed / Math.abs(this.xSpeed);
     	}
     	this.node.x += this.xSpeed * dt;
+    },
+    onDestroy () {
+        // 取消键盘输入监听
+        cc.systemEvent.off(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
+        cc.systemEvent.off(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
     },
 
     start () {

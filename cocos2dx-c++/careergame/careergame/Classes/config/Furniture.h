@@ -1,0 +1,8 @@
+//
+// Created by LinusLan on 2018/8/8.
+//
+
+#ifndef PROJ_ANDROID_STUDIO_FURNITURE_H
+#define PROJ_ANDROID_STUDIO_FURNITURE_H
+
+#endif //PROJ_ANDROID_STUDIO_FURNITURE_H
