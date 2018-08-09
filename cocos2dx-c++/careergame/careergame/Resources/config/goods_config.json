@@ -1,33 +1,45 @@
 {
   "furniture":[{
+    "id": 1,
     "name":"冰箱-小",
     "type": 1,
     "space": 3,
-    "price": 800
+    "price": 800,
+    "image": ""
   }, {
+    "id": 2,
     "name":"冰箱-中",
     "space": 6,
     "type": 1,
-    "price": 1600
+    "price": 1600,
+    "image": ""
   }, {
+    "id": 3,
     "name":"冰箱-大",
     "space": 9,
     "type": 1,
-    "price": 2400
+    "price": 2400,
+    "image": ""
   }, {
+    "id": 4,
     "name":"显示器",
     "type": 2,
     "workAddition": 1,  //1%加成
-    "price": 1300
+    "price": 1300,
+    "image": ""
   }, {
+    "id": 5,
     "name":"CPU",
     "type": 2,
     "workAddition": 3,  //3%加成
-    "price": 3000
+    "price": 3000,
+    "image": ""
   }, {
+    "id": 6,
     "name":"主板",
     "type": 2,
     "workAddition": 1,  //1%加成
-    "price": 1000
+    "price": 1000,
+    "image": ""
   }]
 }

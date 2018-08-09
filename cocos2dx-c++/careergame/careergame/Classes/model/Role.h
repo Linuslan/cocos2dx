@@ -19,6 +19,8 @@ private:
     float power = 0;  //玩家角色当前的体力值
     std::string name;   //玩家角色的名称
     int type;   //玩家角色的职业类型，0：无职业；1：程序员；2：画家；
+    int space;
+    int workAddition;
 public:
     int getLevel() {return level;}
     float getHp() {return hp;}
@@ -44,5 +46,9 @@ public:
     float getPower() {return this->power;}
     void powerIncrease(float power) {this->power = this->power + power;}
     void powerReduce(float power) {this->power = this->power - power;}
+    void setSpace(int space) {this->space = space;}
+    int getSpace() {return this->space;}
+    void setWorkAddition(int workAddition) {this->workAddition = workAddition;}
+    int getWorkAddition() {return this->workAddition;}
 };
 #endif //PROJ_ANDROID_STUDIO_ROLE_H
