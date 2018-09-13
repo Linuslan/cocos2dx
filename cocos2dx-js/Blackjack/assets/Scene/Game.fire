@@ -45,7 +45,7 @@
     "_globalZOrder": 0,
     "_opacityModifyRGB": false,
     "groupIndex": 0,
-    "autoReleaseAssets": null
+    "autoReleaseAssets": false
   },
   {
     "__type__": "cc.Node",
@@ -71,29 +71,32 @@
         "__id__": 107
       },
       {
-        "__id__": 109
-      },
-      {
-        "__id__": 111
+        "__id__": 110
       },
       {
         "__id__": 113
       },
       {
-        "__id__": 114
-      },
-      {
-        "__id__": 115
-      },
-      {
         "__id__": 116
+      },
+      {
+        "__id__": 117
+      },
+      {
+        "__id__": 118
+      },
+      {
+        "__id__": 119
       }
     ],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 117
+        "__id__": 120
+      },
+      {
+        "__id__": 121
       }
     ],
     "_prefab": null,
@@ -456,7 +459,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "button_blue",
+    "_name": "button",
     "_objFlags": 0,
     "_parent": {
       "__id__": 9
@@ -497,7 +500,7 @@
     "_position": {
       "__type__": "cc.Vec2",
       "x": 0,
-      "y": 0
+      "y": -1.4210854715202004e-14
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -534,7 +537,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "ready",
+    "_name": "txt",
     "_objFlags": 0,
     "_parent": {
       "__id__": 9
@@ -663,7 +666,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "button_orange",
+    "_name": "button",
     "_objFlags": 0,
     "_parent": {
       "__id__": 14
@@ -741,7 +744,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "start",
+    "_name": "txt",
     "_objFlags": 0,
     "_parent": {
       "__id__": 14
@@ -4203,6 +4206,9 @@
     "_components": [
       {
         "__id__": 108
+      },
+      {
+        "__id__": 109
       }
     ],
     "_prefab": null,
@@ -4269,6 +4275,20 @@
     "_atlas": null
   },
   {
+    "__type__": "a0895cSgHNEw7bVRbnN04/t",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 107
+    },
+    "_enabled": true,
+    "value": 1,
+    "positionX": 156,
+    "positionY": 245,
+    "originalX": 0,
+    "originalY": 0
+  },
+  {
     "__type__": "cc.Node",
     "_name": "third_porker",
     "_objFlags": 0,
@@ -4280,7 +4300,10 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 110
+        "__id__": 111
+      },
+      {
+        "__id__": 112
       }
     ],
     "_prefab": null,
@@ -4325,7 +4348,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 109
+      "__id__": 110
     },
     "_enabled": true,
     "_spriteFrame": {
@@ -4347,6 +4370,20 @@
     "_atlas": null
   },
   {
+    "__type__": "a0895cSgHNEw7bVRbnN04/t",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 110
+    },
+    "_enabled": true,
+    "value": 1,
+    "positionX": -145,
+    "positionY": 23,
+    "originalX": 0,
+    "originalY": 0
+  },
+  {
     "__type__": "cc.Node",
     "_name": "forth_porker",
     "_objFlags": 0,
@@ -4358,7 +4395,10 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 112
+        "__id__": 114
+      },
+      {
+        "__id__": 115
       }
     ],
     "_prefab": null,
@@ -4403,7 +4443,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 111
+      "__id__": 113
     },
     "_enabled": true,
     "_spriteFrame": {
@@ -4423,6 +4463,20 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_atlas": null
+  },
+  {
+    "__type__": "a0895cSgHNEw7bVRbnN04/t",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 113
+    },
+    "_enabled": true,
+    "value": 1,
+    "positionX": 156,
+    "positionY": 23,
+    "originalX": 0,
+    "originalY": 0
   },
   {
     "__type__": "cc.Node",
@@ -4631,5 +4685,31 @@
     },
     "_fitWidth": false,
     "_fitHeight": true
+  },
+  {
+    "__type__": "eab32XSc2ZAWJRYitl2iltc",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 2
+    },
+    "_enabled": true,
+    "pokerValue": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13
+    ],
+    "pokerType": "",
+    "pokers": []
   }
 ]

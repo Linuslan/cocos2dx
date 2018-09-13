@@ -76,7 +76,7 @@ cc.Class({
         }, this);
         //移动结束，判断是否和需要计算卡牌的空格相交，如果相交，则复制一份副本到相交的卡牌中
         this.node.on(cc.Node.EventType.TOUCH_END, function(event) {
-            var calculatePorker = this.node.parent;
+            var calculatePorker = this.node.parent.getChildByName("calculate_porker");
             var firstPorker = calculatePorker.getChildByName("first_porker");
             var secondPorker = calculatePorker.getChildByName("second_porker");
             var thirdPorker = calculatePorker.getChildByName("third_porker");
@@ -86,25 +86,30 @@ cc.Class({
             console.log(firstPorker.getBoundingBoxToWorld());
             if(cc.Intersection.rectRect(this.node.getBoundingBoxToWorld(), firstPorker.getBoundingBoxToWorld())) {
                 console.log("和第一个底牌相交");
-                firstPorker.getComponent(cc.Sprite).spriteFrame.setTexture("assets/Texture/game/poker_dipai");
-                cc.loader.loadRes("test assets/Texture/game/poker_dipai", cc.SpriteFrame, function (err, spriteFrame) {
+                cc.loader.loadRes("game/poker_dipai", cc.SpriteFrame, function (err, spriteFrame) {
                     firstPorker.getComponent(cc.Sprite).spriteFrame = spriteFrame;
                 });
             }
             console.log(secondPorker.getBoundingBoxToWorld());
             if(cc.Intersection.rectRect(this.node.getBoundingBoxToWorld(), secondPorker.getBoundingBoxToWorld())) {
                 console.log("和第二个底牌相交");
-                secondPorker.getComponent(cc.Sprite).spriteFrame.setTexture("assets/Texture/game/poker_dipai");
+                cc.loader.loadRes("game/poker_dipai", cc.SpriteFrame, function (err, spriteFrame) {
+                    secondPorker.getComponent(cc.Sprite).spriteFrame = spriteFrame;
+                });
             }
             console.log(thirdPorker.getBoundingBoxToWorld());
             if(cc.Intersection.rectRect(this.node.getBoundingBoxToWorld(), thirdPorker.getBoundingBoxToWorld())) {
                 console.log("和第三个底牌相交");
-                thirdPorker.getComponent(cc.Sprite).spriteFrame.setTexture("assets/Texture/game/poker_dipai");
+                cc.loader.loadRes("game/poker_dipai", cc.SpriteFrame, function (err, spriteFrame) {
+                    thirdPorker.getComponent(cc.Sprite).spriteFrame = spriteFrame;
+                });
             }
             console.log(forthPorker.getBoundingBoxToWorld());
             if(cc.Intersection.rectRect(this.node.getBoundingBoxToWorld(), forthPorker.getBoundingBoxToWorld())) {
                 console.log("和第四个底牌相交");
-                forthPorker.getComponent(cc.Sprite).spriteFrame.setTexture("assets/Texture/game/poker_dipai");
+                cc.loader.loadRes("game/poker_dipai", cc.SpriteFrame, function (err, spriteFrame) {
+                    forthPorker.getComponent(cc.Sprite).spriteFrame = spriteFrame;
+                });
             }
             this.node.position = cc.v2(this.positionX, this.positionY);
         }, this);
