@@ -20,7 +20,7 @@ cc.Class({
             default: 0,
             type: cc.Integer
         },
-        porkerContainer: {
+        gameContainer: {
             default: null,
             type: cc.Node
         }
@@ -29,7 +29,6 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
-        console.log(this.porkerContainer.getComponent("Calculate").id);
         this.node.on(cc.Node.EventType.TOUCH_START, function(event) {
             var targetBtn = event.target;
             var porkerContainer = targetBtn.parent.parent;
@@ -45,19 +44,13 @@ cc.Class({
             var calculateIndx = this.index;
             var symbolIndex = this.symbol;
             console.log("index="+calculateIndx+", symbol="+symbolIndex);
-            var porkerContainerCmp = this.porkerContainer.getComponent("Calculate");
+            var gameContainerCmp = this.gameContainer.getComponent("Game");
             switch (calculateIndx) {
-                case 1: {
-                    porkerContainerCmp.firstBtn = this.node;
-                    console.log("为第一个按钮赋值");
-                } break;
-                case 2: porkerContainerCmp.secondBtn = this.node; break;
-                case 3: porkerContainerCmp.thirdBtn = this.node; break;
+                case 1: gameContainerCmp.firstBtn = this.node; break;
+                case 2: gameContainerCmp.secondBtn = this.node; break;
+                case 3: gameContainerCmp.thirdBtn = this.node; break;
             }
-            var firstBtn = porkerContainerCmp.firstBtn.getComponent("CalculateBtn");
-            var secondBtn = porkerContainerCmp.secondBtn.getComponent("CalculateBtn");
-            var thirdBtn = porkerContainerCmp.thirdBtn.getComponent("CalculateBtn");
-            console.log("firstBtn="+firstBtn.symbol+", secondBtn="+secondBtn.symbol+", thirdBtn="+thirdBtn.symbol);
+            this.gameContainer.getComponent("Game").calculate();
         }.bind(this));
     },
 

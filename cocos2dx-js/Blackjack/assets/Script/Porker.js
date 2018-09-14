@@ -16,6 +16,10 @@ cc.Class({
             default: 1,
             type: cc.Integer
         },
+        key: {
+            default: "",
+            type: cc.String
+        },
         positionX: {
             default: 0,
             type: cc.Float
@@ -31,17 +35,23 @@ cc.Class({
         originalY: {
             default: 0,
             type: cc.Float
+        },
+        zIndex: {
+            default: 0,
+            type: cc.Integer
         }
     },
 
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
+        this.node.zIndex = 0;
         this.node.on(cc.Node.EventType.TOUCH_START, function(event) {
             console.log("获取到的位置为：x="+event.getLocation().x+", y="+event.getLocation().y);
             //this.node.position = cc.v2(event.getLocation().x, event.getLocation().y);
             this.originalX = this.node.position.x;
             this.originalY = this.node.position.y;
+            this.node.zIndex = 100;
             //this.node.position = cc.v2(this.node.x-5, this.node.y-5);
         }, this);
         this.node.on(cc.Node.EventType.TOUCH_MOVE, function(event) {
@@ -49,75 +59,66 @@ cc.Class({
             var touchX = event.getLocation().x - this.node.parent.position.x;
             var touchY = event.getLocation().y - this.node.parent.position.y;
             this.node.position = cc.v2(touchX, touchY);
-            //console.log("touch.x="+touchX+", touch.y="+touchY+", porker.x="+this.node.parent.parent.position.x+", porker.y="+this.node.parent.parent.position.y);
-            /*var x = touchX - this.originalX;
-            var y = touchY - this.originalY;
-            console.log("x="+x+", y="+y);
-            var degree = Math.atan2(x, y)*180.0/Math.PI;
-            var distance = 3.0;
-            var offsetY = Math.sin(degree/180*Math.PI)*distance;   //将角度转化为弧度，再用三角函数求坐标
-            var offsetX = Math.cos(degree/180*Math.PI)*distance;
-            console.log("degree="+degree+", 当前节点位置：x="+this.node.position.x+", y="+this.node.position.y+", offsetX="+offsetX+", offsetY="+offsetY);
-            var nodex = this.node.position.x;
-            var nodey = this.node.position.y;
-            if(degree > 90 || degree < -90) {
-                nodex = this.node.position.x - offsetX;
-            } else {
-                nodex = this.node.position.x + offsetX;
-            }
-            if(degree > 0) {
-                nodey = this.node.position.y + offsetY;
-            } else {
-                nodey = this.node.position.y - offsetY;
-            }
-            //var nodex = this.node.position.x + offsetX;
-            //var nodey = this.node.position.y + offsetY;
-            this.node.position = cc.v2(nodex, nodey);*/
         }, this);
         //移动结束，判断是否和需要计算卡牌的空格相交，如果相交，则复制一份副本到相交的卡牌中
         this.node.on(cc.Node.EventType.TOUCH_END, function(event) {
-            var calculatePorker = this.node.parent.getChildByName("calculate_porker");
-            var firstPorker = calculatePorker.getChildByName("first_porker");
-            var secondPorker = calculatePorker.getChildByName("second_porker");
-            var thirdPorker = calculatePorker.getChildByName("third_porker");
-            var forthPorker = calculatePorker.getChildByName("forth_porker");
+            this.node.zIndex = 0;
+            var calculatePorker = this.node.parent;
+            var firstPorker = calculatePorker.getChildByName("cal_first_porker");
+            var secondPorker = calculatePorker.getChildByName("cal_second_porker");
+            var thirdPorker = calculatePorker.getChildByName("cal_third_porker");
+            var forthPorker = calculatePorker.getChildByName("cal_forth_porker");
+            var pokerNodes = [firstPorker, secondPorker, thirdPorker, forthPorker];
             console.log("移动结束");
             console.log(this.node.getBoundingBoxToWorld());
             console.log(firstPorker.getBoundingBoxToWorld());
-            if(cc.Intersection.rectRect(this.node.getBoundingBoxToWorld(), firstPorker.getBoundingBoxToWorld())) {
-                console.log("和第一个底牌相交");
-                cc.loader.loadRes("game/poker_dipai", cc.SpriteFrame, function (err, spriteFrame) {
-                    firstPorker.getComponent(cc.Sprite).spriteFrame = spriteFrame;
-                });
-            }
-            console.log(secondPorker.getBoundingBoxToWorld());
-            if(cc.Intersection.rectRect(this.node.getBoundingBoxToWorld(), secondPorker.getBoundingBoxToWorld())) {
-                console.log("和第二个底牌相交");
-                cc.loader.loadRes("game/poker_dipai", cc.SpriteFrame, function (err, spriteFrame) {
-                    secondPorker.getComponent(cc.Sprite).spriteFrame = spriteFrame;
-                });
-            }
-            console.log(thirdPorker.getBoundingBoxToWorld());
-            if(cc.Intersection.rectRect(this.node.getBoundingBoxToWorld(), thirdPorker.getBoundingBoxToWorld())) {
-                console.log("和第三个底牌相交");
-                cc.loader.loadRes("game/poker_dipai", cc.SpriteFrame, function (err, spriteFrame) {
-                    thirdPorker.getComponent(cc.Sprite).spriteFrame = spriteFrame;
-                });
-            }
-            console.log(forthPorker.getBoundingBoxToWorld());
-            if(cc.Intersection.rectRect(this.node.getBoundingBoxToWorld(), forthPorker.getBoundingBoxToWorld())) {
-                console.log("和第四个底牌相交");
-                cc.loader.loadRes("game/poker_dipai", cc.SpriteFrame, function (err, spriteFrame) {
-                    forthPorker.getComponent(cc.Sprite).spriteFrame = spriteFrame;
-                });
+            for(var i = 0; i < pokerNodes.length; i ++) {
+                var pokerNode = pokerNodes[i];
+                this.changePoker(pokerNode);
             }
             this.node.position = cc.v2(this.positionX, this.positionY);
+            this.node.parent.getComponent("Game").calculate();
         }, this);
     },
 
     start () {
 
     },
+
+    changePoker: function(pokerNode) {
+        var calculatePorker = this.node.parent;
+        var firstPorker = calculatePorker.getChildByName("cal_first_porker");
+        var secondPorker = calculatePorker.getChildByName("cal_second_porker");
+        var thirdPorker = calculatePorker.getChildByName("cal_third_porker");
+        var forthPorker = calculatePorker.getChildByName("cal_forth_porker");
+        var pokerNodes = [firstPorker, secondPorker, thirdPorker, forthPorker];
+        if(cc.Intersection.rectRect(this.node.getBoundingBoxToWorld(), pokerNode.getBoundingBoxToWorld())) {
+            var poker = null;
+            for(var i = 0; i < pokerNodes.length; i ++) {
+                var pokerObj = pokerNodes[i];
+                var pokerNodeCmp = pokerObj.getComponent("Porker");
+                var key = pokerNodeCmp.key;
+                if(key && key == this.key) {
+                    poker = pokerObj;
+                }
+            }
+            console.log(poker);
+            var newkey = this.key;
+            var newValue = this.value;
+            if(pokerNode.getComponent("Porker").key && poker) {
+                cc.loader.loadRes("game/"+pokerNode.getComponent("Porker").key, cc.SpriteFrame, function (err, spriteFrame) {
+                    poker.getComponent(cc.Sprite).spriteFrame = spriteFrame;
+                });
+                poker.getComponent("Porker").key = pokerNode.getComponent("Porker").key;
+                poker.getComponent("Porker").value = pokerNode.getComponent("Porker").value;
+            }
+            cc.loader.loadRes("game/"+newkey, cc.SpriteFrame, function (err, spriteFrame) {
+                pokerNode.getComponent(cc.Sprite).spriteFrame = spriteFrame;
+            });
+            pokerNode.getComponent("Porker").key = newkey;
+            pokerNode.getComponent("Porker").value = newValue;
+        }
+    }
 
     // update (dt) {},
 });
