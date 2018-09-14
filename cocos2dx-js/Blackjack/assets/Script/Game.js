@@ -65,6 +65,10 @@ cc.Class({
         var secondPoker = this.node.getChildByName("second_porker");
         var thirdPoker = this.node.getChildByName("third_porker");
         var forthPoker = this.node.getChildByName("forth_porker");
+        var calFirstPoker = this.node.getChildByName("cal_first_porker");
+        var calSecondPoker = this.node.getChildByName("cal_second_porker");
+        var calThirdPoker = this.node.getChildByName("cal_third_porker");
+        var calForthPoker = this.node.getChildByName("cal_forth_porker");
         var poker = this.getPoker();
         if(poker) {
             cc.loader.loadRes("game/"+poker["key"], cc.SpriteFrame, function (err, spriteFrame) {
@@ -99,6 +103,12 @@ cc.Class({
             forthPoker.getComponent("Porker").value=poker["value"];
             forthPoker.getComponent("Porker").key = poker["key"];
         }
+        cc.loader.loadRes("game/poker_bg", cc.SpriteFrame, function(err, spriteFrame) {
+            calFirstPoker.getComponent(cc.Sprite).spriteFrame = spriteFrame;
+            calSecondPoker.getComponent(cc.Sprite).spriteFrame = spriteFrame;
+            calThirdPoker.getComponent(cc.Sprite).spriteFrame = spriteFrame;
+            calForthPoker.getComponent(cc.Sprite).spriteFrame = spriteFrame;
+        });
     },
     getPoker() {
         var pokerList = [];
