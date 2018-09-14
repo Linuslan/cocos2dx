@@ -105,9 +105,17 @@ cc.Class({
         }
         cc.loader.loadRes("game/poker_bg", cc.SpriteFrame, function(err, spriteFrame) {
             calFirstPoker.getComponent(cc.Sprite).spriteFrame = spriteFrame;
+            calFirstPoker.getComponent("Porker").key = "";
+            calFirstPoker.getComponent("Porker").value = 0;
             calSecondPoker.getComponent(cc.Sprite).spriteFrame = spriteFrame;
+            calSecondPoker.getComponent("Porker").key = "";
+            calSecondPoker.getComponent("Porker").value = 0;
             calThirdPoker.getComponent(cc.Sprite).spriteFrame = spriteFrame;
+            calThirdPoker.getComponent("Porker").key = "";
+            calThirdPoker.getComponent("Porker").value = 0;
             calForthPoker.getComponent(cc.Sprite).spriteFrame = spriteFrame;
+            calForthPoker.getComponent("Porker").key = "";
+            calForthPoker.getComponent("Porker").value = 0;
         });
     },
     getPoker() {
