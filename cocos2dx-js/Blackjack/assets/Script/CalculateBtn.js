@@ -31,14 +31,13 @@ cc.Class({
     onLoad () {
         this.node.on(cc.Node.EventType.TOUCH_START, function(event) {
             var targetBtn = event.target;
-            var porkerContainer = targetBtn.parent.parent;
-            var containers = porkerContainer.children;
-            for(var i = 0; i < containers.length; i ++) {
-                var container = containers[i];
-                var btn = container.getChildByName("btn");
-                btn.runAction(cc.scaleTo(0.1, 0.5, 1));
+            var calculateButtons = targetBtn.parent;
+            var buttons = calculateButtons.children;
+            for(var i = 0; i < buttons.length; i ++) {
+                var button = buttons[i];
+                button.runAction(cc.scaleTo(0.1, 1, 1));
             }
-            targetBtn.runAction(cc.scaleTo(0.1, 0.45, 0.8));
+            targetBtn.runAction(cc.scaleTo(0.1, 0.8, 0.8));
         });
         this.node.on(cc.Node.EventType.TOUCH_END, function(event) {
             var calculateIndx = this.index;

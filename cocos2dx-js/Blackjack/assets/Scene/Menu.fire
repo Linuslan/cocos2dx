@@ -308,7 +308,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "button_jjc",
+    "_name": "advanceBtn",
     "_objFlags": 0,
     "_parent": {
       "__id__": 2
@@ -1330,6 +1330,9 @@
     "node": {
       "__id__": 2
     },
-    "_enabled": true
+    "_enabled": true,
+    "bgAudio": {
+      "__uuid__": "300481c0-2205-45f0-9442-002f2bcb22ed"
+    }
   }
 ]

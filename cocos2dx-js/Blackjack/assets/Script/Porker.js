@@ -45,6 +45,8 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
+        this.positionX = this.node.x;
+        this.positionY = this.node.y;
         this.node.zIndex = 0;
         this.node.on(cc.Node.EventType.TOUCH_START, function(event) {
             console.log("获取到的位置为：x="+event.getLocation().x+", y="+event.getLocation().y);
