@@ -102,7 +102,7 @@ cc.Class({
         } else {
             this.pokerValue = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
         }
-                        
+        this.pokers = [];        
         for(var j = 0; j < this.pokerType.length; j ++) {
             for(var i = 0; i < this.pokerValue.length; i ++) {
                 var key = this.pokerValue[i]+"-"+this.pokerType[j];
@@ -246,6 +246,7 @@ cc.Class({
                 valArr2.push(valArr[i]);
             }
             console.log(valArr2);
+            console.log("计算第"+j+"个值为"+val);
             canCal = this.recursiveCal(j, result, valArr2);
             if(canCal) {
                 break;
@@ -258,17 +259,27 @@ cc.Class({
         console.log(this.expreArr);
     },
     recursiveCal(j, result, valArr) {
+        console.log("本次计算开始值:"+result);
+        console.log(valArr);
         var val = result;
         var isCal = false;
-        var arrLen = valArr.length-1;
+        var arrLen = valArr.length;
         for(var i = 0; i < arrLen; i ++) {
+            var valArr2 = [];
+            for(var j = 0; j < arrLen; j ++) {
+                if(i == j) {
+                    continue;
+                }
+                valArr2.push(valArr[j]);
+            }
+            console.log(valArr2);
             var val2 = valArr[i];
             result = val + val2;
             var expStr = "("+val+"+"+val2+")="+result;
             this.expreArr.push(expStr);
             console.log(expStr);
-            if(i + 1 >= arrLen) {
-                if(result == 24) {
+            if(valArr2.length <= 0) {
+                if(Math.abs(result) == 24) {
                     isCal = true;
                 }
             }
@@ -276,8 +287,8 @@ cc.Class({
                 return true;
             }
 
-            if(i + 1 < arrLen) {
-                isCal = this.recursiveCal(j, result, valArr.slice(i+1));
+            if(valArr2.length > 0) {
+                isCal = this.recursiveCal(j, result, valArr2);
                 if(isCal) {
                     return true;
                 }
@@ -288,8 +299,8 @@ cc.Class({
             this.expreArr.pop();
             this.expreArr.push(expStr);
             console.log(expStr);
-            if(i + 1 >= arrLen) {
-                if(result == 24) {
+            if(valArr2.length <= 0) {
+                if(Math.abs(result) == 24) {
                     isCal = true;
                 }
             }
@@ -297,8 +308,8 @@ cc.Class({
                 return true;
             }
 
-            if(i + 1 < arrLen) {
-                isCal = this.recursiveCal(j, result, valArr.slice(i+1));
+            if(valArr2.length > 0) {
+                isCal = this.recursiveCal(j, result, valArr2);
                 if(isCal) {
                     return true;
                 }
@@ -309,8 +320,8 @@ cc.Class({
             this.expreArr.pop();
             this.expreArr.push(expStr);
             console.log(expStr);
-            if(i + 1 >= arrLen) {
-                if(result == 24) {
+            if(valArr2.length <= 0) {
+                if(Math.abs(result) == 24) {
                     isCal = true;
                 }
             }
@@ -318,20 +329,21 @@ cc.Class({
                 return true;
             }
 
-            if(i + 1 < arrLen) {
-                isCal = this.recursiveCal(j, result, valArr.slice(i+1));
+            if(valArr2.length > 0) {
+                isCal = this.recursiveCal(j, result, valArr2);
                 if(isCal) {
                     return true;
                 }
             }
+
             if(val2 != 0) {
                 result = val / val2;
                 expStr = "("+val+"÷"+val2+")="+result;
                 this.expreArr.pop();
                 this.expreArr.push(expStr);
                 console.log(expStr);
-                if(i + 1 >= arrLen) {
-                    if(result == 24) {
+                if(valArr2.length <= 0) {
+                    if(Math.abs(result) == 24) {
                         isCal = true;
                     }
                 }
@@ -339,8 +351,8 @@ cc.Class({
                     return true;
                 }
     
-                if(i + 1 < arrLen) {
-                    isCal = this.recursiveCal(j, result, valArr.slice(i+1));
+                if(valArr2.length > 0) {
+                    isCal = this.recursiveCal(j, result, valArr2);
                     if(isCal) {
                         return true;
                     }
