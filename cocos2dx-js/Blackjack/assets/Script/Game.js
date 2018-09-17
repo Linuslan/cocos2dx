@@ -41,6 +41,14 @@ cc.Class({
         pokerInfo: {
             default: null,
             type: cc.Label
+        },
+        selectedVal: {
+            default: [],
+            type: [cc.Integer]
+        },
+        expreArr: {
+            default: [],
+            type: [cc.String]
         }
     },
 
@@ -124,6 +132,10 @@ cc.Class({
                 button.runAction(cc.scaleTo(0.1, 1, 1));
             }
         }
+        this.firstBtn = null;
+        this.secondBtn = null;
+        this.thirdBtn = null;
+        this.forthBtn = null;
         var cardDealAudioID = null;
         cc.loader.loadRes("audio/card_deal", cc.AudioClip, function (err, clip) {
             cardDealAudioID = cc.audioEngine.play(clip, false, 1);
@@ -136,6 +148,10 @@ cc.Class({
         var calSecondPoker = this.node.getChildByName("cal_second_porker");
         var calThirdPoker = this.node.getChildByName("cal_third_porker");
         var calForthPoker = this.node.getChildByName("cal_forth_porker");
+        var firstVal = 0;
+        var secondVal = 0;
+        var thirdVal = 0;
+        var forthVal = 0;
         var poker = this.getPoker();
         if(poker) {
             cc.loader.loadRes("game/"+poker["key"], cc.SpriteFrame, function (err, spriteFrame) {
@@ -143,6 +159,7 @@ cc.Class({
             });
             firstPoker.getComponent("Porker").value=poker["value"];
             firstPoker.getComponent("Porker").key = poker["key"];
+            firstVal = poker["value"];
         }
         
         poker = this.getPoker();
@@ -152,6 +169,7 @@ cc.Class({
             });
             secondPoker.getComponent("Porker").value=poker["value"];
             secondPoker.getComponent("Porker").key = poker["key"];
+            secondVal = poker["value"];
         }
         
         poker = this.getPoker();
@@ -161,6 +179,7 @@ cc.Class({
             });
             thirdPoker.getComponent("Porker").value=poker["value"];
             thirdPoker.getComponent("Porker").key = poker["key"];
+            thirdVal = poker["value"];
         }
         poker = this.getPoker();
         if(poker) {
@@ -169,7 +188,9 @@ cc.Class({
             });
             forthPoker.getComponent("Porker").value=poker["value"];
             forthPoker.getComponent("Porker").key = poker["key"];
+            forthVal = poker["value"];
         }
+        this.selectedVal = [firstVal, secondVal, thirdVal, forthVal];
         cc.loader.loadRes("game/poker_bg", cc.SpriteFrame, function(err, spriteFrame) {
             calFirstPoker.getComponent(cc.Sprite).spriteFrame = spriteFrame;
             calFirstPoker.getComponent("Porker").key = "";
@@ -184,6 +205,7 @@ cc.Class({
             calForthPoker.getComponent("Porker").key = "";
             calForthPoker.getComponent("Porker").value = 0;
         });
+        this.robotCalculate(this.selectedVal);
     },
     getPoker() {
         if(this.pokers.length <= 0) {
@@ -206,6 +228,128 @@ cc.Class({
         this.pokers.splice(idx, 1);
         this.showPokerInfo();
         return poker;
+    },
+    //机器人计算可能的公式
+    robotCalculate(valArr) {
+        if(!canCal) {
+            this.expreArr = [];
+        }
+        var canCal = false;
+        for(var j = 0; j < valArr.length; j ++) {
+            var val = valArr[j];
+            var result = val;
+            var valArr2 = [];
+            for(var i = 0; i < valArr.length; i ++) {
+                if(i == j) {
+                    continue;
+                }
+                valArr2.push(valArr[i]);
+            }
+            console.log(valArr2);
+            canCal = this.recursiveCal(j, result, valArr2);
+            if(canCal) {
+                break;
+            }
+        }
+        console.log("本次牌计算结果为："+canCal);
+        if(!canCal) {
+            this.expreArr = [];
+        }
+        console.log(this.expreArr);
+    },
+    recursiveCal(j, result, valArr) {
+        var val = result;
+        var isCal = false;
+        var arrLen = valArr.length-1;
+        for(var i = 0; i < arrLen; i ++) {
+            var val2 = valArr[i];
+            result = val + val2;
+            var expStr = "("+val+"+"+val2+")="+result;
+            this.expreArr.push(expStr);
+            console.log(expStr);
+            if(i + 1 >= arrLen) {
+                if(result == 24) {
+                    isCal = true;
+                }
+            }
+            if(isCal) {
+                return true;
+            }
+
+            if(i + 1 < arrLen) {
+                isCal = this.recursiveCal(j, result, valArr.slice(i+1));
+                if(isCal) {
+                    return true;
+                }
+            }
+
+            result = val - val2;
+            expStr = "("+val+"-"+val2+")="+result;
+            this.expreArr.pop();
+            this.expreArr.push(expStr);
+            console.log(expStr);
+            if(i + 1 >= arrLen) {
+                if(result == 24) {
+                    isCal = true;
+                }
+            }
+            if(isCal) {
+                return true;
+            }
+
+            if(i + 1 < arrLen) {
+                isCal = this.recursiveCal(j, result, valArr.slice(i+1));
+                if(isCal) {
+                    return true;
+                }
+            }
+            
+            result = val * val2;
+            expStr = "("+val+"×"+val2+")="+result;
+            this.expreArr.pop();
+            this.expreArr.push(expStr);
+            console.log(expStr);
+            if(i + 1 >= arrLen) {
+                if(result == 24) {
+                    isCal = true;
+                }
+            }
+            if(isCal) {
+                return true;
+            }
+
+            if(i + 1 < arrLen) {
+                isCal = this.recursiveCal(j, result, valArr.slice(i+1));
+                if(isCal) {
+                    return true;
+                }
+            }
+            if(val2 != 0) {
+                result = val / val2;
+                expStr = "("+val+"÷"+val2+")="+result;
+                this.expreArr.pop();
+                this.expreArr.push(expStr);
+                console.log(expStr);
+                if(i + 1 >= arrLen) {
+                    if(result == 24) {
+                        isCal = true;
+                    }
+                }
+                if(isCal) {
+                    return true;
+                }
+    
+                if(i + 1 < arrLen) {
+                    isCal = this.recursiveCal(j, result, valArr.slice(i+1));
+                    if(isCal) {
+                        return true;
+                    }
+                }
+            }
+            
+            this.expreArr.pop();
+            
+        }
     },
     calculate() {
         console.log("进入结果计算");
