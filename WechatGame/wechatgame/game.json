@@ -6,22 +6,5 @@
         "uploadFile": 5000,
         "downloadFile": 5000
     },
-    "subpackages": [
-        {
-            "name": "button_res",
-            "root": "src/assets/resources/button.js"
-        },
-        {
-            "name": "game_res",
-            "root": "src/assets/resources/game.js"
-        },
-        {
-            "name": "game_texture",
-            "root": "src/assets/Texture/game.js"
-        },
-        {
-            "name": "menu_texture",
-            "root": "src/assets/Texture/menu.js"
-        }
-    ]
+    "subpackages": []
 }

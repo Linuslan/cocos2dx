@@ -3,6 +3,7 @@
   "appSecret": "",
   "encryptJs": true,
   "excludeScenes": [],
+  "fb-instant-games": {},
   "includeAnySDK": false,
   "includeSDKBox": false,
   "inlineSpriteFrames": true,
@@ -20,18 +21,17 @@
   },
   "packageName": "org.cocos2d.helloworld",
   "privateKey": "",
+  "qqplay": {
+    "REMOTE_SERVER_ROOT": "",
+    "orientation": "portrait"
+  },
   "startScene": "c6e7f299-3e17-4728-bf2e-27c845a0a0b3",
   "title": "calculate24",
   "webOrientation": "auto",
   "wechatgame": {
     "appid": "wx9e6926dccdae6bda",
-    "orientation": "portrait"
+    "orientation": "landscape"
   },
   "xxteaKey": "e09df1d0-6019-4d",
-  "zipCompressJs": true,
-  "qqplay": {
-    "orientation": "portrait",
-    "REMOTE_SERVER_ROOT": ""
-  },
-  "fb-instant-games": {}
+  "zipCompressJs": true
 }
