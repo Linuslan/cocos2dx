@@ -3,7 +3,7 @@
     "miniprogramRoot": "./",
     "setting": {
         "urlCheck": true,
-        "es6": true,
+        "es6": false,
         "postcss": true,
         "minified": true,
         "newFeature": false

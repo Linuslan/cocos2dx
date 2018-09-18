@@ -26,20 +26,29 @@
 var ID = 'WXDownloader';
 
 var non_text_format = [
-    'js','png','jpg','bmp','jpeg','gif','ico','tiff','webp','image','mp3','ogg','wav','m4a','font','eot','ttf','woff','svg','ttc'
+    'js','png','jpg','bmp','jpeg','gif','ico','tiff','webp','image','pvr','etc','mp3','ogg','wav','m4a','font','eot','ttf','woff','svg','ttc'
 ];
 
-var fs = wx.getFileSystemManager();
+const REGEX = /^\w+:\/\/.*/;
 
+// has sub domain
+var isSubdomain = !wx.getFileSystemManager;
+
+var fs = isSubdomain ? {} : wx.getFileSystemManager();
+
+var _newAssets = [];
 var WXDownloader = window.WXDownloader = function () {
     this.id = ID;
     this.async = true;
     this.pipeline = null;
     this.REMOTE_SERVER_ROOT = '';
+    this.SUBCONTEXT_ROOT = '';
+    _newAssets = [];
 };
 WXDownloader.ID = ID;
 
 WXDownloader.prototype.handle = function (item, callback) {
+
     if (item.type === 'js') {
         callback(null, null);
         return;
@@ -57,6 +66,21 @@ WXDownloader.prototype.handle = function (item, callback) {
             }
         }
     }
+
+    if (isSubdomain) {
+        if (REGEX.test(item.url)) {
+            callback(null, null);
+            return;
+        }
+
+        item.url = this.SUBCONTEXT_ROOT + '/' + item.url;
+
+        if (item.type && non_text_format.indexOf(item.type) !== -1) {
+            nextPipe(item, callback);
+            return;
+        }
+    }
+
     var filePath = item.url;
     // Read from package
     fs.access({
@@ -76,63 +100,85 @@ WXDownloader.prototype.handle = function (item, callback) {
 };
 
 WXDownloader.prototype.cleanOldAssets = function () {
-    fs.getSavedFileList({
-        success: function (res) {
-            var list = res.fileList;
-            if (list) {
-                for (var i = 0; i < list.length; i++) {
-                    var path = list[i].filePath;
-                    fs.unlink({
-                        filePath: list[i].filePath, 
-                        success: function () {
-                            cc.log('Removed local file ' + path + ' successfully!');
-                        },
-                        fail: function (res) {
-                            cc.warn('Failed to remove file(' + path + '): ' + res ? res.errMsg : 'unknown error');
-                        }
-                    });
-                }
+    cleanAllFiles(wx.env.USER_DATA_PATH, _newAssets, (err) => {
+        if (err) {
+            cc.warn(err);
+        }
+        else {
+            for (let i = 0; i < _newAssets.length; ++i) {
+                cc.log('reserve local file: ' + _newAssets[i]);
             }
-        },
-        fail: function (res) {
-            cc.warn('Failed to list all saved files: ' + res ? res.errMsg : 'unknown error');
+            cc.log('Clean old Assets successfully!');
         }
     });
 };
 
-WXDownloader.prototype.cleanAllAssets = function () {
-    fs.getSavedFileList({
+function cleanAllFiles(path, newAssets, finish) {
+    fs.readdir({
+        dirPath: path,
         success: function (res) {
-            var list = res.fileList;
-            if (list) {
-                for (var i = 0; i < list.length; i++) {
-                    var path = list[i].filePath;
-                    fs.unlink({
-                        filePath: list[i].filePath, 
-                        success: function () {
-                            cc.log('Removed local file ' + path + ' successfully!');
-                        },
-                        fail: function (res) {
-                            cc.warn('Failed to remove file(' + path + '): ' + res ? res.errMsg : 'unknown error');
+            var files = res.files;
+            (function next(idx) {
+                if (idx < files.length) {
+                    var dirPath = path + '/' + files[idx];
+                    var stat = fs.statSync(dirPath);
+                    if (stat.isDirectory()) {
+                        cleanAllFiles(dirPath, newAssets, function () {
+                            next(idx + 1);
+                        });
+                    }
+                    else {
+                        // remove old assets
+                        if (newAssets && newAssets.indexOf(dirPath) !== -1) {
+                            next(idx + 1);
+                            return;
                         }
-                    });
+                        fs.unlink({
+                            filePath: dirPath,
+                            success: function () {
+                                cc.log('unlink local file ' + dirPath + ' successfully!');
+                            },
+                            fail: function (res) {
+                                cc.warn('failed to unlink file(' + dirPath + '): ' + res ? res.errMsg : 'unknown error');
+                            },
+                            complete: function () {
+                                next(idx + 1);
+                            }
+                        });
+                    }
                 }
-            }
+                else {
+                    finish && finish();
+                }
+
+            })(0);
         },
         fail: function (res) {
-            cc.warn('Failed to list all saved files: ' + res ? res.errMsg : 'unknown error');
+            finish && finish();
+        },
+    });
+}
+
+WXDownloader.prototype.cleanAllAssets = function () {
+    _newAssets = [];
+    cleanAllFiles(wx.env.USER_DATA_PATH, null, (err) => {
+        if (err) {
+            cc.warn(err);
+        }
+        else {
+            cc.log('Clean all Assets successfully!');
         }
     });
 };
 
 var wxDownloader = window.wxDownloader = new WXDownloader();
 
-function nextPipe (item, callback) {
+function nextPipe(item, callback) {
     var queue = cc.LoadingItems.getQueue(item);
     queue.addListener(item.id, function (item) {
         if (item.error) {
             fs.unlink({
-                filePath: item.url, 
+                filePath: item.url,
                 success: function () {
                     cc.log('Load failed, removed local file ' + item.url + ' successfully!');
                 }
@@ -154,13 +200,13 @@ function readText (item, callback) {
         fail: function (res) {
             cc.warn('Read file failed: ' + url);
             fs.unlink({
-                filePath: url, 
+                filePath: url,
                 success: function () {
                     cc.log('Read file failed, removed local file ' + url + ' successfully!');
                 }
             });
             callback({
-                status: 0, 
+                status: 0,
                 errorMessage: res && res.errMsg ? res.errMsg : "Read text file failed: " + url
             });
         }
@@ -169,10 +215,15 @@ function readText (item, callback) {
 
 function readFromLocal (item, callback) {
     var localPath = wx.env.USER_DATA_PATH + '/' + item.url;
+
     // Read from local file cache
     fs.access({
         path: localPath,
         success: function () {
+
+            // cache new asset
+            _newAssets.push(localPath);
+
             item.url = localPath;
             if (item.type && non_text_format.indexOf(item.type) !== -1) {
                 nextPipe(item, callback);
@@ -193,46 +244,85 @@ function readFromLocal (item, callback) {
     });
 }
 
+function ensureDirFor (path, callback) {
+    // cc.log('mkdir:' + path);
+    var ensureDir = cc.path.dirname(path);
+    if (ensureDir === "wxfile://usr" || ensureDir === "http://usr") {
+        callback();
+        return;
+    }
+    fs.access({
+        path: ensureDir,
+        success: callback,
+        fail: function (res) {
+            ensureDirFor(ensureDir, function () {
+                fs.mkdir({
+                    dirPath: ensureDir,
+                    complete: callback,
+                });
+            });
+        },
+    });
+}
+
 function downloadRemoteFile (item, callback) {
     // Download from remote server
     var relatUrl = item.url;
+
+    // filter protocol url (E.g: https:// or http:// or ftp://)
+    if (REGEX.test(relatUrl)) {
+        callback(null, null);
+        return;
+    }
+
     var remoteUrl = wxDownloader.REMOTE_SERVER_ROOT + '/' + relatUrl;
     item.url = remoteUrl;
     wx.downloadFile({
         url: remoteUrl,
-        success: function(res) {
-            if (res.tempFilePath) {
-                // Save to local path
-                var localPath = wx.env.USER_DATA_PATH + '/' + relatUrl;
-                wx.saveFile({
-                    tempFilePath: res.tempFilePath,
-                    filePath: localPath,
-                    success: function (res) {
-                        cc.log('Write file to ' + res.savedFilePath + ' successfully!');
-                        item.url = res.savedFilePath;
-                        if (item.type && non_text_format.indexOf(item.type) !== -1) {
-                            nextPipe(item, callback);
-                        }
-                        else {
-                            readText(item, callback);
-                        }
-                    },
-                    fail: function () {
-                        // Failed to save file, then just use remote url
-                        callback(null, null);
-                    }
-                });
-            } else if (res.statusCode === 404) {
+        success: function (res) {
+            if (res.statusCode === 404) {
                 cc.warn("Download file failed: " + remoteUrl);
                 callback({
-                    status: 0, 
+                    status: 0,
                     errorMessage: res && res.errMsg ? res.errMsg : "Download file failed: " + remoteUrl
+                });
+            }
+            else if (res.tempFilePath) {
+                // http reading is not cached
+                var localPath = wx.env.USER_DATA_PATH + '/' + relatUrl;
+                // check and mkdir remote folder has exists
+                ensureDirFor(localPath, function () {
+                    // Save to local path
+                    wx.saveFile({
+                        tempFilePath: res.tempFilePath,
+                        filePath: localPath,
+                        success: function (res) {
+                            // cc.log('save:' + localPath);
+                            item.url = res.savedFilePath;
+                            if (item.type && non_text_format.indexOf(item.type) !== -1) {
+                                nextPipe(item, callback);
+                            }
+                            else {
+                                readText(item, callback);
+                            }
+                        },
+                        fail: function (res) {
+                            // Failed to save file, then just use remote url
+                            callback({
+                                status: 0,
+                                errorMessage: res && res.errMsg ? res.errMsg : "Download file failed: " + remoteUrl
+                            }, null);
+                        }
+                    });
                 });
             }
         },
         fail: function (res) {
             // Continue to try download with downloader, most probably will also fail
-            callback(null, null);
+            callback({
+                status: 0,
+                errorMessage: res && res.errMsg ? res.errMsg : "Download file failed: " + remoteUrl
+            }, null);
         }
     })
 }
@@ -290,6 +380,3 @@ function downloadRemoteFile (item, callback) {
 //         }
 //     });
 // }
-
-var prevPipe = cc.loader.md5Pipe || cc.loader.assetLoader;
-cc.loader.insertPipeAfter(prevPipe, wxDownloader);

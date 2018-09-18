@@ -48,7 +48,31 @@ cc.Class({
         },
         expreArr: {
             default: [],
+            type: [cc.Integer]
+        },
+        calArr: {
+            default: [],
+            type: [cc.Integer]
+        },
+        expreInfoArr: {
+            default: [],
             type: [cc.String]
+        },
+        result: {
+            default: 0,
+            type: cc.Integer
+        },
+        lastPokerValues: {
+            default: [],
+            type: [cc.Integer]
+        },
+        lastPokerLbl: {
+            default: null,
+            type: cc.Label
+        },
+        lastExpression: {
+            default: null,
+            type: cc.Label
         }
     },
 
@@ -65,6 +89,7 @@ cc.Class({
         var restartBtn = this.node.getChildByName("buttons").getChildByName("restart_btn");
         var backBtn = this.node.getChildByName("buttons").getChildByName("back_btn");
         startBtn.on(cc.Node.EventType.TOUCH_START, function(event) {
+            this.expreInfoArr = [];
             var btn = event.target;
             btn.runAction(cc.sequence(cc.scaleTo(0.1, 0.85, 0.85), cc.scaleTo(0.1, 1, 1), cc.callFunc(function() {
                 this.refreshPoker();
@@ -72,6 +97,26 @@ cc.Class({
             cc.loader.loadRes("audio/button", cc.AudioClip, function (err, clip) {
                 var audioID = cc.audioEngine.play(clip, false, 1);
             });
+            var firstPoker = this.node.getChildByName("first_porker");
+            var secondPoker = this.node.getChildByName("second_porker");
+            var thirdPoker = this.node.getChildByName("third_porker");
+            var forthPoker = this.node.getChildByName("forth_porker");
+            var lastFirstVal = firstPoker.getComponent("Porker").value;
+            var lastSecondVal = secondPoker.getComponent("Porker").value;
+            var lastThirdVal = thirdPoker.getComponent("Porker").value;
+            var lastForthVal = forthPoker.getComponent("Porker").value;
+            this.lastPokerValues = [lastFirstVal, lastSecondVal, lastThirdVal, lastForthVal];
+            var lastPokers = "上局提示：\n\n"+lastFirstVal+", "+lastSecondVal+", "+lastThirdVal+", "+lastForthVal;
+            this.lastPokerLbl.string = lastPokers;
+            this.recursiveCal(this.selectedVal);
+            var tips = "无解";
+            if(this.expreInfoArr.length > 0) {
+                tips = "";
+                for(var i = 0; i < this.expreInfoArr.length; i ++) {
+                    tips = tips + this.expreInfoArr[i]+"\n\n";
+                }
+            }
+            this.lastExpression.string = tips;
         }, this);
 
         restartBtn.on(cc.Node.EventType.TOUCH_START, function(event) {
@@ -97,6 +142,7 @@ cc.Class({
     },
 
     initGame() {
+        this.clearTips();
         if(this.gameLevel == 0) {
             this.pokerValue = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         } else {
@@ -205,7 +251,6 @@ cc.Class({
             calForthPoker.getComponent("Porker").key = "";
             calForthPoker.getComponent("Porker").value = 0;
         });
-        this.robotCalculate(this.selectedVal);
     },
     getPoker() {
         if(this.pokers.length <= 0) {
@@ -222,149 +267,143 @@ cc.Class({
             return;
         }
         var idx = Math.floor(Math.random()*(this.pokers.length-1-0+1)+0);
-        console.log("选中索引："+idx);
-        console.log(this.pokers);
+        //console.log("选中索引："+idx);
+        //console.log(this.pokers);
         var poker = this.pokers[idx];
         this.pokers.splice(idx, 1);
         this.showPokerInfo();
         return poker;
     },
     //机器人计算可能的公式
-    robotCalculate(valArr) {
-        if(!canCal) {
-            this.expreArr = [];
-        }
-        var canCal = false;
-        for(var j = 0; j < valArr.length; j ++) {
-            var val = valArr[j];
-            var result = val;
-            var valArr2 = [];
-            for(var i = 0; i < valArr.length; i ++) {
-                if(i == j) {
-                    continue;
-                }
-                valArr2.push(valArr[i]);
+    recursiveCal(arr) {
+        for(var i = 0; i < arr.length; i ++) {
+            var val = arr[i];
+            this.calArr.push(val);
+            var arr2 = this.rebuildArr(i, arr);
+            if(arr2.length <= 0) {
+                this.result = this.calculateVal(this.calArr);
+                this.expreArr = [];
+            } else {
+                this.result = this.recursiveCal(arr2);
             }
-            console.log(valArr2);
-            console.log("计算第"+j+"个值为"+val);
-            canCal = this.recursiveCal(j, result, valArr2);
-            if(canCal) {
-                break;
+            this.calArr.pop();
+            if(this.result == 24) {
+                return this.result;
             }
         }
-        console.log("本次牌计算结果为："+canCal);
-        if(!canCal) {
-            this.expreArr = [];
-        }
-        console.log(this.expreArr);
     },
-    recursiveCal(j, result, valArr) {
-        console.log("本次计算开始值:"+result);
-        console.log(valArr);
-        var val = result;
-        var isCal = false;
-        var arrLen = valArr.length;
-        for(var i = 0; i < arrLen; i ++) {
-            var valArr2 = [];
-            for(var j = 0; j < arrLen; j ++) {
-                if(i == j) {
-                    continue;
-                }
-                valArr2.push(valArr[j]);
+    rebuildArr(j, arr) {
+        var temp = [];
+        for(var i = 0; i < arr.length; i ++) {
+            if(i == j) {
+                continue;
             }
-            console.log(valArr2);
-            var val2 = valArr[i];
-            result = val + val2;
-            var expStr = "("+val+"+"+val2+")="+result;
-            this.expreArr.push(expStr);
-            console.log(expStr);
-            if(valArr2.length <= 0) {
-                if(Math.abs(result) == 24) {
-                    isCal = true;
-                }
-            }
-            if(isCal) {
-                return true;
-            }
-
-            if(valArr2.length > 0) {
-                isCal = this.recursiveCal(j, result, valArr2);
-                if(isCal) {
-                    return true;
-                }
-            }
-
-            result = val - val2;
-            expStr = "("+val+"-"+val2+")="+result;
-            this.expreArr.pop();
-            this.expreArr.push(expStr);
-            console.log(expStr);
-            if(valArr2.length <= 0) {
-                if(Math.abs(result) == 24) {
-                    isCal = true;
-                }
-            }
-            if(isCal) {
-                return true;
-            }
-
-            if(valArr2.length > 0) {
-                isCal = this.recursiveCal(j, result, valArr2);
-                if(isCal) {
-                    return true;
-                }
-            }
-            
-            result = val * val2;
-            expStr = "("+val+"×"+val2+")="+result;
-            this.expreArr.pop();
-            this.expreArr.push(expStr);
-            console.log(expStr);
-            if(valArr2.length <= 0) {
-                if(Math.abs(result) == 24) {
-                    isCal = true;
-                }
-            }
-            if(isCal) {
-                return true;
-            }
-
-            if(valArr2.length > 0) {
-                isCal = this.recursiveCal(j, result, valArr2);
-                if(isCal) {
-                    return true;
-                }
-            }
-
-            if(val2 != 0) {
-                result = val / val2;
-                expStr = "("+val+"÷"+val2+")="+result;
-                this.expreArr.pop();
-                this.expreArr.push(expStr);
-                console.log(expStr);
-                if(valArr2.length <= 0) {
-                    if(Math.abs(result) == 24) {
-                        isCal = true;
-                    }
-                }
-                if(isCal) {
-                    return true;
-                }
-    
-                if(valArr2.length > 0) {
-                    isCal = this.recursiveCal(j, result, valArr2);
-                    if(isCal) {
-                        return true;
-                    }
-                }
-            }
-            
-            this.expreArr.pop();
-            
+            temp.push(arr[i]);
         }
+        return temp;
+    },
+    calculateVal(arr) {
+        var result = 0;
+        for(var i = 0; i < arr.length; i ++) {
+            var val = arr[i];
+            this.expreArr.push(val);
+            var arr2 = this.rebuildArr(i, arr);
+            if(arr2.length <= 0) {
+                result = this.executeExpre(this.expreArr);
+                this.expreArr.pop();
+                this.expreArr.pop();
+                return result;
+            }
+            for(var j = 1; j <= 4; j ++) {
+                this.expreArr.push(j);
+                result = this.calculateVal(arr2);
+                if(result == 24) {
+                    return result;
+                }
+                if(arr2.length <= 0) {
+                    result = this.executeExpre(this.expreArr);
+                    this.expreArr.pop();
+                    this.expreArr.pop();
+                    return result;
+                }
+            }
+            this.expreArr.pop();
+            this.expreArr.pop();
+            return 0;
+        }
+    },
+    executeExpre(expreArr) {
+        var val = expreArr[0];
+        var expre = expreArr[1];
+        var val2 = expreArr[2];
+        var expre2 = expreArr[3];
+        var val3 = expreArr[4];
+        var expre3 = expreArr[5];
+        var val4 = expreArr[6];
+        var expreTemp = [];
+        //第一种组合方式：按顺序组合
+        var result1 = this.getResult(val, val2, expre, expreTemp);
+        var result2 = this.getResult(result1, val3, expre2, expreTemp);
+        var result = this.getResult(result2, val4, expre3, expreTemp);
+        if(Number.isInteger(result1) && Number.isInteger(result2) && result == 24) {
+            console.log(expreTemp);
+            this.expreInfoArr = expreTemp;
+            return result;
+        }
+        expreTemp = [];
+        //第二种组合方式：第一个数和第二个数组合，第三个数和第四个数组合
+        var result1 = this.getResult(val, val2, expre, expreTemp);
+        var result2 = this.getResult(val3, val4, expre3, expreTemp);
+        result = this.getResult(result1, result2, expre2, expreTemp);
+        if(Number.isInteger(result1) && Number.isInteger(result2) && result == 24) {
+            console.log(expreTemp);
+            this.expreInfoArr = expreTemp;
+            return result;
+        }
+        expreTemp = [];
+        //第三种组合方式：第二个数和第三个数组合，再和第一个数组合，再和第四个数组合
+        var result1 = this.getResult(val2, val3, expre2, expreTemp);
+        var result2 = this.getResult(val, result1, expre, expreTemp);
+        result = this.getResult(result2, val4, expre3, expreTemp);
+        if(Number.isInteger(result1) && Number.isInteger(result2) && result == 24) {
+            console.log(expreTemp);
+            this.expreInfoArr = expreTemp;
+            return result;
+        }
+        expreTemp = [];
+        //第四种组合方式：第二个数和第三个数组合，再和第四个数组合，再和第一个数组合
+        var result1 = this.getResult(val2, val3, expre2, expreTemp);
+        var result2 = this.getResult(result1, val4, expre3, expreTemp);
+        result = this.getResult(val, result2, expre, expreTemp);
+        if(Number.isInteger(result1) && Number.isInteger(result2) && result == 24) {
+            console.log(expreTemp);
+            this.expreInfoArr = expreTemp;
+            return result;
+        }
+        expreTemp = [];
+        //第五种组合方式：第三个数和第四个数组合，再和第二个数组合，再和第一个数组合
+        var result1 = this.getResult(val3, val4, expre3, expreTemp);
+        var result2 = this.getResult(val2, result1, expre2, expreTemp);
+        result = this.getResult(val, result2, expre, expreTemp);
+        if(Number.isInteger(result1) && Number.isInteger(result2) && result == 24) {
+            console.log(expreTemp);
+            this.expreInfoArr = expreTemp;
+        }
+        this.expreTemp = [];
+        return result;
+    },
+    getResult(val, val2, expre, expreArr) {
+        var result = 0;
+        switch(expre) {
+            case 1: result = val + val2; expreArr.push(val+"+"+val2+"="+result); break;
+            case 2: result = val - val2; expreArr.push(val+"-"+val2+"="+result); break;
+            case 3: result = val * val2; expreArr.push(val+"*"+val2+"="+result); break;
+            case 4: result = val2 && val2 > 0 ? (val / val2) : 0; expreArr.push(val+"/"+val2+"="+result); break;
+        }
+        return result;
     },
     calculate() {
-        console.log("进入结果计算");
+        //console.log("进入结果计算");
         var calFirstPoker = this.node.getChildByName("cal_first_porker");
         var calSecondPoker = this.node.getChildByName("cal_second_porker");
         var calThirdPoker = this.node.getChildByName("cal_third_porker");
@@ -378,7 +417,7 @@ cc.Class({
         thirdVal = thirdVal ? thirdVal : 0;
         forthVal = forthVal ? forthVal : 0;
         if(this.firstBtn && this.secondBtn && this.thirdBtn && firstVal > 0 && secondVal > 0 && thirdVal > 0 && forthVal > 0) {
-            console.log("开始计算结果");
+            //console.log("开始计算结果");
             var firstSymbol = this.firstBtn.getComponent("CalculateBtn").symbol;
             var secondSymbol = this.secondBtn.getComponent("CalculateBtn").symbol;
             var thirdSymbol = this.thirdBtn.getComponent("CalculateBtn").symbol;
@@ -393,6 +432,7 @@ cc.Class({
             if(thirdResult == 24) {
                 this.showInfo("过关");
                 this.refreshPoker();
+                this.clearTips();
                 return;
             }
             firstResult = this.calculateResult(firstVal, secondVal, firstSymbol);
@@ -404,6 +444,7 @@ cc.Class({
             if(thirdResult == 24) {
                 this.showInfo("过关");
                 this.refreshPoker();
+                this.clearTips();
                 return;
             }
             firstResult = this.calculateResult(secondVal, thirdVal, secondSymbol);
@@ -415,6 +456,7 @@ cc.Class({
             if(thirdResult == 24) {
                 this.showInfo("过关");
                 this.refreshPoker();
+                this.clearTips();
                 return;
             }
         }
@@ -430,7 +472,7 @@ cc.Class({
         return result;
     },
     showInfo(msg) {
-        console.log("通知信息为："+msg);
+        //console.log("通知信息为："+msg);
         this.resultInfo.string = msg;
         this.resultInfo.scheduleOnce(function() {
             // 这里的 this 指向 component
@@ -440,6 +482,10 @@ cc.Class({
     showPokerInfo() {
         var len = this.pokers.length;
         this.pokerInfo.string = "剩余牌数："+len;
+    },
+    clearTips() {
+        this.lastExpression.string = "";
+        this.lastPokerLbl.string = "";
     }
 
     // update (dt) {},

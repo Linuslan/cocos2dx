@@ -1,6 +1,7 @@
 {
   "ver": "1.0.1",
   "uuid": "f52d0f50-dceb-4e23-97c8-dfcbd2da2884",
-  "isGroup": false,
+  "isSubpackage": false,
+  "subpackageName": "button_res",
   "subMetas": {}
 }

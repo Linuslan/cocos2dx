@@ -1,6 +1,7 @@
 {
   "ver": "1.0.1",
   "uuid": "50245ef6-d702-4bec-89c3-1cf87737db1c",
-  "isGroup": false,
+  "isSubpackage": true,
+  "subpackageName": "game_texture",
   "subMetas": {}
 }

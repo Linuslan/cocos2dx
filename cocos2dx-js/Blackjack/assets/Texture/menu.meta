@@ -1,6 +1,7 @@
 {
   "ver": "1.0.1",
   "uuid": "48109232-60bf-4a7a-aeab-a2b110671ea0",
-  "isGroup": false,
+  "isSubpackage": false,
+  "subpackageName": "menu_texture",
   "subMetas": {}
 }
