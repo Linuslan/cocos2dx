@@ -10,12 +10,39 @@ cc.Class({
 
     // use this for initialization
     onLoad: function () {
+        var url = "https://www.uxgoo.com/calculate24/UserAction.php?m=userLogin";
+        wx.login({
+            timeout: 6000,
+            success: function(code) {
+                console.log("打印返回的code");
+                console.log(code.code);
+                var sendUrl = url + "&code="+code.code;
+                console.log(sendUrl);
+                wx.request({
+                    url: sendUrl,
+                    success: function(data, statusCode, header) {
+                        console.log(data);
+                    }
+                });
+            }
+        });
+        /*var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && (xhr.status >= 200 && xhr.status < 400)) {
+                var response = xhr.responseText;
+                console.log(response);
+            }
+        };
+        xhr.open("GET", url, true);
+        xhr.send();*/
+        
         this.bgAudioId = cc.audioEngine.play(this.bgAudio, true, 1);
         cc.director.preloadScene("Game", function() {
             console.log("预加载游戏场景");
         });
         var quickStartBtn = this.node.getChildByName("quickStartBtn");
         var advanceBtn = this.node.getChildByName("advanceBtn");
+        var onlineBtn = this.node.getChildByName("onlineBtn");
         if(quickStartBtn) {
             quickStartBtn.on(cc.Node.EventType.TOUCH_START, function(event) {
                 console.log("按下快速开始按钮");
@@ -64,6 +91,13 @@ cc.Class({
                     });
                 }));
                 btn.runAction(action);
+            });
+        }
+        //点击对战，将数据发送到微信上，获取匹配
+        if(onlineBtn) {
+            onlineBtn.on(cc.Node.EventType.TOUCH_START, function(event) {
+                console.log("进入在线对战");
+
             });
         }
     },
