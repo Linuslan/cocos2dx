@@ -4,12 +4,9 @@
  * Date: 2017/10/18
  * Time: 14:33
  */
- include "action/GameRoomAction.php";
- include "action/PlayerAction.php"
+ 
 class SocketService
 {
-    $gameRoomAction = new GameRoomAction();
-    $playerAction = new PlayerAction();
     private $address  = '0.0.0.0';
     private $port = 8083;
     private $_sockets;
@@ -55,42 +52,17 @@ class SocketService
                     $this->handshaking($newClient, $line);
                     //获取client ip
                     socket_getpeername ($newClient, $ip);
-                    $id = uniqid();
-                    $clients[$id] = $newClient;
+                    $clients[$ip] = $newClient;
                     echo  "Client ip:{$ip}   \n";
                     echo "Client msg:{$line} \n";
-                    echo "command:{$id}";
-                    $this->send($newClient, $id);
                 } else {
                     socket_recv($_sock, $buffer,  2048, 0);
                     $msg = $this->message($buffer);
-                    $json = json_decode($msg);
-                    $command = $json->{"command"};
-                    $response = null;
-                    if($command == "updateSocketId") {
-                        $result = $playerAction->updateSocketId($json->{"data"});
-                        if($result == true) {
-                            $this->send($_sock, "{\"result\":true}");
-                        } else {
-                            $this->send($_sock, "{\"result\":false}");
-                        }
-                    } else if($command == "searchRoom") {
-                        $response = $gameRoomAction->searchRoom($json->{"data"});
-                        $this->send($_sock, $response);
-                    } else if($command == "playerReady") {
-                        $result = $gameRoomAction->playerReady($json->{"data"});
-                        $resultJson = json_decode($result);
-                        $socketIds = $resultJson->{"socketIds"};
-                        $socketArr = explode(",", $socketIds);
-                        for($socketArr as $socketId) {
-                            $socket = $clients[$socketId];
-                            $this->send($socket, $resultJson->{"card"});
-                        }
-                    }
                     //在这里业务代码
-                    /*echo "{$key} clinet msg:",$msg,"\n";
+                    echo "{$key} clinet msg:",$msg,"\n";
                     fwrite(STDOUT, 'Please input a argument:');
-                    $response = trim(fgets(STDIN));*/
+                    $response = trim(fgets(STDIN));
+                    $this->send($_sock, $response);
                     echo "{$key} response to Client:".$response,"\n";
                 }
             }
