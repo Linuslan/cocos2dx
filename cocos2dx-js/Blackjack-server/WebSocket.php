@@ -26,7 +26,7 @@ class SocketService
     public function service(){
         //获取tcp协议号码。
         $tcp = getprotobyname("tcp");
-        /*$sock = socket_create(AF_INET, SOCK_STREAM, $tcp);
+        $sock = socket_create(AF_INET, SOCK_STREAM, $tcp);
         socket_set_option($sock, SOL_SOCKET, SO_REUSEADDR, 1);
         
         if($sock < 0)
@@ -34,8 +34,8 @@ class SocketService
             throw new Exception("failed to create socket: ".socket_strerror($sock)."\n");
         }
         socket_bind($sock, $this->address, $this->port);
-        socket_listen($sock, $this->port);*/
-        $context = stream_context_create();
+        socket_listen($sock, $this->port);
+        /*$context = stream_context_create();
 
         // local_cert must be in PEM format
         stream_context_set_option($context, 'ssl', 'local_cert', "D:/Study/php/2_www.uxgoo.com.crt");
@@ -52,7 +52,7 @@ class SocketService
             $errstr,
             STREAM_SERVER_BIND|STREAM_SERVER_LISTEN,
             $context
-        );
+        );*/
         echo "listen on $this->address $this->port ... \n";
         $this->_sockets = $sock;
     }
