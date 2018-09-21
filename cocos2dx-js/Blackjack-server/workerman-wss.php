@@ -21,7 +21,7 @@ $worker = new Worker('websocket://0.0.0.0:8083', $context);
 // 设置transport开启ssl，websocket+ssl即wss
 $worker->transport = 'ssl';
 $worker->onMessage = function($con, $msg) {
-	echo "receive：".$msg;
+	echo "receive:".$msg;
     $con->send('ok');
 };
 

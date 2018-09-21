@@ -41,10 +41,11 @@ cc.Class({
         // };
         // xhr.open("GET", url, true);
         // xhr.send();
-        //var ws = new WebSocket("wss://www.uxgoo.com:8083");
-        var ws = new WebSocket("ws://localhost:8083");
+        var ws = new WebSocket("wss://www.uxgoo.com:8083");
+        //var ws = new WebSocket("ws://localhost:8083");
         ws.onopen = function (event) {
             console.log("Send Text WS was opened.");
+            ws.send("Hello WebSocket, I'm a text message.");
         };
         ws.onmessage = function (event) {
             console.log("response text msg: " + event.data);
@@ -63,7 +64,7 @@ cc.Class({
             else {
                 console.log("WebSocket instance wasn't ready...");
             }
-        }, 3);*/
+        }, 20);*/
         
         this.bgAudioId = cc.audioEngine.play(this.bgAudio, true, 1);
         cc.director.preloadScene("Game", function() {
