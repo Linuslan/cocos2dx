@@ -4,12 +4,12 @@
  * Date: 2017/10/18
  * Time: 14:33
  */
- include "action/GameRoomAction.php";
- include "action/PlayerAction.php"
+include_once dirname(__FILE__)."/action/GameRoomAction.php";
+include_once dirname(__FILE__)."/action/PlayerAction.php";
+$gameRoomAction = new GameRoomAction();
+$playerAction = new PlayerAction();
 class SocketService
 {
-    $gameRoomAction = new GameRoomAction();
-    $playerAction = new PlayerAction();
     private $address  = '0.0.0.0';
     private $port = 8083;
     private $_sockets;
@@ -26,14 +26,33 @@ class SocketService
     public function service(){
         //获取tcp协议号码。
         $tcp = getprotobyname("tcp");
-        $sock = socket_create(AF_INET, SOCK_STREAM, $tcp);
+        /*$sock = socket_create(AF_INET, SOCK_STREAM, $tcp);
         socket_set_option($sock, SOL_SOCKET, SO_REUSEADDR, 1);
+        
         if($sock < 0)
         {
             throw new Exception("failed to create socket: ".socket_strerror($sock)."\n");
         }
         socket_bind($sock, $this->address, $this->port);
-        socket_listen($sock, $this->port);
+        socket_listen($sock, $this->port);*/
+        $context = stream_context_create();
+
+        // local_cert must be in PEM format
+        stream_context_set_option($context, 'ssl', 'local_cert', "D:/Study/php/2_www.uxgoo.com.crt");
+        stream_context_set_option($context, 'ssl', 'local_pk', 'D:/Study/php/3_www.uxgoo.com.key');
+        // Pass Phrase (password) of private key
+        //stream_context_set_option($context, 'ssl', 'passphrase', $pem_passphrase);
+        stream_context_set_option($context, 'ssl', 'allow_self_signed', true);
+        stream_context_set_option($context, 'ssl', 'verify_peer', false);
+
+        // Create the server socket
+        $sock = stream_socket_server(
+            'ssl://0.0.0.0:8083',
+            $errno,
+            $errstr,
+            STREAM_SERVER_BIND|STREAM_SERVER_LISTEN,
+            $context
+        );
         echo "listen on $this->address $this->port ... \n";
         $this->_sockets = $sock;
     }
@@ -62,31 +81,41 @@ class SocketService
                     echo "command:{$id}";
                     $this->send($newClient, $id);
                 } else {
-                    socket_recv($_sock, $buffer,  2048, 0);
-                    $msg = $this->message($buffer);
-                    $json = json_decode($msg);
-                    $command = $json->{"command"};
-                    $response = null;
-                    if($command == "updateSocketId") {
-                        $result = $playerAction->updateSocketId($json->{"data"});
-                        if($result == true) {
-                            $this->send($_sock, "{\"result\":true}");
-                        } else {
-                            $this->send($_sock, "{\"result\":false}");
+                    try {
+                        $i = socket_recv($_sock, $buffer,  2048, 0);
+                        if($i === false) {
+                            echo "socket 异常 ".socket_strerror($_sock)."\n";
+                            array_splice($clients, intval($key), 1);
+                            break;
                         }
-                    } else if($command == "searchRoom") {
-                        $response = $gameRoomAction->searchRoom($json->{"data"});
-                        $this->send($_sock, $response);
-                    } else if($command == "playerReady") {
-                        $result = $gameRoomAction->playerReady($json->{"data"});
-                        $resultJson = json_decode($result);
-                        $socketIds = $resultJson->{"socketIds"};
-                        $socketArr = explode(",", $socketIds);
-                        for($socketArr as $socketId) {
-                            $socket = $clients[$socketId];
-                            $this->send($socket, $resultJson->{"card"});
+                        $msg = $this->message($buffer);
+                        $json = json_decode($msg);
+                        $command = $json->{"command"};
+                        $response = null;
+                        if($command == "updateSocketId") {
+                            $result = $playerAction->updateSocketId($json->{"data"});
+                            if($result == true) {
+                                $this->send($_sock, "{\"result\":true}");
+                            } else {
+                                $this->send($_sock, "{\"result\":false}");
+                            }
+                        } else if($command == "searchRoom") {
+                            $response = $gameRoomAction->searchRoom($json->{"data"});
+                            $this->send($_sock, $response);
+                        } else if($command == "playerReady") {
+                            $result = $gameRoomAction->playerReady($json->{"data"});
+                            $resultJson = json_decode($result);
+                            $socketIds = $resultJson->{"socketIds"};
+                            $socketArr = explode(",", $socketIds);
+                            foreach($socketArr as $socketId) {
+                                $socket = $clients[$socketId];
+                                $this->send($socket, $resultJson->{"card"});
+                            }
                         }
+                    } catch(Exception $ex) {
+
                     }
+                    
                     //在这里业务代码
                     /*echo "{$key} clinet msg:",$msg,"\n";
                     fwrite(STDOUT, 'Please input a argument:');
@@ -120,7 +149,7 @@ class SocketService
             "Upgrade: websocket\r\n" .
             "Connection: Upgrade\r\n" .
             "WebSocket-Origin: $this->address\r\n" .
-            "WebSocket-Location: ws://$this->address:$this->port/websocket/websocket\r\n".
+            "WebSocket-Location: wss://$this->address:$this->port/websocket/websocket\r\n".
             "Sec-WebSocket-Accept:$secAccept\r\n\r\n";
         return socket_write($newClient, $upgrade, strlen($upgrade));
     }

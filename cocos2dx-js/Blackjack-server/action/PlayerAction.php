@@ -1,7 +1,9 @@
 <?php
-	include "../utils/JdbcUtil.php";
+	$cur_dir=dirname(__FILE__);
+	chdir($cur_dir);
+	include_once "../utils/JdbcUtil.php";
+	getConn();
 	class PlayerAction {
-		getConn();
 		function updateSocketId($data) {
 			$json = json_decode($data);
 			$websocketId = $json->{"webSocketId"};

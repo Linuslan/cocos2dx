@@ -11,30 +11,59 @@ cc.Class({
     // use this for initialization
     onLoad: function () {
         var url = "https://www.uxgoo.com/calculate24/UserAction.php?m=userLogin";
-        wx.login({
-            timeout: 6000,
-            success: function(code) {
-                console.log("打印返回的code");
-                console.log(code.code);
-                var sendUrl = url + "&code="+code.code;
-                console.log(sendUrl);
-                wx.request({
-                    url: sendUrl,
-                    success: function(data, statusCode, header) {
-                        console.log(data);
-                    }
-                });
-            }
-        });
-        /*var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState == 4 && (xhr.status >= 200 && xhr.status < 400)) {
-                var response = xhr.responseText;
-                console.log(response);
-            }
+        // wx.login({
+        //     timeout: 6000,
+        //     success: function(code) {
+        //         console.log("打印返回的code");
+        //         console.log(code.code);
+        //         var sendUrl = url + "&code="+code.code;
+        //         console.log(sendUrl);
+        //         // wx.request({
+        //         //     url: sendUrl,
+        //         //     success: function(data, statusCode, header) {
+        //         //         console.log(data);
+        //         //     }
+        //         // });
+        //         wx.connectSocket({
+        //             url: "wss://www.uxgoo.com:8083",
+        //             success: function() {
+        //                 console.log("链接websocket完成");
+        //             }
+        //         });
+        //     }
+        // });
+        // var xhr = new XMLHttpRequest();
+        // xhr.onreadystatechange = function () {
+        //     if (xhr.readyState == 4 && (xhr.status >= 200 && xhr.status < 400)) {
+        //         var response = xhr.responseText;
+        //         console.log(response);
+        //     }
+        // };
+        // xhr.open("GET", url, true);
+        // xhr.send();
+        //var ws = new WebSocket("wss://www.uxgoo.com:8083");
+        var ws = new WebSocket("ws://localhost:8083");
+        ws.onopen = function (event) {
+            console.log("Send Text WS was opened.");
         };
-        xhr.open("GET", url, true);
-        xhr.send();*/
+        ws.onmessage = function (event) {
+            console.log("response text msg: " + event.data);
+        };
+        ws.onerror = function (event) {
+            console.log("Send Text fired an error");
+        };
+        ws.onclose = function (event) {
+            console.log("WebSocket instance closed.");
+        };
+
+        /*setTimeout(function () {
+            if (ws.readyState === WebSocket.OPEN) {
+                ws.send("Hello WebSocket, I'm a text message.");
+            }
+            else {
+                console.log("WebSocket instance wasn't ready...");
+            }
+        }, 3);*/
         
         this.bgAudioId = cc.audioEngine.play(this.bgAudio, true, 1);
         cc.director.preloadScene("Game", function() {

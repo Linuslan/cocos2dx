@@ -1,8 +1,11 @@
 <?php
-	include "../utils/JdbcUtil.php";
-	include "../model/GameRoom.php";
+	$cur_dir=dirname(__FILE__);
+	chdir($cur_dir);
+	include_once "../utils/JdbcUtil.php";
+	include_once "../model/GameRoom.php";
+	getConn();
 	class GameRoomAction {
-		getConn();
+		
 		//搜索房间，如果有空闲房间，则进入空闲房间，如果没有空闲房间，则创建一个房间，等待玩家进入
 		public function searchRoom($data) {
 			$sql = "SELECT * FROM tbl_wechat_game_room t WHERE t.status = 0 ORDER BY t.id ASC LIMIT 1";
@@ -41,7 +44,7 @@
 			$result = mysql_query($sql);
 			$playerCount = 0;
 			while($row = mysql_fetch_array($result)) {
-				$playerCount = $row["cnt"]
+				$playerCount = $row["cnt"];
 			}
 			$card = "";
 			$socketIdStr = "";
@@ -49,7 +52,7 @@
 				$card = "4,3,2,1";
 				$sql = "SELECT t1.websocket_id FROM (SELECT * FROM tbl_wechat_game_room_player t WHERE t.room_id='".$roomId."') t INNER JOIN tbl_wechat_player t1 ON t.player_id = t1.id";
 				$result = mysql_query($sql);
-				$socketIds = new array();
+				$socketIds = array();
 				while($row = mysql_fetch_array($result)) {
 					array_push($socketIds, $row["websocket_id"]);
 				}
