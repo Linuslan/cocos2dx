@@ -1,9 +1,12 @@
 <?php
 require_once __DIR__ . '/Workerman/Autoloader.php';
+include_once __DIR__."/action/GameRoomAction.php";
+include_once __DIR__."/action/PlayerAction.php";
 use Workerman\Worker;
-echo dirname(__FILE__).'\\2_www.uxgoo.com.crt';
-echo "    ";
-echo dirname(__FILE__).'\\3_www.uxgoo.com.key';
+
+$gameRoomAction = new GameRoomAction();
+$playerAction = new PlayerAction();
+
 // 证书最好是申请的证书
 $context = array(
     // 更多ssl选项请参考手册 http://php.net/manual/zh/context.ssl.php
@@ -20,9 +23,67 @@ $context = array(
 $worker = new Worker('websocket://0.0.0.0:8083', $context);
 // 设置transport开启ssl，websocket+ssl即wss
 $worker->transport = 'ssl';
+$clients = [];
 $worker->onMessage = function($con, $msg) {
-	echo "receive:".$msg;
-    $con->send('ok');
+	global $playerAction;
+	global $gameRoomAction;
+	global $clients;
+	echo "receive:".$msg."\n";
+	$result = [];
+	$result["success"] = false;
+	$result["msg"] = "";
+	$result["code"] = "";
+	$result["data"] = "";
+	$isSend = false;
+	try {
+		if($msg == null) {
+			throw new Exception("{\"msg\":\"command is null\", \"code\": \"1\"}");
+		}
+		$jsonData = json_decode($msg);
+		$cmd = $jsonData->{"cmd"};	//获取指令
+		$result["cmd"] = $cmd;
+		//var_dump($clients);
+		if($cmd == "getSocketId") {
+			$socketId = uniqid();
+			$data = [];
+			$data["socketId"] = $socketId;
+			$result["data"] = $data;
+			$clients[$socketId] = $con;
+		} else if($cmd == "updateSocketId") {
+			$data = $jsonData->{"data"};
+			$rs = $playerAction->updateSocketId($jsonData->{"data"});
+			echo "updateSocketId result:".$rs."\n";
+		} else if ($cmd == "playerReady") {
+			$currSocketId = $jsonData->{"data"}->{"socketId"};
+			$rs = $gameRoomAction->playerReady($jsonData->{"data"});
+			$result["data"] = $rs;
+			$result["success"] = true;
+            $rsJson = json_decode($rs);
+            if($rsJson->{"isCountDown"}) {
+            	$socketIds = $rsJson->{"socketIds"};
+            	echo "playerReady->socketIds:".$socketIds."\n";
+	            $socketArr = explode(",", $socketIds);
+	            foreach($socketArr as $socketId) {
+	            	echo "socketId:".$socketId."\n";
+	            	if($socketId == $currSocketId) {
+	            		$isSend = true;
+	            	}
+	                $socket = $clients[$socketId];
+	                $socket->send(json_encode($result));
+	            }
+            }
+		}
+		$result["success"] = true;
+	} catch(Exception $ex) {
+		$errJson = json_decode($ex->getMessage());
+		$result["success"] = false;
+		$result["msg"] = $errJson->{"msg"};
+		$result["code"] = $errJson->{"code"};
+	}
+	if(!$isSend) {
+		$con->send(json_encode($result));
+	}
+    //$con->send('ok');
 };
 
 Worker::runAll();

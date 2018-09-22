@@ -41,21 +41,21 @@ cc.Class({
         // };
         // xhr.open("GET", url, true);
         // xhr.send();
-        var ws = new WebSocket("wss://www.uxgoo.com:8083");
-        //var ws = new WebSocket("ws://localhost:8083");
-        ws.onopen = function (event) {
-            console.log("Send Text WS was opened.");
-            ws.send("Hello WebSocket, I'm a text message.");
-        };
-        ws.onmessage = function (event) {
-            console.log("response text msg: " + event.data);
-        };
-        ws.onerror = function (event) {
-            console.log("Send Text fired an error");
-        };
-        ws.onclose = function (event) {
-            console.log("WebSocket instance closed.");
-        };
+        // var ws = new WebSocket("wss://www.uxgoo.com:8083");
+        // //var ws = new WebSocket("ws://localhost:8083");
+        // ws.onopen = function (event) {
+        //     console.log("Send Text WS was opened.");
+        //     ws.send("Hello WebSocket, I'm a text message.");
+        // };
+        // ws.onmessage = function (event) {
+        //     console.log("response text msg: " + event.data);
+        // };
+        // ws.onerror = function (event) {
+        //     console.log("Send Text fired an error");
+        // };
+        // ws.onclose = function (event) {
+        //     console.log("WebSocket instance closed.");
+        // };
 
         /*setTimeout(function () {
             if (ws.readyState === WebSocket.OPEN) {

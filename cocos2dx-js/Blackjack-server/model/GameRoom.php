@@ -1,7 +1,7 @@
 <?php
 	class GameRoom {
 		private $id;
-		private $roomId;
+		private $roomNo;
 		private $roomName;
 		private $status;
 		private $password;
@@ -12,11 +12,11 @@
 		public function setId($id) {
 			$this->id = $id;
 		}
-		public function getRoomId() {
+		public function getRoomNo() {
 			return $roomId;
 		}
-		public function setRoomId($roomId) {
-			$this->roomId = $roomId;
+		public function setRoomNo($roomNo) {
+			$this->roomNo = $roomNo;
 		}
 		public function getRoomName() {
 			return $roomName;
