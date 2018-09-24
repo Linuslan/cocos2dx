@@ -11,27 +11,29 @@ cc.Class({
     // use this for initialization
     onLoad: function () {
         var url = "https://www.uxgoo.com/calculate24/UserAction.php?m=userLogin";
-        // wx.login({
-        //     timeout: 6000,
-        //     success: function(code) {
-        //         console.log("打印返回的code");
-        //         console.log(code.code);
-        //         var sendUrl = url + "&code="+code.code;
-        //         console.log(sendUrl);
-        //         // wx.request({
-        //         //     url: sendUrl,
-        //         //     success: function(data, statusCode, header) {
-        //         //         console.log(data);
-        //         //     }
-        //         // });
-        //         wx.connectSocket({
-        //             url: "wss://www.uxgoo.com:8083",
-        //             success: function() {
-        //                 console.log("链接websocket完成");
-        //             }
-        //         });
-        //     }
-        // });
+        wx.login({
+            timeout: 6000,
+            success: function(code) {
+                console.log("打印返回的code");
+                console.log(code.code);
+                var sendUrl = url + "&code="+code.code;
+                console.log(sendUrl);
+                wx.request({
+                    url: sendUrl,
+                    success: function(data, statusCode, header) {
+                        console.log(data);
+                        resposne = data.data;
+                        
+                    }
+                });
+                wx.connectSocket({
+                    url: "wss://www.uxgoo.com:8083",
+                    success: function() {
+                        console.log("链接websocket完成");
+                    }
+                });
+            }
+        });
         // var xhr = new XMLHttpRequest();
         // xhr.onreadystatechange = function () {
         //     if (xhr.readyState == 4 && (xhr.status >= 200 && xhr.status < 400)) {

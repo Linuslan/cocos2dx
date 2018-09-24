@@ -20,5 +20,18 @@
 		//$openId = $json["openid"];
 		$json = json_decode($output);
 		$openId = $json->{"openid"};
+		$sql = "SELECT * FROM tbl_wechat_player t WHERE t.openid='".$openId."'";
+		$result = mysql_query($sql);
+		$userCount = 0;
+		$id = null;
+		while($row = mysql_fetch_array($result)) {
+			$id = $row["id"];
+		}
+		if($id == null || $id < 0) {
+			$sql = "INSERT INTO tbl_wechat_player(openid, score, create_time, login_time) VALUES('".$openId."', 0, '".date("Y-m-d H:i:s")."', '".date("Y-m-d H:i:s")."')";
+			mysql_query($sql);
+			$id = mysql_insert_id();
+		}
+		echo "{\"playerId\": \"".$id."\"}";
 	}
 ?>
