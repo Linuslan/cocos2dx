@@ -1,4 +1,6 @@
 window.Global = {
     playerId: null,
-    socketId: null
+    socketId: null,
+    roomId: null,
+    gameLevel: null
 }

@@ -23,15 +23,18 @@ cc.Class({
                     success: function(data, statusCode, header) {
                         console.log(data);
                         resposne = data.data;
+                        if(response.playerId) {
+                            Global.playerId = response.playerId;
+                        }
                         
                     }
                 });
-                wx.connectSocket({
-                    url: "wss://www.uxgoo.com:8083",
-                    success: function() {
-                        console.log("链接websocket完成");
-                    }
-                });
+                // wx.connectSocket({
+                //     url: "wss://www.uxgoo.com:8083",
+                //     success: function() {
+                //         console.log("链接websocket完成");
+                //     }
+                // });
             }
         });
         // var xhr = new XMLHttpRequest();
@@ -43,21 +46,49 @@ cc.Class({
         // };
         // xhr.open("GET", url, true);
         // xhr.send();
-        // var ws = new WebSocket("wss://www.uxgoo.com:8083");
-        // //var ws = new WebSocket("ws://localhost:8083");
-        // ws.onopen = function (event) {
-        //     console.log("Send Text WS was opened.");
-        //     ws.send("Hello WebSocket, I'm a text message.");
-        // };
-        // ws.onmessage = function (event) {
-        //     console.log("response text msg: " + event.data);
-        // };
-        // ws.onerror = function (event) {
-        //     console.log("Send Text fired an error");
-        // };
-        // ws.onclose = function (event) {
-        //     console.log("WebSocket instance closed.");
-        // };
+        var ws = new WebSocket("wss://www.uxgoo.com:8083");
+        //var ws = new WebSocket("ws://localhost:8083");
+        ws.onopen = function (event) {
+            console.log("Send Text WS was opened.");
+            ws.send("{\"cmd\":\"getSocketId\"}");
+        };
+        ws.onmessage = function (event) {
+            var data = event.data;
+            console.log("response text msg: " + event.data);
+            var json = eval("("+data+")");
+            if(json.success == false) {
+                wx.showToast({title:"请求服务端异常"});
+            }
+            if(json.cmd == "getSocketId") {
+                Global.socketId = json.socketId;
+                ws.send("{\"cmd\":\"updateSocketId\", \"data\":{\"socketId\":\""+Global.socketId+"\"}}");
+            }
+            if(json.cmd == "updateSocketId") {
+                wx.showToast({title:"联网成功"});
+            }
+            if(json.cmd == "searchRoom") {
+                var responseData = json.data;
+                if(!responseData.roomId || responseData.gameLevel) {
+                    wx.showToast({title:"查找房间异常"});
+                }
+                var gameLevel = responseData.gameLevel;
+                Global.gameLevel = gameLevel;
+                Global.roomId = responseData.roomId;
+                cc.director.loadScene("Game", function() {
+                    var scene = cc.director.getScene();
+                    var canvas = scene.getChildByName("Canvas");
+                    var gameCmp = canvas.getComponent("Game");
+                    gameCmp.gameLevel = gameLevel;
+                    gameCmp.initGame();
+                });
+            }
+        };
+        ws.onerror = function (event) {
+            console.log("Send Text fired an error");
+        };
+        ws.onclose = function (event) {
+            console.log("WebSocket instance closed.");
+        };
 
         /*setTimeout(function () {
             if (ws.readyState === WebSocket.OPEN) {
@@ -88,14 +119,12 @@ cc.Class({
                 console.log("按下快速开始按钮结束");
                 var btn = event.target;
                 var action = cc.sequence(cc.scaleTo(0.1, 1), cc.callFunc(function() {
+                    if(ws.readyState !== WebSocket.OPEN) {
+                        wx.showToast({title:"正在联网中，请稍后"});
+                        return ;
+                    }
+                    wx.send("{\"cmd\":\"searchRoom\", \"data\": {\"gameLevel\": 0}}");
                     console.log("开始执行动作回调");
-                    cc.director.loadScene("Game", function() {
-                        var scene = cc.director.getScene();
-                        var canvas = scene.getChildByName("Canvas");
-                        var gameCmp = canvas.getComponent("Game");
-                        gameCmp.gameLevel = 0;
-                        gameCmp.initGame();
-                    });
                 }));
                 btn.runAction(action);
             });

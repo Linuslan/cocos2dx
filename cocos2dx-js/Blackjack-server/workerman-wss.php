@@ -53,7 +53,12 @@ $worker->onMessage = function($con, $msg) {
 			$data = $jsonData->{"data"};
 			$rs = $playerAction->updateSocketId($jsonData->{"data"});
 			echo "updateSocketId result:".$rs."\n";
-		} else if ($cmd == "playerReady") {
+		} else if($cmd == "searchRoom") {
+            $rs = $gameRoomAction->searchRoom($jsonData->{"data"});
+            if($rs != null) {
+                $result["data"] = $rs;
+            }
+        } else if ($cmd == "playerReady") {
 			$currSocketId = $jsonData->{"data"}->{"socketId"};
 			$rs = $gameRoomAction->playerReady($jsonData->{"data"});
 			$result["data"] = $rs;
@@ -72,7 +77,17 @@ $worker->onMessage = function($con, $msg) {
 	                $socket->send(json_encode($result));
 	            }
             }
-		}
+		} else if($cmd == "refreshPoker") {
+            $data = $jsonData->{"data"};
+            $rs = $gameRoomAction->refreshPoker($data);
+            $result["data"] = $rs;
+        } else if($cmd == "initGame") {
+            $data = $jsonData->{"data"};
+            $rs = $gameRoomAction->initGame($data);
+            $result["data"] = $rs;
+        } else if($cmd == "commit") {
+            $data = $jsonData->{"data"};
+        }
 		$result["success"] = true;
 	} catch(Exception $ex) {
 		$errJson = json_decode($ex->getMessage());

@@ -145,8 +145,10 @@ cc.Class({
         this.clearTips();
         if(this.gameLevel == 0) {
             this.pokerValue = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-        } else {
+        } else if(this.gameLevel == 1) {
             this.pokerValue = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+        } else if(this.gameLevel == 2) {    //简单的在线对战
+            //出现准备按钮
         }
         this.pokers = [];        
         for(var j = 0; j < this.pokerType.length; j ++) {
