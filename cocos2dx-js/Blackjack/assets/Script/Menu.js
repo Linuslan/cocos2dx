@@ -22,7 +22,9 @@ cc.Class({
                     url: sendUrl,
                     success: function(data, statusCode, header) {
                         console.log(data);
-                        resposne = data.data;
+                        var response = data.data;
+                        console.log("用户登录响应");
+                        console.log(response);
                         if(response.playerId) {
                             Global.playerId = response.playerId;
                         }
@@ -55,21 +57,30 @@ cc.Class({
         ws.onmessage = function (event) {
             var data = event.data;
             console.log("response text msg: " + event.data);
-            var json = eval("("+data+")");
+            var json = JSON.parse(data);
+            console.log("JSON解析成功");
+            console.log(json);
             if(json.success == false) {
                 wx.showToast({title:"请求服务端异常"});
+                //alert("请求服务器异常");
             }
             if(json.cmd == "getSocketId") {
+                console.log("进入getSocketId处理流程，开始发送更新socketId操作");
                 Global.socketId = json.socketId;
                 ws.send("{\"cmd\":\"updateSocketId\", \"data\":{\"socketId\":\""+Global.socketId+"\"}}");
             }
             if(json.cmd == "updateSocketId") {
+                console.log("进入updateSocketId处理流程，开始弹出更新成功提示");
                 wx.showToast({title:"联网成功"});
+                //alert("联网成功");
             }
             if(json.cmd == "searchRoom") {
+                console.log("进入searchRoom处理流程");
                 var responseData = json.data;
+                console.log("responseData:"+responseData);
                 if(!responseData.roomId || responseData.gameLevel) {
                     wx.showToast({title:"查找房间异常"});
+                    //alert("查找房间异常");
                 }
                 var gameLevel = responseData.gameLevel;
                 Global.gameLevel = gameLevel;
@@ -121,9 +132,10 @@ cc.Class({
                 var action = cc.sequence(cc.scaleTo(0.1, 1), cc.callFunc(function() {
                     if(ws.readyState !== WebSocket.OPEN) {
                         wx.showToast({title:"正在联网中，请稍后"});
+                        //alert("正在联网中，请稍后");
                         return ;
                     }
-                    wx.send("{\"cmd\":\"searchRoom\", \"data\": {\"gameLevel\": 0}}");
+                    ws.send("{\"cmd\":\"searchRoom\", \"data\": {\"gameLevel\": 0}}");
                     console.log("开始执行动作回调");
                 }));
                 btn.runAction(action);

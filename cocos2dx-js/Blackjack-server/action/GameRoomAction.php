@@ -16,15 +16,16 @@
 				$roomNo = $row["room_no"];
 			}
 			//创建房间
-			if($roomId == null) {
+			if($roomNo == null) {
 				$roomNo = uniqid();
 				$time = date('Y-m-j G:i:s');
 				$gameRoom = new GameRoom();
-				$gameRoom->setRoomNo($roomId);
+				$gameRoom->setRoomNo($roomNo);
 				$gameRoom->setRoomName("房间");
 				$gameRoom->setStatus(0);
 				$gameRoom->setCreateTime($time);
-				$sql = "INSERT INTO tbl_wechat_game_room(room_no, room_name, create_time, status, password) VALUES('".$roomNo."', '', '".$time."', 0, '')";
+				$sql = "INSERT INTO tbl_wechat_game_room(room_no, room_name, create_time, status, pwd) VALUES('".$roomNo."', '', '".$time."', 0, '')";
+				echo $sql;
 				mysql_query($sql);
 			}
 			return "{\"roomNo\":\"".$roomNo."\", \"gameLevel\": ".$gameLevel."}";
@@ -141,7 +142,7 @@
 		public function commit($data) {
 			$roomNo = $data->{"roomNo"};
 			$roundId = $data->{"roundId"};
-			$playerId = $data->{"playerId"}
+			$playerId = $data->{"playerId"};
 			$sql = "SELECT * FROM tbl_wechat_game_room_round_poker t WHERE t.round_id=".$roundId;
 			$sql = "SELECT * FROM tbl_wechat_player t WHERE t.id=".$playerId;
 			$score = 0;

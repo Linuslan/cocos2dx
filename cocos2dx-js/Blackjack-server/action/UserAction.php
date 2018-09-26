@@ -1,4 +1,6 @@
 <?php
+	include_once "utils/JdbcUtil.php";
+	getConn();
 	$method = $_REQUEST["m"];
 	if($method == "userLogin") {
 		userLogin();
