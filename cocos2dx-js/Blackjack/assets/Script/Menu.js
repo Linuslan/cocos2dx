@@ -10,6 +10,7 @@ cc.Class({
 
     // use this for initialization
     onLoad: function () {
+        var ws;
         var url = "https://www.uxgoo.com/calculate24/UserAction.php?m=userLogin";
         wx.login({
             timeout: 6000,
@@ -25,10 +26,64 @@ cc.Class({
                         var response = data.data;
                         console.log("用户登录响应");
                         console.log(response);
-                        if(response.playerId) {
-                            Global.playerId = response.playerId;
+                        console.log("用户id："+response.playerId);
+                        if(!response.playerId) {
+                            wx.showToast({title:"请求服务端异常", icon: "none"});
                         }
-                        
+                        console.log("给全局赋值");
+                        Global.playerId = response.playerId;
+                        ws = new WebSocket("wss://www.uxgoo.com:8083");
+                        ws.onopen = function (event) {
+                            console.log("Send Text WS was opened.");
+                            ws.send("{\"cmd\":\"getSocketId\"}");
+                        };
+                        ws.onmessage = function (event) {
+                            var data = event.data;
+                            console.log("response text msg: " + event.data);
+                            var json = JSON.parse(data);
+                            console.log("JSON解析成功");
+                            console.log(json);
+                            if(json.success == false) {
+                                wx.showToast({title:"请求服务端异常", icon: "none"});
+                                //alert("请求服务器异常");
+                            }
+                            if(json.cmd == "getSocketId") {
+                                console.log("进入getSocketId处理流程，开始发送更新socketId操作");
+                                Global.socketId = json.data.socketId;
+                                console.log(Global);
+                                ws.send("{\"cmd\":\"updateSocketId\", \"data\":{\"socketId\":\""+Global.socketId+"\", \"playerId\":"+Global.playerId+"}}");
+                            }
+                            if(json.cmd == "updateSocketId") {
+                                console.log("进入updateSocketId处理流程，开始弹出更新成功提示");
+                                wx.showToast({title:"联网成功"});
+                                //alert("联网成功");
+                            }
+                            if(json.cmd == "searchRoom") {
+                                console.log("进入searchRoom处理流程");
+                                var responseData = json.data;
+                                console.log("responseData:"+responseData);
+                                if(!responseData.roomNo || responseData.gameLevel) {
+                                    wx.showToast({title:"查找房间异常", icon: "none"});
+                                    //alert("查找房间异常");
+                                }
+                                var gameLevel = responseData.gameLevel;
+                                Global.gameLevel = gameLevel;
+                                Global.roomId = responseData.roomId;
+                                cc.director.loadScene("Game", function() {
+                                    var scene = cc.director.getScene();
+                                    var canvas = scene.getChildByName("Canvas");
+                                    var gameCmp = canvas.getComponent("Game");
+                                    gameCmp.gameLevel = gameLevel;
+                                    gameCmp.initGame();
+                                });
+                            }
+                        };
+                        ws.onerror = function (event) {
+                            console.log("Send Text fired an error");
+                        };
+                        ws.onclose = function (event) {
+                            console.log("WebSocket instance closed.");
+                        };
                     }
                 });
                 // wx.connectSocket({
@@ -48,58 +103,6 @@ cc.Class({
         // };
         // xhr.open("GET", url, true);
         // xhr.send();
-        var ws = new WebSocket("wss://www.uxgoo.com:8083");
-        //var ws = new WebSocket("ws://localhost:8083");
-        ws.onopen = function (event) {
-            console.log("Send Text WS was opened.");
-            ws.send("{\"cmd\":\"getSocketId\"}");
-        };
-        ws.onmessage = function (event) {
-            var data = event.data;
-            console.log("response text msg: " + event.data);
-            var json = JSON.parse(data);
-            console.log("JSON解析成功");
-            console.log(json);
-            if(json.success == false) {
-                wx.showToast({title:"请求服务端异常"});
-                //alert("请求服务器异常");
-            }
-            if(json.cmd == "getSocketId") {
-                console.log("进入getSocketId处理流程，开始发送更新socketId操作");
-                Global.socketId = json.socketId;
-                ws.send("{\"cmd\":\"updateSocketId\", \"data\":{\"socketId\":\""+Global.socketId+"\"}}");
-            }
-            if(json.cmd == "updateSocketId") {
-                console.log("进入updateSocketId处理流程，开始弹出更新成功提示");
-                wx.showToast({title:"联网成功"});
-                //alert("联网成功");
-            }
-            if(json.cmd == "searchRoom") {
-                console.log("进入searchRoom处理流程");
-                var responseData = json.data;
-                console.log("responseData:"+responseData);
-                if(!responseData.roomId || responseData.gameLevel) {
-                    wx.showToast({title:"查找房间异常"});
-                    //alert("查找房间异常");
-                }
-                var gameLevel = responseData.gameLevel;
-                Global.gameLevel = gameLevel;
-                Global.roomId = responseData.roomId;
-                cc.director.loadScene("Game", function() {
-                    var scene = cc.director.getScene();
-                    var canvas = scene.getChildByName("Canvas");
-                    var gameCmp = canvas.getComponent("Game");
-                    gameCmp.gameLevel = gameLevel;
-                    gameCmp.initGame();
-                });
-            }
-        };
-        ws.onerror = function (event) {
-            console.log("Send Text fired an error");
-        };
-        ws.onclose = function (event) {
-            console.log("WebSocket instance closed.");
-        };
 
         /*setTimeout(function () {
             if (ws.readyState === WebSocket.OPEN) {
@@ -109,7 +112,7 @@ cc.Class({
                 console.log("WebSocket instance wasn't ready...");
             }
         }, 20);*/
-        
+
         this.bgAudioId = cc.audioEngine.play(this.bgAudio, true, 1);
         cc.director.preloadScene("Game", function() {
             console.log("预加载游戏场景");
@@ -130,7 +133,7 @@ cc.Class({
                 console.log("按下快速开始按钮结束");
                 var btn = event.target;
                 var action = cc.sequence(cc.scaleTo(0.1, 1), cc.callFunc(function() {
-                    if(ws.readyState !== WebSocket.OPEN) {
+                    if(!ws || ws.readyState !== WebSocket.OPEN) {
                         wx.showToast({title:"正在联网中，请稍后"});
                         //alert("正在联网中，请稍后");
                         return ;
