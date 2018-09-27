@@ -29,6 +29,7 @@ cc.Class({
                         console.log("用户id："+response.playerId);
                         if(!response.playerId) {
                             wx.showToast({title:"请求服务端异常", icon: "none"});
+                            return;
                         }
                         console.log("给全局赋值");
                         Global.playerId = response.playerId;
@@ -46,6 +47,7 @@ cc.Class({
                             if(json.success == false) {
                                 wx.showToast({title:"请求服务端异常", icon: "none"});
                                 //alert("请求服务器异常");
+                                return;
                             }
                             if(json.cmd == "getSocketId") {
                                 console.log("进入getSocketId处理流程，开始发送更新socketId操作");
@@ -61,13 +63,14 @@ cc.Class({
                             if(json.cmd == "searchRoom") {
                                 console.log("进入searchRoom处理流程");
                                 var responseData = json.data;
-                                console.log("responseData:"+responseData);
-                                if(!responseData.roomNo || responseData.gameLevel) {
+                                if(!responseData.roomNo || responseData.gameLevel === null || responseData.gameLevel < 0) {
                                     wx.showToast({title:"查找房间异常", icon: "none"});
                                     //alert("查找房间异常");
+                                    return;
                                 }
                                 var gameLevel = responseData.gameLevel;
                                 Global.gameLevel = gameLevel;
+                                Global.roomNo = responseData.roomNo;
                                 Global.roomId = responseData.roomId;
                                 cc.director.loadScene("Game", function() {
                                     var scene = cc.director.getScene();

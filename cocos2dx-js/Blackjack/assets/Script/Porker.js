@@ -13,7 +13,7 @@ cc.Class({
 
     properties: {
         value: {
-            default: 1,
+            default: null,
             type: cc.Integer
         },
         key: {

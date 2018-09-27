@@ -79,16 +79,57 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
+        console.log(Global);
+        var ws = new WebSocket("wss://www.uxgoo.com:8083");
+        ws.onopen = function (event) {
+            console.log("Send Text WS was opened.");
+        };
+        ws.onmessage = function (event) {
+            var data = event.data;
+            console.log("response text msg: " + event.data);
+            var json = JSON.parse(data);
+            console.log("JSON解析成功");
+            console.log(json);
+            if(json.success == false) {
+                wx.showToast({title:"请求服务端异常", icon: "none"});
+                //alert("请求服务器异常");
+                return;
+            }
+            var cmd = json.cmd;
+            var data = json.data;
+            if(cmd == "playerReady") {
+                //如果开始倒计时，说明所有玩家都已经准备完成，倒计时结束后开始初始化游戏，初始化游戏完成后开始第一次发牌
+                if(data.isCountDown == true) {
+                    var second = data.second;
+                    var count = 0;
+                    this.schedule(function() {
+                        //获取时钟对象，修改里面的数字
+                        count ++;
+                        if(count == second) {   //倒计时完成，开始初始化游戏
+                            ws.send("{\"cmd\":\"initGame\", \"data\": {}}");
+                        }
+                    }, 1, second, 0);
+                }
+            }
+        };
+        ws.onerror = function (event) {
+            console.log("Send Text fired an error");
+        };
+        ws.onclose = function (event) {
+            console.log("WebSocket instance closed.");
+        };
         cc.director.preloadScene("Menu", function() {
             console.log("预加载游戏场景");
         });
         this.current = cc.audioEngine.play(this.bgAudio, true, 1);
         this.resultInfo.string = "";
         this.pokerType = ["clubs", "diamonds", "hearts", "spades"];
-        var startBtn = this.node.getChildByName("buttons").getChildByName("hit");
+        var readyBtn = this.node.getChildByName("buttons").getChildByName("ready");
+        var giveupBtn = this.node.getChildByName("buttons").getChildByName("giveup");
+        giveupBtn.active = false;
         var restartBtn = this.node.getChildByName("buttons").getChildByName("restart_btn");
         var backBtn = this.node.getChildByName("buttons").getChildByName("back_btn");
-        startBtn.on(cc.Node.EventType.TOUCH_START, function(event) {
+        readyBtn.on(cc.Node.EventType.TOUCH_START, function(event) {
             this.expreInfoArr = [];
             var btn = event.target;
             btn.runAction(cc.sequence(cc.scaleTo(0.1, 0.85, 0.85), cc.scaleTo(0.1, 1, 1), cc.callFunc(function() {
@@ -105,6 +146,9 @@ cc.Class({
             var lastSecondVal = secondPoker.getComponent("Porker").value;
             var lastThirdVal = thirdPoker.getComponent("Porker").value;
             var lastForthVal = forthPoker.getComponent("Porker").value;
+            if(!lastFirstVal || !lastSecondVal || !lastThirdVal || !lastForthVal) {
+                return ;
+            }
             this.lastPokerValues = [lastFirstVal, lastSecondVal, lastThirdVal, lastForthVal];
             var lastPokers = "上局提示：\n\n"+lastFirstVal+", "+lastSecondVal+", "+lastThirdVal+", "+lastForthVal;
             this.lastPokerLbl.string = lastPokers;
@@ -117,6 +161,18 @@ cc.Class({
                 }
             }
             this.lastExpression.string = tips;
+        }, this);
+
+        readyBtn.on(cc.Node.EventType.TOUCH_END, function(event){
+            //发送到服务端玩家准备完成
+            ws.send("{\"cmd\":\"playerReady\", \"data\": {\"roomNo\":"+Global.roomNo+", \"playerId\":"+Global.playerId+"}}");
+            giveupBtn.active = true;
+            readyBtn.active = false;
+        }, this);
+
+        giveupBtn.on(cc.Node.EventType.TOUCH_END, function(event){
+            readyBtn.active = true;
+            giveupBtn.active = false;
         }, this);
 
         restartBtn.on(cc.Node.EventType.TOUCH_START, function(event) {

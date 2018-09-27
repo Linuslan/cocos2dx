@@ -63,15 +63,14 @@ $worker->onMessage = function($con, $msg) {
 			$rs = $gameRoomAction->playerReady($jsonData->{"data"});
 			$result["data"] = $rs;
 			$result["success"] = true;
-            $rsJson = json_decode($rs);
-            if($rsJson->{"isCountDown"}) {
-            	$socketIds = $rsJson->{"socketIds"};
+            if($rs["isCountDown"]) {
+            	$socketIds = $rs["socketIds"];
             	echo "playerReady->socketIds:".$socketIds."\n";
 	            $socketArr = explode(",", $socketIds);
 	            foreach($socketArr as $socketId) {
 	            	echo "socketId:".$socketId."\n";
 	            	if($socketId == $currSocketId) {
-	            		$isSend = true;
+	            		$isSend = true;  //确保后面不会再发送
 	            	}
 	                $socket = $clients[$socketId];
 	                $socket->send(json_encode($result));

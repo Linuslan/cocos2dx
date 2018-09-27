@@ -12,8 +12,10 @@
 			$sql = "SELECT * FROM tbl_wechat_game_room t WHERE t.status = 0 ORDER BY t.id ASC LIMIT 1";
 			$result = mysql_query($sql);
 			$roomNo = null;
+			$roomId = null;
 			while($row = mysql_fetch_array($result)) {
 				$roomNo = $row["room_no"];
+				$roomId = $row["id"];
 			}
 			//创建房间
 			if($roomNo == null) {
@@ -27,8 +29,14 @@
 				$sql = "INSERT INTO tbl_wechat_game_room(room_no, room_name, create_time, status, pwd) VALUES('".$roomNo."', '', '".$time."', 0, '')";
 				echo $sql;
 				mysql_query($sql);
+				$roomId = mysql_insert_id();
 			}
-			return "{\"roomNo\":\"".$roomNo."\", \"gameLevel\": ".$gameLevel."}";
+			$result = [];
+			$result["roomNo"] = $roomNo;
+			$result["gameLevel"] = $gameLevel;
+			$result["roomId"] = $roomId;
+			//return "{\"roomNo\":\"".$roomNo."\", \"gameLevel\": ".$gameLevel."}";
+			return $result;
 		}
 
 		public function playerReady($data) {
@@ -66,7 +74,12 @@
 				$sql = "UPDATE tbl_wechat_game_room SET status = 1 WHERE room_no='".$roomNo."'";
 				mysql_query($sql);
 			}
-			return "{\"isCountDown\": ".$isCountDown.", \"second\": ".$second.", \"cards\":\"".$card."\", \"socketIds\":\"".$socketIdStr."\"}";
+			$result = [];
+			$result["isCountDown"] = $isCountDown;
+			$result["second"] = $second;
+			$result["socketIds"] = $socketIdStr;
+			//return "{\"isCountDown\": ".$isCountDown.", \"second\": ".$second.", \"cards\":\"".$card."\", \"socketIds\":\"".$socketIdStr."\"}";
+			return $result;
 		}
 
 		public function initGame($data) {
