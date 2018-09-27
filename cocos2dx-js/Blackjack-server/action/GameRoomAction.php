@@ -61,6 +61,7 @@
 			$socketIdStr = "";
 			$isCountDown = false;
 			$second = 5;
+			$result = [];
 			if($readyCount == $playerCount) {
 				$isCountDown = true;
 				$card = "4,3,2,1";
@@ -73,8 +74,14 @@
 				$socketIdStr = implode(",", $socketIds);
 				$sql = "UPDATE tbl_wechat_game_room SET status = 1 WHERE room_no='".$roomNo."'";
 				mysql_query($sql);
+				//开始初始化游戏数据
+				$initResult = $this->initGame($data);
+				$refreshPokerResult = $this->refreshPoker($data);
+				$result["pokerCount"] = $refreshPokerResult["pokerCount"];
+				$result["cards"] = $refreshPokerResult["cards"];
+				$result["roundId"] = $refreshPokerResult["roundId"];
 			}
-			$result = [];
+			
 			$result["isCountDown"] = $isCountDown;
 			$result["second"] = $second;
 			$result["socketIds"] = $socketIdStr;
@@ -111,7 +118,9 @@
 	                $count ++;
 	            }
 	        }
-	        return "{\"pokerCount\":".$count."}";
+	        $result = [];
+	        $result["pokerCount"] = $count;
+	        return $result;
 		}
 
 		public function refreshPoker($data) {
@@ -149,7 +158,17 @@
 				$sql = "UPDATE tbl_wechat_game_room_poker SET status = 1 WHERE id=".$pokerId;
 				mysql_query($sql);
 			}
-			return "{\"cards\": ".json_encode($pokerArr).", \"roundId\":".$roundId."}";
+			$sql = "SELECT COUNT(*) cnt FROM tbl_wechat_game_room_poker t WHERE t.status = 0 AND t.room_no='".$roomNo."'";
+			$pokerCount = 0;
+			while($row = mysql_fetch_array($result)) {
+				$pokerCount = $row["cnt"];
+			}
+			$result = [];
+			$result["cards"] = json_encode($pokerArr);
+			$result["roundId"] = $roundId;
+			$result["pokerCount"] = $pokerCount;
+			//return "{\"cards\": ".json_encode($pokerArr).", \"roundId\":".$roundId."}";
+			return $result;
 		}
 
 		public function commit($data) {

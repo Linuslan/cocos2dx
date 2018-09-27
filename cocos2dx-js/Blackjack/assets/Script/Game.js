@@ -80,6 +80,9 @@ cc.Class({
 
     onLoad () {
         console.log(Global);
+        var readyBtn = this.node.getChildByName("buttons").getChildByName("ready");
+        var giveupBtn = this.node.getChildByName("buttons").getChildByName("giveup");
+        giveupBtn.active = false;
         var ws = new WebSocket("wss://www.uxgoo.com:8083");
         ws.onopen = function (event) {
             console.log("Send Text WS was opened.");
@@ -98,6 +101,7 @@ cc.Class({
             var cmd = json.cmd;
             var data = json.data;
             if(cmd == "playerReady") {
+                readyBtn.active = false;
                 //如果开始倒计时，说明所有玩家都已经准备完成，倒计时结束后开始初始化游戏，初始化游戏完成后开始第一次发牌
                 if(data.isCountDown == true) {
                     var second = data.second;
@@ -105,8 +109,8 @@ cc.Class({
                     this.schedule(function() {
                         //获取时钟对象，修改里面的数字
                         count ++;
-                        if(count == second) {   //倒计时完成，开始初始化游戏
-                            ws.send("{\"cmd\":\"initGame\", \"data\": {}}");
+                        if(count == second) {   //倒计时完成，开始发牌
+                            
                         }
                     }, 1, second, 0);
                 }
@@ -124,9 +128,6 @@ cc.Class({
         this.current = cc.audioEngine.play(this.bgAudio, true, 1);
         this.resultInfo.string = "";
         this.pokerType = ["clubs", "diamonds", "hearts", "spades"];
-        var readyBtn = this.node.getChildByName("buttons").getChildByName("ready");
-        var giveupBtn = this.node.getChildByName("buttons").getChildByName("giveup");
-        giveupBtn.active = false;
         var restartBtn = this.node.getChildByName("buttons").getChildByName("restart_btn");
         var backBtn = this.node.getChildByName("buttons").getChildByName("back_btn");
         readyBtn.on(cc.Node.EventType.TOUCH_START, function(event) {
@@ -165,7 +166,7 @@ cc.Class({
 
         readyBtn.on(cc.Node.EventType.TOUCH_END, function(event){
             //发送到服务端玩家准备完成
-            ws.send("{\"cmd\":\"playerReady\", \"data\": {\"roomNo\":"+Global.roomNo+", \"playerId\":"+Global.playerId+"}}");
+            ws.send("{\"cmd\":\"playerReady\", \"data\": {\"roomNo\":"+Global.roomNo+", \"playerId\":"+Global.playerId+", \"gameLevel\":"+this.gameLevel+"}}");
             giveupBtn.active = true;
             readyBtn.active = false;
         }, this);
