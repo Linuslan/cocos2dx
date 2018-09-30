@@ -83,10 +83,11 @@ cc.Class({
         var readyBtn = this.node.getChildByName("buttons").getChildByName("ready");
         var giveupBtn = this.node.getChildByName("buttons").getChildByName("giveup");
         giveupBtn.active = false;
-        var ws = new WebSocket("wss://www.uxgoo.com:8083");
-        ws.onopen = function (event) {
+        this.node.getChildByName("clock").active = true;
+        var ws = Global.webSocket;
+        /*ws.onopen = function (event) {
             console.log("Send Text WS was opened.");
-        };
+        };*/
         var self = this;
         ws.onmessage = function (event) {
             var data = event.data;
@@ -109,10 +110,15 @@ cc.Class({
                     var second = data.second;
                     var count = 0;
                     var cards = data.cards;
-                    this.schedule(function() {
+                    var gameNo = data.gameNo;
+                    Global.gameNo = gameNo;
+                    self.node.schedule(function() {
                         //获取时钟对象，修改里面的数字
+                        self.node.getChildByName("clock").active = true;
+                        self.node.getChildByName("clock").string = (second-count);
                         count ++;
                         if(count == second) {   //倒计时完成，开始发牌
+                            self.node.getChildByName("clock").active = false;
                             for(key in cards) {
                                 var value = cards[key];
                                 var poker = new cc.Object();

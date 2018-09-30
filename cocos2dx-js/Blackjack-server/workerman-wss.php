@@ -58,6 +58,8 @@ $worker->onMessage = function($con, $msg) {
             if($rs != null) {
                 $result["data"] = $rs;
             }
+        } else if($cmd == "enterRoom") {
+            $rs = $gameRoomAction->enterRoom($jsonData->{"data"});
         } else if ($cmd == "playerReady") {
 			$currSocketId = $jsonData->{"data"}->{"socketId"};
 			$rs = $gameRoomAction->playerReady($jsonData->{"data"});

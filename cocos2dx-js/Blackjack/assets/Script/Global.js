@@ -3,5 +3,7 @@ window.Global = {
     socketId: null,
     roomId: null,
     roomNo: null,
-    gameLevel: null
+    gameNo: null,
+    gameLevel: null,
+    webSocket: null
 }

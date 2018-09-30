@@ -27,7 +27,7 @@
 				$gameRoom->setStatus(0);
 				$gameRoom->setCreateTime($time);
 				$sql = "INSERT INTO tbl_wechat_game_room(room_no, room_name, create_time, status, pwd) VALUES('".$roomNo."', '', '".$time."', 0, '')";
-				echo $sql;
+				echo $sql."\n";
 				mysql_query($sql);
 				$roomId = mysql_insert_id();
 			}
@@ -37,6 +37,32 @@
 			$result["roomId"] = $roomId;
 			//return "{\"roomNo\":\"".$roomNo."\", \"gameLevel\": ".$gameLevel."}";
 			return $result;
+		}
+
+		public function enterRoom($data) {
+			$roomNo = $data->{"roomNo"};
+			$roomId = $data->{"roomId"};
+			$playerId = $data->{"playerId"};
+			$sql = "SELECT * FROM tbl_wechat_game_room t WHERE t.status = 0 AND t.id=".$roomId." ORDER BY t.id ASC LIMIT 1";
+			$result = mysql_query($sql);
+			$roomNo = null;
+			$roomId = null;
+			if(mysql_num_rows($result) < 1) {
+				throw new Exception("{\"msg\":\"game room is not exist\", \"code\":\"1000-02\"}");
+			}
+			while($row = mysql_fetch_array($result)) {
+				$roomNo = $row["room_no"];
+				$roomId = $row["id"];
+			}
+			$sql = "SELECT * FROM tbl_wechat_player t WHERE t.id=".$playerId;
+			$result = mysql_query($sql);
+			if(mysql_num_rows($result) < 1) {
+				throw new Exception("{\"msg\":\"player is not exist\", \"code\":\"1000-03\"}");
+			}
+			$sql = "INSERT INTO tbl_wechat_game_room_player(room_id, room_no, player_id, status, score) VALUES(".$roomId.", '".$roomNo."', ".$playerId.", 0, 0)";
+			echo $sql."\n";
+			mysql_query($sql);
+			return true;
 		}
 
 		public function playerReady($data) {
@@ -64,7 +90,7 @@
 			$result = [];
 			if($readyCount == $playerCount) {
 				$isCountDown = true;
-				$card = "4,3,2,1";
+				//$card = "4,3,2,1";
 				$sql = "SELECT t1.websocket_id FROM (SELECT * FROM tbl_wechat_game_room_player t WHERE t.room_no='".$roomNo."') t INNER JOIN tbl_wechat_player t1 ON t.player_id = t1.id";
 				$rs = mysql_query($sql);
 				$socketIds = array();
@@ -182,6 +208,12 @@
 			$result["pokerCount"] = $pokerCount;
 			//return "{\"cards\": ".json_encode($pokerArr).", \"roundId\":".$roundId."}";
 			return $result;
+		}
+		
+		public function playerInfo($data) {
+			$roomNo = $data->{"roomNo"};
+			$gameNo = $data->{"gameNo"};
+
 		}
 
 		public function commit($data) {

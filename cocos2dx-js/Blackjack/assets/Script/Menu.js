@@ -34,6 +34,7 @@ cc.Class({
                         console.log("给全局赋值");
                         Global.playerId = response.playerId;
                         ws = new WebSocket("wss://www.uxgoo.com:8083");
+                        Global.webSocket = ws;
                         ws.onopen = function (event) {
                             console.log("Send Text WS was opened.");
                             ws.send("{\"cmd\":\"getSocketId\"}");
@@ -78,7 +79,11 @@ cc.Class({
                                     var gameCmp = canvas.getComponent("Game");
                                     gameCmp.gameLevel = gameLevel;
                                     gameCmp.initGame();
+                                    ws.send("{\"cmd\":\"enterRoom\", \"data\":{\"roomNo\":\""+Global.roomNo+"\", \"roomId\":"+Global.roomId+", \"playerId\":"+Global.playerId+"}}");
                                 });
+                            }
+                            if(json.cmd == "enterRoom") {
+                                wx.showToast({title:"进入房间成功"});
                             }
                         };
                         ws.onerror = function (event) {
