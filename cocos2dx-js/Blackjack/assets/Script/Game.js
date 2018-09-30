@@ -87,15 +87,17 @@ cc.Class({
         ws.onopen = function (event) {
             console.log("Send Text WS was opened.");
         };
+        var self = this;
         ws.onmessage = function (event) {
             var data = event.data;
+            console.log(self);
             console.log("response text msg: " + event.data);
             var json = JSON.parse(data);
             console.log("JSON解析成功");
             console.log(json);
             if(json.success == false) {
-                wx.showToast({title:"请求服务端异常", icon: "none"});
-                //alert("请求服务器异常");
+                //wx.showToast({title:"请求服务端异常", icon: "none"});
+                alert("请求服务器异常");
                 return;
             }
             var cmd = json.cmd;
@@ -106,11 +108,18 @@ cc.Class({
                 if(data.isCountDown == true) {
                     var second = data.second;
                     var count = 0;
+                    var cards = data.cards;
                     this.schedule(function() {
                         //获取时钟对象，修改里面的数字
                         count ++;
                         if(count == second) {   //倒计时完成，开始发牌
-                            
+                            for(key in cards) {
+                                var value = cards[key];
+                                var poker = new cc.Object();
+                                poker.key = key;
+                                poker.value = value;
+                                self.pokers.push(poker);
+                            }
                         }
                     }, 1, second, 0);
                 }
@@ -166,7 +175,7 @@ cc.Class({
 
         readyBtn.on(cc.Node.EventType.TOUCH_END, function(event){
             //发送到服务端玩家准备完成
-            ws.send("{\"cmd\":\"playerReady\", \"data\": {\"roomNo\":"+Global.roomNo+", \"playerId\":"+Global.playerId+", \"gameLevel\":"+this.gameLevel+"}}");
+            ws.send("{\"cmd\":\"playerReady\", \"data\": {\"roomNo\":\""+Global.roomNo+"\", \"playerId\":"+Global.playerId+", \"gameLevel\":"+this.gameLevel+", \"socketId\":\""+Global.socketId+"\"}}");
             giveupBtn.active = true;
             readyBtn.active = false;
         }, this);

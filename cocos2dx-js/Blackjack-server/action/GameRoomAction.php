@@ -66,9 +66,9 @@
 				$isCountDown = true;
 				$card = "4,3,2,1";
 				$sql = "SELECT t1.websocket_id FROM (SELECT * FROM tbl_wechat_game_room_player t WHERE t.room_no='".$roomNo."') t INNER JOIN tbl_wechat_player t1 ON t.player_id = t1.id";
-				$result = mysql_query($sql);
+				$rs = mysql_query($sql);
 				$socketIds = array();
-				while($row = mysql_fetch_array($result)) {
+				while($row = mysql_fetch_array($rs)) {
 					array_push($socketIds, $row["websocket_id"]);
 				}
 				$socketIdStr = implode(",", $socketIds);
@@ -76,7 +76,9 @@
 				mysql_query($sql);
 				//开始初始化游戏数据
 				$initResult = $this->initGame($data);
+				$data->{"gameNo"} = $initResult["gameNo"];
 				$refreshPokerResult = $this->refreshPoker($data);
+				$result["gameNo"] = $initResult["gameNo"];
 				$result["pokerCount"] = $refreshPokerResult["pokerCount"];
 				$result["cards"] = $refreshPokerResult["cards"];
 				$result["roundId"] = $refreshPokerResult["roundId"];
@@ -107,25 +109,36 @@
 			} else if($gameLevel == 1) {
 				$pokerValue = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 			}
+			$sql = "SELECT MAX(game_no) gameNo FROM tbl_wechat_game_room_number WHERE room_no='".$roomNo."'";
+			$rs = mysql_query($sql);
+			$gameNo = 0;
+			while($row = mysql_fetch_array($rs)) {
+				$gameNo = $row["gameNo"];
+			}
+			$gameNo += 1;
+			$sql = "INSERT INTO tbl_wechat_game_room_number(room_no, game_no, create_time) VALUES('".$roomNo."', ".$gameNo.", '".date('Y-m-j G:i:s')."')";
+			mysql_query($sql);
 			$pokerType = ["clubs", "diamonds", "hearts", "spades"];
 			$count = 0;
 			for($j = 0; $j < count($pokerType); $j ++) {
 	            for($i = 0; $i < count($pokerValue); $i ++) {
 	                $key = $pokerValue[$i]."-".$pokerType[$j];
 	                $value = $pokerValue[$i];
-	                $sql = "INSERT INTO tbl_wechat_game_room_poker(room_id, room_no, poker_key, poker_value, status, create_time) VALUES(".$roomId.", '".$roomNo."', '".$key."', '".$value."', 0, '".date('Y-m-j G:i:s')."')";
+	                $sql = "INSERT INTO tbl_wechat_game_room_poker(room_id, room_no, game_no, poker_key, poker_value, status, create_time) VALUES(".$roomId.", '".$roomNo."', ".$gameNo.", '".$key."', '".$value."', 0, '".date('Y-m-j G:i:s')."')";
 	                mysql_query($sql);
 	                $count ++;
 	            }
 	        }
 	        $result = [];
 	        $result["pokerCount"] = $count;
+	        $result["gameNo"] = $gameNo;
 	        return $result;
 		}
 
 		public function refreshPoker($data) {
 			$roomNo = $data->{"roomNo"};
-			$sql = "SELECT * FROM tbl_wechat_game_room_poker t WHERE t.room_no = '".$roomNo."' AND t.status = 0";
+			$gameNo = $data->{"gameNo"};
+			$sql = "SELECT * FROM tbl_wechat_game_room_poker t WHERE t.room_no = '".$roomNo."' AND t.status = 0 AND t.game_no=".$gameNo;
 			$pokerlist = [];
 			$result = mysql_query($sql);
 			$idx = 0;
@@ -147,7 +160,7 @@
 			$roundId = mysql_insert_id();
 			$pokerArr = [];
 			for($i = 0; $i < 4; $i ++) {
-				$idx = mt_rand(0, $count);
+				$idx = mt_rand(0, $count-1);
 				$poker = $pokerlist[$idx];
 				$key = key($poker);
 				$value = current($poker);
@@ -158,7 +171,7 @@
 				$sql = "UPDATE tbl_wechat_game_room_poker SET status = 1 WHERE id=".$pokerId;
 				mysql_query($sql);
 			}
-			$sql = "SELECT COUNT(*) cnt FROM tbl_wechat_game_room_poker t WHERE t.status = 0 AND t.room_no='".$roomNo."'";
+			$sql = "SELECT COUNT(*) cnt FROM tbl_wechat_game_room_poker t WHERE t.status = 0 AND t.game_no='".$gameNo."' AND t.room_no='".$roomNo."'";
 			$pokerCount = 0;
 			while($row = mysql_fetch_array($result)) {
 				$pokerCount = $row["cnt"];
