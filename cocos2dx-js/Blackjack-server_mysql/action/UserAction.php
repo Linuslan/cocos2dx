@@ -3,7 +3,7 @@
 	$cur_dir=dirname(__FILE__);
 	chdir($cur_dir);
 	include_once "../utils/JdbcUtil.php";
-	$conn = getConn();
+	getConn();
 	/*$method = $_REQUEST["m"];
 	if($method == "userLogin") {
 		userLogin();
@@ -27,17 +27,20 @@
 		$json = json_decode($output);
 		$openId = $json->{"openid"};
 		$sql = "SELECT * FROM tbl_wechat_player t WHERE t.openid='".$openId."'";
-		$result = mysqli_query($conn, $sql);
+		echo $sql."\n";
+		$result = mysql_query($sql);
 		$userCount = 0;
 		$id = null;
 		$userName = "";
-		while($row = mysqli_fetch_array($result, MYSQL_BOTH)) {
+		while($row = mysql_fetch_array($result)) {
 			$id = $row["id"];
 			$userName = $row["user_name"];
 		}
 		if($id == null || $id < 0) {
+			echo "can't find player, insert new player.\n";
 			$sql = "INSERT INTO tbl_wechat_player(openid, score, create_time, login_time) VALUES('".$openId."', 0, '".date("Y-m-d H:i:s")."', '".date("Y-m-d H:i:s")."')";
-			$id = db_execute($sql);
+			mysql_query($sql);
+			$id = mysql_insert_id();
 		}
 		echo "{\"playerId\": \"".$id."\", \"userName\":\"".$userName."\"}\n";
 		$result = [];

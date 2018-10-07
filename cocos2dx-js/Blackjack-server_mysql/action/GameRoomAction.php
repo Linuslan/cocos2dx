@@ -3,18 +3,18 @@
 	chdir($cur_dir);
 	include_once "../utils/JdbcUtil.php";
 	include_once "../model/GameRoom.php";
-	$conn = getConn();
+	getConn();
 	class GameRoomAction {
 		
 		//搜索房间，如果有空闲房间，则进入空闲房间，如果没有空闲房间，则创建一个房间，等待玩家进入
 		public function searchRoom($data) {
 			$gameLevel = $data->{"gameLevel"};
 			$sql = "SELECT * FROM tbl_wechat_game_room t WHERE t.status = 0 ORDER BY t.id ASC LIMIT 1";
-			$result = mysqli_query($conn, $sql);
+			$result = mysql_query($sql);
 			$roomNo = null;
 			$roomId = null;
-			if(mysqli_num_rows($result) > 0) {
-				while($row = mysqli_fetch_array($result, MYSQLI_BOTH)) {
+			if(mysql_num_rows($result) > 0) {
+				while($row = mysql_fetch_array($result)) {
 					$roomNo = $row["room_no"];
 					$roomId = $row["id"];
 				}
@@ -47,28 +47,28 @@
 			$roomId = $data->{"roomId"};
 			$playerId = $data->{"playerId"};
 			$sql = "SELECT * FROM tbl_wechat_game_room t WHERE t.status = 0 AND t.id=".$roomId." ORDER BY t.id ASC LIMIT 1";
-			$rows = mysqli_query($conn, $sql);
+			$rows = mysql_query($sql);
 			$roomNo = null;
 			$roomId = null;
-			if(mysqli_num_rows($rows) < 1) {
+			if(mysql_num_rows($rows) < 1) {
 				throw new Exception("{\"msg\":\"game room is not exist\", \"code\":\"1000-02\"}");
 			}
-			while($row = mysqli_fetch_array($rows, MYSQLI_BOTH)) {
+			while($row = mysql_fetch_array($rows)) {
 				$roomNo = $row["room_no"];
 				$roomId = $row["id"];
 			}
 			$sql = "SELECT * FROM tbl_wechat_player t WHERE t.id=".$playerId;
-			$rows = mysqli_query($conn, $sql);
-			if(mysqli_num_rows($rows) < 1) {
+			$rows = mysql_query($sql);
+			if(mysql_num_rows($rows) < 1) {
 				throw new Exception("{\"msg\":\"player is not exist\", \"code\":\"1000-03\"}");
 			}
 			$sql = "INSERT INTO tbl_wechat_game_room_player(room_id, room_no, player_id, status, score) VALUES(".$roomId.", '".$roomNo."', ".$playerId.", 0, 0)";
 			db_execute($sql);
 			$sql = "SELECT t1.websocket_id, t1.user_name, t1.avatar_url, t1.id FROM (SELECT * FROM tbl_wechat_game_room_player t WHERE t.room_no='".$roomNo."') t INNER JOIN tbl_wechat_player t1 ON t.player_id = t1.id";
 			echo $sql."\n";
-			$rs = mysqli_query($conn, $sql);
+			$rs = mysql_query($sql);
 			$socketIds = array();
-			while($row = mysqli_fetch_array($rs, MYSQLI_BOTH)) {
+			while($row = mysql_fetch_array($rs)) {
 				echo "get socketid\n";
 				array_push($socketIds, $row["websocket_id"]);
 				if($row["id"] == $playerId) {
@@ -91,15 +91,15 @@
 			db_execute($sql);
 			//得出有多少个玩家已准备
 			$sql = "SELECT COUNT(*) cnt FROM tbl_wechat_game_room_player t WHERE t.status = 1 AND t.room_no='".$roomNo."'";
-			$rows = mysqli_query($conn, $sql);
+			$rows = mysql_query($sql);
 			$readyCount = 0;
-			while($row = mysqli_fetch_array($rows, MYSQLI_BOTH)) {
+			while($row = mysql_fetch_array($rows)) {
 				$readyCount = $row["cnt"];
 			}
 			$sql = "SELECT COUNT(*) cnt FROM tbl_wechat_game_room_player t WHERE t.room_no='".$roomNo."' AND t.status <> 2";
-			$rows = mysqli_query($conn, $sql);
+			$rows = mysql_query($sql);
 			$playerCount = 0;
-			while($row = mysqli_fetch_array($rows, MYSQLI_BOTH)) {
+			while($row = mysql_fetch_array($rows)) {
 				$playerCount = $row["cnt"];
 			}
 			$card = "";
@@ -111,9 +111,9 @@
 				$isCountDown = true;
 				//$card = "4,3,2,1";
 				$sql = "SELECT t1.websocket_id FROM (SELECT * FROM tbl_wechat_game_room_player t WHERE t.room_no='".$roomNo."' AND t.status = 1) t INNER JOIN tbl_wechat_player t1 ON t.player_id = t1.id";
-				$rs = mysqli_query($conn, $sql);
+				$rs = mysql_query($sql);
 				$socketIds = array();
-				while($row = mysqli_fetch_array($rs, MYSQLI_BOTH)) {
+				while($row = mysql_fetch_array($rs)) {
 					array_push($socketIds, $row["websocket_id"]);
 				}
 				$socketIdStr = implode(",", $socketIds);
@@ -124,8 +124,8 @@
 				$gameNo = $initResult["gameNo"];
 				//将准备好的玩家写入到tbl_wechat_game_room_number_player表中，表示即将参加本局游戏的玩家
 				$sql = "SELECT * FROM tbl_wechat_game_room_player t WHERE t.room_no='".$roomNo."' AND t.status = 1";
-				$rows = mysqli_query($conn, $sql);
-				while($row = mysqli_fetch_array($rows, MYSQLI_BOTH)) {
+				$rows = mysql_query($sql);
+				while($row = mysql_fetch_array($rows)) {
 					$playerId = $row["player_id"];
 					$time = date('Y-m-j G:i:s');
 					$sql = "INSERT INTO tbl_wechat_game_room_number_player(player_id, score, create_time, game_no, room_no) VALUES(".$playerId.", 0, '".$time."', ".$gameNo.", '".$roomNo."')";
@@ -150,9 +150,9 @@
 		public function initGame($data) {
 			$roomNo = $data->{"roomNo"};
 			$sql = "SELECT * FROM tbl_wechat_game_room t WHERE t.room_no = '".$roomNo."'";
-			$result = mysqli_query($conn, $sql);
+			$result = mysql_query($sql);
 			$roomId = null;
-			while($row = mysqli_fetch_array($result, MYSQLI_BOTH)) {
+			while($row = mysql_fetch_array($result)) {
 				$roomId = $row["id"];
 			}
 			if($roomId == null) {
@@ -166,9 +166,9 @@
 				$pokerValue = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 			}
 			$sql = "SELECT MAX(game_no) gameNo FROM tbl_wechat_game_room_number WHERE room_no='".$roomNo."'";
-			$rs = mysqli_query($conn, $sql);
+			$rs = mysql_query($sql);
 			$gameNo = 0;
-			while($row = mysqli_fetch_array($rs, MYSQLI_BOTH)) {
+			while($row = mysql_fetch_array($rs)) {
 				$gameNo = $row["gameNo"];
 			}
 			$gameNo += 1;
@@ -197,9 +197,9 @@
 			$gameNo = $data->{"gameNo"};
 			$sql = "SELECT * FROM tbl_wechat_game_room_poker t WHERE t.room_no = '".$roomNo."' AND t.status = 0 AND t.game_no=".$gameNo;
 			$pokerlist = [];
-			$rows = mysqli_query($conn, $sql);
+			$rows = mysql_query($sql);
 			$idx = 0;
-			while($row = mysqli_fetch_array($rows, MYSQLI_BOTH)) {
+			while($row = mysql_fetch_array($rows)) {
 				$key = $row["poker_key"];
 				$value = $row["poker_value"];
 				$poker = [];
@@ -222,8 +222,8 @@
 			$roundId = db_execute($sql);
 			//获取本局中共有多少个准备好的玩家，生成这些玩家的新一回合的数据
 			$sql = "SELECT * FROM tbl_wechat_game_room_number_player t WHERE t.room_no='".$roomNo."' AND t.game_no=".$gameNo;
-			$rows = mysqli_query($conn, $sql);
-			while($row=mysqli_fetch_array($rows, MYSQLI_BOTH)) {
+			$rows = mysql_query($sql);
+			while($row=mysql_fetch_array($rows)) {
 				$playerId = $row["player_id"];
 				$time = date('Y-m-j G:i:s');
 				//生成新回合的玩家，用于表示本回合该玩家的状态是放弃还是已完成还是解题中
@@ -250,8 +250,8 @@
 			$sql = "SELECT COUNT(*) cnt FROM tbl_wechat_game_room_poker t WHERE t.status = 0 AND t.game_no=".$gameNo." AND t.room_no='".$roomNo."'";
 			echo $sql."\n";
 			
-			$rows = mysqli_query($conn, $sql);
-			while($row = mysqli_fetch_array($rows, MYSQLI_BOTH)) {
+			$rows = mysql_query($sql);
+			while($row = mysql_fetch_array($rows)) {
 				$pokerCount = $row["cnt"];
 			}
 			echo "left pokers is ".$pokerCount."\n";
@@ -297,9 +297,9 @@
 			}
 			//查询本回合内的玩家是否还有处于未完成的状态，如果没有，则开始新的一个回合，不管有没有，都需要更新玩家的视图
 			$sql = "SELECT COUNT(*) cnt FROM tbl_wechat_game_room_round_player t WHERE t.status = 0 AND game_no=".$gameNo." AND room_no='".$roomNo."' AND round_id=".$roundId;
-			$rows = mysqli_query($conn, $sql);
+			$rows = mysql_query($sql);
 			$count = 0;
-			while($row = mysqli_fetch_array($rows, MYSQLI_BOTH)) {
+			while($row = mysql_fetch_array($rows)) {
 				$count = $row["cnt"];
 			}
 			echo "unfinished player's count is ".$count."\n";
@@ -314,16 +314,16 @@
 			$result["playerId"]=$playerId;
 			//查询当前玩家在本局内已经得到了多少分
 			$sql = "SELECT * FROM tbl_wechat_game_room_number_player t WHERE t.room_no='".$roomNo."' AND t.player_id=".$playerId." AND t.game_no=".$gameNo;
-			$rows = mysqli_query($conn, $sql);
+			$rows = mysql_query($sql);
 			$score = 0;
-			while($row = mysqli_fetch_array($rows, MYSQLI_BOTH)) {
+			while($row = mysql_fetch_array($rows)) {
 				$score = $row["score"];
 			}
 			$result["score"] = $score;
 			$sql = "SELECT t1.websocket_id FROM (SELECT * FROM tbl_wechat_game_room_player t WHERE t.room_no='".$roomNo."' AND t.status = 1) t INNER JOIN tbl_wechat_player t1 ON t.player_id = t1.id";
-			$rs = mysqli_query($conn, $sql);
+			$rs = mysql_query($sql);
 			$socketIds = array();
-			while($row = mysqli_fetch_array($rs, MYSQLI_BOTH)) {
+			while($row = mysql_fetch_array($rs)) {
 				array_push($socketIds, $row["websocket_id"]);
 			}
 			$socketIdStr = implode(",", $socketIds);
@@ -336,7 +336,7 @@
 				$sql = "INSERT INTO tbl_wechat_game_room_round(room_no, create_time) VALUES('".$roomNo."', '".$time."')";
 				$roundId = db_execute($sql);
 				$result["roundId"] = $roundId;
-				while($row = mysqli_fetch_array($rows, MYSQLI_BOTH)) {
+				while($row = mysql_fetch_array($rows)) {
 					$playerId = $row["player_id"];
 					$time = date('Y-m-j G:i:s');
 					//生成新回合的玩家，用于表示本回合该玩家的状态是放弃还是已完成还是解题中

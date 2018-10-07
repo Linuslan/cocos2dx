@@ -5,5 +5,6 @@ window.Global = {
     roomNo: null,
     gameNo: null,
     gameLevel: null,
-    webSocket: null
+    webSocket: null,    //WebSocket实例
+    roundId: null
 }

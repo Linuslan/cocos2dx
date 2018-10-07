@@ -27,7 +27,7 @@
   },
   "startScene": "c6e7f299-3e17-4728-bf2e-27c845a0a0b3",
   "title": "calculate24",
-  "webOrientation": "auto",
+  "webOrientation": "landscape",
   "wechatgame": {
     "appid": "wx6dfb528574f8fb69",
     "orientation": "landscape"
