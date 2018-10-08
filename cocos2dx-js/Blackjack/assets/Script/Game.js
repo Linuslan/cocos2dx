@@ -121,7 +121,8 @@ cc.Class({
                     var playerInfoLbl = self.node.getChildByName("player_info").getComponent(cc.Label);
                     playerInfoLbl.string = "分数：0";
                 } else {
-                    var player = self.getPlayerByPlayerId(playerId);
+                    console.log("playerId:"+data.playerId);
+                    var player = self.getPlayerByPlayerId(data.playerId);
                     //更新分数
                     player.getChildByName("score").getComponent(cc.Label).string = 0;
                     //更新状态
@@ -159,7 +160,7 @@ cc.Class({
                 } else if(status == 3) {
                     statusStr = "超时";
                 }
-                console.log("开始判断是否为玩家本人或者其他玩家");
+                console.log("开始判断是否为玩家本人或者其他玩家, playerId="+playerId);
                 //如果是玩家自己，则更新分数
                 if(playerId == Global.playerId) {
                     console.log("玩家本人");
@@ -199,13 +200,23 @@ cc.Class({
                 }
             } else if(cmd == "enterRoom") {
                 wx.showToast({title:"进入房间成功"});
-                var avatarUrl = data.avatarUrl;
-                var userName = data.userName;
-                //判断是否为玩家本人，如果为玩家本人，不做任何操作，如果非玩家本人，则将进入玩家的头像显示在当前玩家的房间内
-                if(data.playerId != Global.playerId) {
+                var players = data.players;
+                console.log("本房间共有玩家");
+                console.log(players);
+                for(var i = 0; i < players.length; i ++) {
+                    var player = players[i];
+                    var id = player.id;
+                    var avatarUrl = player.avatarUrl;
+                    var userName = player.userName;
+                    if(id == Global.playerId) {
+                        continue;
+                    }
+                    console.log("非本玩家，更新玩家头像");
                     var playerNode = self.getEmptyPlayerCmp();
                     var player = playerNode.getComponent("Player");
-                    player.playerId = data.playerId;
+                    player.playerId = id;
+                    console.log(playerNode);
+                    console.log("playerId="+player.playerId);
                     var avatarNode = playerNode.getChildByName("avatar");
                     var avatarCmp = avatarNode.getComponent(cc.Sprite);
                     cc.loader.load(avatarUrl, function (err, texture) {
@@ -374,79 +385,50 @@ cc.Class({
         var forthVal = 0;
         //var poker = this.getPoker();
         var poker = this.pokers[0];
-        console.log(poker);
         if(poker) {
             cc.loader.loadRes("game/"+poker["key"], cc.SpriteFrame, function (err, spriteFrame) {
                 firstPoker.getComponent(cc.Sprite).spriteFrame = spriteFrame;
             });
             var pokerCmp = firstPoker.getComponent("Porker");
-            console.log(pokerCmp);
             pokerCmp.value=poker["value"];
             pokerCmp.key = poker["key"];
-            console.log(poker["key"]+"="+poker["value"]);
-            console.log(pokerCmp.key+"="+pokerCmp.value);
-            console.log(firstPoker.getComponent("Porker").key);
-            console.log(firstPoker.getComponent("Porker").value);
             firstVal = poker["value"];
         }
-        console.log(firstPoker);
         
         //poker = this.getPoker();
         poker = this.pokers[1];
-        console.log(poker);
         if(poker) {
             cc.loader.loadRes("game/"+poker["key"], cc.SpriteFrame, function (err, spriteFrame) {
                 secondPoker.getComponent(cc.Sprite).spriteFrame = spriteFrame;
             });
             var pokerCmp = secondPoker.getComponent("Porker");
-            console.log(pokerCmp);
             pokerCmp.value=poker["value"];
             pokerCmp.key = poker["key"];
-            console.log(poker["key"]+"="+poker["value"]);
-            console.log(pokerCmp.key+"="+pokerCmp.value);
-            console.log(secondPoker.getComponent("Porker").key);
-            console.log(secondPoker.getComponent("Porker").value);
             secondVal = poker["value"];
         }
-        console.log(secondPoker);
         
         //poker = this.getPoker();
         poker = this.pokers[2];
-        console.log(poker);
         if(poker) {
             cc.loader.loadRes("game/"+poker["key"], cc.SpriteFrame, function (err, spriteFrame) {
                 thirdPoker.getComponent(cc.Sprite).spriteFrame = spriteFrame;
             });
             var pokerCmp = thirdPoker.getComponent("Porker");
-            console.log(pokerCmp);
             pokerCmp.value=poker["value"];
             pokerCmp.key = poker["key"];
-            console.log(poker["key"]+"="+poker["value"]);
-            console.log(pokerCmp.key+"="+pokerCmp.value);
-            console.log(thirdPoker.getComponent("Porker").key);
-            console.log(thirdPoker.getComponent("Porker").value);
             thirdVal = poker["value"];
         }
-        console.log(thirdPoker);
         //poker = this.getPoker();
         poker = this.pokers[3];
-        console.log(poker);
         if(poker) {
             cc.loader.loadRes("game/"+poker["key"], cc.SpriteFrame, function (err, spriteFrame) {
                 forthPoker.getComponent(cc.Sprite).spriteFrame = spriteFrame;
             });
             var pokerCmp = forthPoker.getComponent("Porker");
-            console.log(pokerCmp);
             pokerCmp.value=poker["value"];
             pokerCmp.key = poker["key"];
-            console.log(poker["key"]+"="+poker["value"]);
-            console.log(pokerCmp.key+"="+pokerCmp.value);
-            console.log(forthPoker.getComponent("Porker").key);
-            console.log(forthPoker.getComponent("Porker").value);
             forthVal = poker["value"];
         }
-        console.log(forthPoker);
-        
     },
     resetPoker() {
         var firstPoker = this.node.getChildByName("first_porker");
@@ -806,36 +788,41 @@ cc.Class({
         this.lastPokerLbl.string = "";
     },
     getPlayerByPlayerId(playerId) {
-        var firstPlayer = this.getChildByName("first_player");
-        var secondPlayer = this.getChildByName("second_player");
-        var thirdPlayer = this.getChildByName("third_player");
-        var forthPlayer = this.getChildByName("forth_player");
+        var firstPlayer = this.node.getChildByName("first_player");
+        var secondPlayer = this.node.getChildByName("second_player");
+        var thirdPlayer = this.node.getChildByName("third_player");
+        var forthPlayer = this.node.getChildByName("forth_player");
         var playerCmp = firstPlayer.getComponent("Player");
         var playerCmpId = playerCmp.playerId;
+        console.log("第一个玩家的playerId="+playerCmpId);
         if(playerCmpId && playerCmpId == playerId) {
             return firstPlayer;
         }
         playerCmp = secondPlayer.getComponent("Player");
         playerCmpId = playerCmp.playerId;
+        console.log("第二个玩家的playerId="+playerCmpId);
         if(playerCmpId && playerCmpId == playerId) {
             return secondPlayer;
         }
         playerCmp = thirdPlayer.getComponent("Player");
         playerCmpId = playerCmp.playerId;
+        console.log("第三个玩家的playerId="+playerCmpId);
         if(playerCmpId && playerCmpId == playerId) {
             return thirdPlayer;
         }
         playerCmp = forthPlayer.getComponent("Player");
         playerCmpId = playerCmp.playerId;
+        console.log("第四个玩家的playerId="+playerCmpId);
         if(playerCmpId && playerCmpId == playerId) {
             return forthPlayer;
         }
+        console.log("未找到玩家");
     },
     getEmptyPlayerCmp() {
-        var firstPlayer = this.getChildByName("first_player");
-        var secondPlayer = this.getChildByName("second_player");
-        var thirdPlayer = this.getChildByName("third_player");
-        var forthPlayer = this.getChildByName("forth_player");
+        var firstPlayer = this.node.getChildByName("first_player");
+        var secondPlayer = this.node.getChildByName("second_player");
+        var thirdPlayer = this.node.getChildByName("third_player");
+        var forthPlayer = this.node.getChildByName("forth_player");
         var playerCmp = firstPlayer.getComponent("Player");
         var playerCmpId = playerCmp.playerId;
         if(!playerCmpId) {

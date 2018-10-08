@@ -68,19 +68,24 @@
 			echo $sql."\n";
 			$rs = mysql_query($sql);
 			$socketIds = array();
+			$players = [];
+			$idx = 0;
 			while($row = mysql_fetch_array($rs)) {
 				echo "get socketid\n";
 				array_push($socketIds, $row["websocket_id"]);
-				if($row["id"] == $playerId) {
-					$result["avatarUrl"] = $row["avatar_url"];
-					$result["userName"] = $row["user_name"];
-				}
+				$player = [];
+				$player["avatarUrl"] = $row["avatar_url"];
+				$player["userName"] = $row["user_name"];
+				$player["id"] = $row["id"];
+				$players[$idx] = $player;
+				$idx ++;
 			}
 			$socketIdStr = implode(",", $socketIds);
 			echo "socketids is ".$socketIdStr."\n";
 			$result["enter"] = true;
 			$result["socketIds"] = $socketIdStr;
 			$result["playerId"] = $playerId;
+			$result["players"] = $players;
 			return $result;
 		}
 
