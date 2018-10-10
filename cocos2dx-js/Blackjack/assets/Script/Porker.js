@@ -45,13 +45,13 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
-        console.log("key="+this.key);
-        console.log("value="+this.value);
+        //console.log("key="+this.key);
+        //console.log("value="+this.value);
         this.positionX = this.node.x;
         this.positionY = this.node.y;
         this.node.zIndex = 0;
         this.node.on(cc.Node.EventType.TOUCH_START, function(event) {
-            console.log("获取到的位置为：x="+event.getLocation().x+", y="+event.getLocation().y);
+            //console.log("获取到的位置为：x="+event.getLocation().x+", y="+event.getLocation().y);
             //this.node.position = cc.v2(event.getLocation().x, event.getLocation().y);
             this.originalX = this.node.position.x;
             this.originalY = this.node.position.y;
@@ -73,11 +73,11 @@ cc.Class({
             var thirdPorker = calculatePorker.getChildByName("cal_third_porker");
             var forthPorker = calculatePorker.getChildByName("cal_forth_porker");
             var pokerNodes = [firstPorker, secondPorker, thirdPorker, forthPorker];
-            console.log("移动结束");
-            console.log(this.node.getBoundingBoxToWorld());
-            console.log(firstPorker.getBoundingBoxToWorld());
-            console.log("key="+this.key);
-            console.log("value="+this.value);
+            //console.log("移动结束");
+            //console.log(this.node.getBoundingBoxToWorld());
+            //console.log(firstPorker.getBoundingBoxToWorld());
+            //console.log("key="+this.key);
+            //console.log("value="+this.value);
             for(var i = 0; i < pokerNodes.length; i ++) {
                 var pokerNode = pokerNodes[i];
                 this.changePoker(pokerNode);
@@ -99,7 +99,7 @@ cc.Class({
         var thirdPorker = calculatePorker.getChildByName("cal_third_porker");
         var forthPorker = calculatePorker.getChildByName("cal_forth_porker");
         var pokerNodes = [firstPorker, secondPorker, thirdPorker, forthPorker];
-        console.log(pokerNodes);
+        //console.log(pokerNodes);
         if(cc.Intersection.rectRect(this.node.getBoundingBoxToWorld(), pokerNode.getBoundingBoxToWorld())) {
             var poker = null;
             for(var i = 0; i < pokerNodes.length; i ++) {
@@ -110,10 +110,10 @@ cc.Class({
                     poker = pokerObj;
                 }
             }
-            console.log(poker);
+            //console.log(poker);
             var newkey = this.key;
             var newValue = this.value;
-            console.log("newkey="+newkey+", newValue="+newValue);
+            //console.log("newkey="+newkey+", newValue="+newValue);
             if(pokerNode.getComponent("Porker").key && poker) {
                 cc.loader.loadRes("game/"+pokerNode.getComponent("Porker").key, cc.SpriteFrame, function (err, spriteFrame) {
                     poker.getComponent(cc.Sprite).spriteFrame = spriteFrame;

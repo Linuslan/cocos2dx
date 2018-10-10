@@ -302,6 +302,7 @@
 			}
 			//查询本回合内的玩家是否还有处于未完成的状态，如果没有，则开始新的一个回合，不管有没有，都需要更新玩家的视图
 			$sql = "SELECT COUNT(*) cnt FROM tbl_wechat_game_room_round_player t WHERE t.status = 0 AND game_no=".$gameNo." AND room_no='".$roomNo."' AND round_id=".$roundId;
+			echo $sql."\n";
 			$rows = mysql_query($sql);
 			$count = 0;
 			while($row = mysql_fetch_array($rows)) {
@@ -336,24 +337,12 @@
 			$result["socketIds"] = $socketIdStr;
 			if($newRound) {
 				echo "new round is start\n";
-				$time = date('Y-m-j G:i:s');
-				//生成新的一个回合
-				$sql = "INSERT INTO tbl_wechat_game_room_round(room_no, create_time) VALUES('".$roomNo."', '".$time."')";
-				$roundId = db_execute($sql);
-				$result["roundId"] = $roundId;
-				while($row = mysql_fetch_array($rows)) {
-					$playerId = $row["player_id"];
-					$time = date('Y-m-j G:i:s');
-					//生成新回合的玩家，用于表示本回合该玩家的状态是放弃还是已完成还是解题中
-					$sql = "INSERT INTO tbl_wechat_game_room_round_player(game_no, round_id, player_id, status, create_time, room_no) VALUES('".$gameNo."', ".$roundId.", ".$playerId.", 0, '".$time."', '".$roomNo."')";
-					db_execute($sql);
-				}
 				$refreshResult = $this->refreshPoker($data);
 				$result["restart"] = $refreshResult["restart"];
 				$result["pokerCount"] = $refreshResult["pokerCount"];
 				if($refreshResult["restart"] == false) {
 					$result["cards"] = $refreshResult["cards"];
-					$result["roundId"] = $roundId;
+					$result["roundId"] = $refreshResult["roundId"];
 				}
 			}
 			return $result;

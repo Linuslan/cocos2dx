@@ -79,7 +79,7 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
-        /*cc.loader.downloader.loadSubpackage('script_game', function (err) {
+        /*cc.loader.downloader.loadSubpackage('script_model', function (err) {
             if (err) {
                 return console.error(err);
             }
@@ -92,7 +92,7 @@ cc.Class({
         
         clockNode.active = false;
         
-        giveupBtn.active = false;
+        //giveupBtn.active = false;
         var ws = Global.webSocket;
         /*ws.onopen = function (event) {
             console.log("Send Text WS was opened.");
@@ -217,9 +217,9 @@ cc.Class({
                     player.playerId = id;
                     console.log(playerNode);
                     console.log("playerId="+player.playerId);
-                    var avatarNode = playerNode.getChildByName("avatar");
+                    var avatarNode = playerNode.getChildByName("avatar").getChildByName("image");
                     var avatarCmp = avatarNode.getComponent(cc.Sprite);
-                    cc.loader.load(avatarUrl, function (err, texture) {
+                    cc.loader.load({url:avatarUrl, type:"jpg"}, function (err, texture) {
                         var spriteFrame  = new cc.SpriteFrame(texture);
                         avatarCmp.spriteFrame = spriteFrame;
                     });
@@ -247,7 +247,7 @@ cc.Class({
         this.current = cc.audioEngine.play(this.bgAudio, true, 1);
         this.resultInfo.string = "";
         this.pokerType = ["clubs", "diamonds", "hearts", "spades"];
-        var restartBtn = this.node.getChildByName("buttons").getChildByName("restart_btn");
+        //var restartBtn = this.node.getChildByName("buttons").getChildByName("restart_btn");
         var backBtn = this.node.getChildByName("buttons").getChildByName("back_btn");
         readyBtn.on(cc.Node.EventType.TOUCH_START, function(event) {
             this.expreInfoArr = [];
@@ -286,7 +286,7 @@ cc.Class({
             this.showTips();
         }, this);
 
-        restartBtn.on(cc.Node.EventType.TOUCH_START, function(event) {
+        /*restartBtn.on(cc.Node.EventType.TOUCH_START, function(event) {
             var btn = event.target;
             btn.runAction(cc.sequence(cc.scaleTo(0.1, 0.85, 0.85), cc.scaleTo(0.1, 1, 1), cc.callFunc(function() {
                 this.refreshPoker();
@@ -295,7 +295,7 @@ cc.Class({
                 var audioID = cc.audioEngine.play(clip, false, 1);
             });
             this.initGame();
-        }, this);
+        }, this);*/
 
         backBtn.on(cc.Node.EventType.TOUCH_START, function(event) {
             var btn = event.target;
@@ -688,44 +688,6 @@ cc.Class({
                 ws.send("{\"cmd\":\"commit\", \"data\":{\"playerId\":"+Global.playerId+", \"socketId\":\""+Global.socketId+"\",\"roomNo\":\""+Global.roomNo+"\", \"roomId\":"+Global.roomId+", \"gameNo\":"+Global.gameNo+", \"roundId\":"+Global.roundId+", \"status\": 1}}");
                 return ;
             }
-            // var firstResult = this.calculateResult(firstVal, secondVal, firstSymbol);
-            // console.log("symbol:"+firstSymbol+"第一个值"+firstVal+"和第二个值"+secondVal+"计算结果为："+firstResult);
-            // var secondResult = this.calculateResult(firstResult, thirdVal, secondSymbol);
-            // console.log("symbol:"+secondSymbol+"第一个结果"+firstResult+"和第三个值"+thirdVal+"计算结果为："+secondResult);
-            // var thirdResult = this.calculateResult(secondResult, forthVal, thirdSymbol);
-            // console.log("symbol:"+thirdSymbol+"第二个结果"+secondResult+"和第四个值"+forthVal+"计算结果为："+thirdResult);
-            // console.log("计算结果为："+thirdResult);
-            // //等于24，则提示用户赢了，并且增加用户积分，刷新新的牌出来
-            // if(thirdResult == 24) {
-            //     this.showInfo("过关");
-            //     this.refreshPoker();
-            //     this.clearTips();
-            //     return;
-            // }
-            // firstResult = this.calculateResult(firstVal, secondVal, firstSymbol);
-            // console.log("symbol:"+firstSymbol+"第一个值"+firstVal+"和第二个值"+secondVal+"计算结果为："+firstResult);
-            // secondResult = this.calculateResult(thirdVal, forthVal, thirdSymbol);
-            // console.log("symbol:"+thirdSymbol+"第三个值"+thirdVal+"和第四个值"+forthVal+"计算结果为："+secondResult);
-            // thirdResult = this.calculateResult(firstResult, secondResult, secondSymbol);
-            // console.log("symbol:"+secondSymbol+"第二个结果"+firstResult+"和第二个结果"+secondResult+"计算结果为："+thirdResult);
-            // if(thirdResult == 24) {
-            //     this.showInfo("过关");
-            //     this.refreshPoker();
-            //     this.clearTips();
-            //     return;
-            // }
-            // firstResult = this.calculateResult(secondVal, thirdVal, secondSymbol);
-            // console.log("symbol:"+secondSymbol+"第二个值"+secondVal+"和第三个值"+thirdVal+"计算结果为："+firstResult);
-            // secondResult = this.calculateResult(firstVal, firstResult, firstSymbol);
-            // console.log("symbol:"+firstSymbol+"第一个值"+firstVal+"和第一个结果"+firstResult+"计算结果为："+secondResult);
-            // thirdResult = this.calculateResult(secondResult, forthVal, thirdSymbol);
-            // console.log("symbol:"+thirdSymbol+"第二个结果"+secondResult+"和第四个值"+forthVal+"计算结果为："+thirdResult);
-            // if(thirdResult == 24) {
-            //     this.showInfo("过关");
-            //     this.refreshPoker();
-            //     this.clearTips();
-            //     return;
-            // }
         }
     },
     calculateResult(firstVal, secondVal, symbol) {
