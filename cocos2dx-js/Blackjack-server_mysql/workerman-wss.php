@@ -30,7 +30,7 @@ $clients = [];
 define("HEARTBEAT_TIME",5);
 //检测心跳
 $worker->onWorkerStart = function($worker) {
-    Timer::add(5, function()use($worker){
+    /*Timer::add(5, function()use($worker){
     	echo "start check heart beat.\n";
     	global $clients;
     	var_dump($clients);
@@ -48,26 +48,29 @@ $worker->onWorkerStart = function($worker) {
             	echo "client is offline, close it.\n";
                 $connection->close();
                 if(!empty($connection->socketId)) {
-                	echo "before remove, socketIds is ".array_keys($clients)."\n";
+                	echo "before remove, socketIds is \n";
+                	print_r(array_keys($clients));
                 	echo "heart beat exception, remove socket:".$connection->socketId." from clients\n";
                 	unset($clients[$connection->socketId]);
-                	echo "after remove, left socketIds is ".array_keys($clients)."\n";
+                	echo "after remove, left socketIds is \n";
+                	print_r(array_keys($clients));
                 }
             }
         }
-    });
+    });*/
 };
 $worker->onClose = function($con) {
 	echo "connection is close.\n";
 	global $clients;
-	var_dump($clients);
+	//var_dump($clients);
 	$socketId = $con->socketId;
 	echo "socketId is ".$socketId."\n";
 	if(empty($socketId)) {
 		return;
 	}
 	unset($clients[$socketId]);
-	echo "after remove from clients, left clients are ".array_keys($clients)."\n";
+	echo "after remove from clients, left clients are \n";
+	print_r(array_keys($clients));
 };
 $worker->onMessage = function($con, $msg) {
 	global $playerAction;

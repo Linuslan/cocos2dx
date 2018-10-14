@@ -25,7 +25,7 @@ cc.Class({
         if(!Global.updatePlayer || Global.updatePlayer == 0) {
             wxQuickStart = wx.createUserInfoButton({
                 type: 'text',
-                text: '',
+                text: '更新',
                 style: {
                     left: 450,
                     top: 45,
@@ -41,9 +41,11 @@ cc.Class({
                     borderRadius: 4
                 }
             });
-            console.log(wxQuickStart);
+            //console.log(wxQuickStart);
             wxQuickStart.show();
             wxQuickStart.onTap(function(res) {
+                console.log("点击了快速开始按钮");
+                console.log(res);
                 var userInfo = res.userInfo;
                 var userName = userInfo.nickName;
                 var avatarUrl = userInfo.avatarUrl;
@@ -53,12 +55,13 @@ cc.Class({
                     //alert("正在联网中，请稍后");
                     return ;
                 }
+                console.log("开始联网请求");
                 ws.send("{\"cmd\":\"updatePlayer\", \"data\":{\"playerId\":"+Global.playerId+", \"nickName\":\""+userName+"\", \"avatarUrl\":\""+avatarUrl+"\", \"btn\":\"quickStart\"}}");
             });
     
             wxAdvanceBtn = wx.createUserInfoButton({
                 type: 'text',
-                text: '',
+                text: '更新2',
                 style: {
                     left: 450,
                     top: 150,
@@ -74,9 +77,10 @@ cc.Class({
                     borderRadius: 4
                 }
             });
-            console.log(wxAdvanceBtn);
+            //console.log(wxAdvanceBtn);
             wxAdvanceBtn.show();
             wxAdvanceBtn.onTap(function(res) {
+                console.log("点击了进阶场按钮");
                 var userInfo = res.userInfo;
                 var userName = userInfo.nickName;
                 var avatarUrl = userInfo.avatarUrl;
@@ -91,7 +95,7 @@ cc.Class({
     
             wxOnlineBtn = wx.createUserInfoButton({
                 type: 'text',
-                text: '',
+                text: '更新3',
                 style: {
                     left: 450,
                     top: 265,
@@ -107,9 +111,10 @@ cc.Class({
                     borderRadius: 4
                 }
             });
-            console.log(wxOnlineBtn);
+            //console.log(wxOnlineBtn);
             wxOnlineBtn.show();
             wxOnlineBtn.onTap(function(res) {
+                console.log("点击了联网按钮");
                 var userInfo = res.userInfo;
                 var userName = userInfo.nickName;
                 var avatarUrl = userInfo.avatarUrl;
@@ -206,11 +211,11 @@ cc.Class({
                         }
                         console.log("用户信息更新成功，用户点击的按钮为："+btn);
                         if(btn == "quickStart") {
-                            ws.send("{\"cmd\":\"searchRoom\", \"data\": {\"gameLevel\": 0}}");
+                            //ws.send("{\"cmd\":\"searchRoom\", \"data\": {\"gameLevel\": 0}}");
                         } else if(btn == "advanceBtn") {
-                            ws.send("{\"cmd\":\"searchRoom\", \"data\": {\"gameLevel\": 1}}");
+                            //ws.send("{\"cmd\":\"searchRoom\", \"data\": {\"gameLevel\": 1}}");
                         } else if(btn == "onlienBtn") {
-                            wx.showToast({title:"功能正在开发中，请耐心等待", icon: "none"});
+                            //wx.showToast({title:"功能正在开发中，请耐心等待", icon: "none"});
                         }
                     }
                 };

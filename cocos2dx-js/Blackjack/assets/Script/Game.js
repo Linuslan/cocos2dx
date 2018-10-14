@@ -89,8 +89,10 @@ cc.Class({
         var readyBtn = this.node.getChildByName("buttons").getChildByName("ready");
         var giveupBtn = this.node.getChildByName("buttons").getChildByName("giveup");
         var clockNode = this.node.getChildByName("clock");
+        var calClockNode = this.node.getChildByName("cal_clock");
         
         clockNode.active = false;
+        calClockNode.active = false;
         
         //giveupBtn.active = false;
         var ws = Global.webSocket;
@@ -353,11 +355,16 @@ cc.Class({
         cc.audioEngine.stop(this.current);
     },
     clockCountDown(cards, second, pokerCount) {
+        this.calClockUnschedule();
+        console.log("进入倒计时，时间为："+second);
         var clockNode = this.node.getChildByName("clock");
+        var calClockNode = this.node.getChildByName("cal_clock");
+        calClockNode.active = false;
         var clock = clockNode.getComponent(cc.Label);
         var count = 0;
         var self = this;
         this.pokers = [];
+        console.log("开始倒计时");
         clock.schedule(function() {
             //获取时钟对象，修改里面的数字
             var time = second-count;
@@ -382,6 +389,43 @@ cc.Class({
             }
             count ++;
         }, 1, second, 0);
+    },
+    clockUnschedule() {
+        var clockNode = this.node.getChildByName("clock");
+        var clock = clockNode.getComponent(cc.Label);
+        clock.unscheduleAllCallbacks(clock);
+    },
+    calClockCountDown() {
+        this.clockUnschedule();
+        var clock1 = this.node.getChildByName("clock");
+        clock1.active = false;
+        var clockNode = this.node.getChildByName("cal_clock");
+        var clock = clockNode.getComponent(cc.Label);
+        var count = 0;
+        var second = 60;
+        console.log("发完牌，开始进入计算时间倒计时");
+        //开始倒计时，一局的限定时间为60秒
+        clock.schedule(function() {
+            //获取时钟对象，修改里面的数字
+            var time = second-count;
+            console.log("倒计时数字："+time);
+            clock.string = time;
+            clockNode.active = true;
+            if(time <= 0) {   //倒计时完成，开始发牌
+                console.log("倒计时完成，玩家没有完成计算");
+                clockNode.active = false;
+                var ws = Global.webSocket;
+                ws.send("{\"\cmd\":\"commit\", \"data\":{\"playerId\":"+Global.playerId+", \"socketId\":\""+Global.socketId+"\",\"roomNo\":\""+Global.roomNo+"\", \"roomId\":"+Global.roomId+", \"gameNo\":"+Global.gameNo+", \"roundId\":"+Global.roundId+", \"status\": 3}}");
+            }
+            count ++;
+        }, 1, second, 0);
+    },
+    calClockUnschedule() {
+        console.log("计算倒计时停止");
+        var clockNode = this.node.getChildByName("cal_clock");
+        var clock = clockNode.getComponent(cc.Label);
+        clock.unscheduleAllCallbacks(clock);
+        console.log("计算倒计时停止结束");
     },
     refreshPoker() {
         this.resetCalUI();
@@ -444,26 +488,7 @@ cc.Class({
             pokerCmp.key = poker["key"];
             forthVal = poker["value"];
         }
-
-        var clockNode = this.node.getChildByName("clock");
-        var clock = clockNode.getComponent(cc.Label);
-        var count = 0;
-        var second = 60;
-        //开始倒计时，一局的限定时间为60秒
-        clock.schedule(function() {
-            //获取时钟对象，修改里面的数字
-            var time = second-count;
-            console.log("倒计时数字："+time);
-            clock.string = time;
-            clockNode.active = true;
-            if(time <= 0) {   //倒计时完成，开始发牌
-                console.log("倒计时完成，玩家没有完成计算");
-                clockNode.active = false;
-                var ws = Global.webSocket;
-                ws.send("{\"\cmd\":\"commit\", \"data\":{\"playerId\":"+Global.playerId+", \"socketId\":\""+Global.socketId+"\",\"roomNo\":\""+Global.roomNo+"\", \"roomId\":"+Global.roomId+", \"gameNo\":"+Global.gameNo+", \"roundId\":"+Global.roundId+", \"status\": 3}}");
-            }
-            count ++;
-        }, 1, second, 0);
+        this.calClockCountDown();
     },
     resetPoker() {
         var firstPoker = this.node.getChildByName("first_porker");
@@ -721,9 +746,11 @@ cc.Class({
                 this.clearTips();
                 var ws = Global.webSocket;
                 ws.send("{\"cmd\":\"commit\", \"data\":{\"playerId\":"+Global.playerId+", \"socketId\":\""+Global.socketId+"\",\"roomNo\":\""+Global.roomNo+"\", \"roomId\":"+Global.roomId+", \"gameNo\":"+Global.gameNo+", \"roundId\":"+Global.roundId+", \"status\": 1}}");
-                var clockNode = this.node.getChildByName("clock");
-                var clock = clockNode.getComponent(cc.Label);
-                clock.unschedule();
+                //var clockNode = this.node.getChildByName("clock");
+                //var clock = clockNode.getComponent(cc.Label);
+                //clock.unschedule();
+                console.log("停止计算倒计时");
+                this.calClockUnschedule();
                 return ;
             }
         }
@@ -767,7 +794,7 @@ cc.Class({
             return ;
         }
         this.lastPokerValues = [lastFirstVal, lastSecondVal, lastThirdVal, lastForthVal];
-        var lastPokers = "上局提示：\n\n"+lastFirstVal+", "+lastSecondVal+", "+lastThirdVal+", "+lastForthVal;
+        var lastPokers = lastFirstVal+", "+lastSecondVal+", "+lastThirdVal+", "+lastForthVal;
         this.lastPokerLbl.string = lastPokers;
         console.log(this.expreInfoArr);
         this.recursiveCal(this.lastPokerValues);
