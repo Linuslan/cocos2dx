@@ -133,7 +133,7 @@
 				while($row = mysql_fetch_array($rows)) {
 					$playerId = $row["player_id"];
 					$time = date('Y-m-j G:i:s');
-					$sql = "INSERT INTO tbl_wechat_game_room_number_player(player_id, score, create_time, game_no, room_no) VALUES(".$playerId.", 0, '".$time."', ".$gameNo.", '".$roomNo."')";
+					$sql = "INSERT INTO tbl_wechat_game_room_number_player(player_id, score, create_time, game_no, room_no, status) VALUES(".$playerId.", 0, '".$time."', ".$gameNo.", '".$roomNo."', 0)";
 					db_execute($sql);
 				}
 
@@ -226,7 +226,7 @@
 			$sql = "INSERT INTO tbl_wechat_game_room_round(room_no, create_time) VALUES('".$roomNo."', '".date('Y-m-j G:i:s')."')";
 			$roundId = db_execute($sql);
 			//获取本局中共有多少个准备好的玩家，生成这些玩家的新一回合的数据
-			$sql = "SELECT * FROM tbl_wechat_game_room_number_player t WHERE t.room_no='".$roomNo."' AND t.game_no=".$gameNo;
+			$sql = "SELECT * FROM tbl_wechat_game_room_number_player t WHERE t.status=0 AND t.room_no='".$roomNo."' AND t.game_no=".$gameNo;
 			$rows = mysql_query($sql);
 			while($row=mysql_fetch_array($rows)) {
 				$playerId = $row["player_id"];
@@ -284,7 +284,7 @@
 			$roundId = $data->{"roundId"};
 			$playerId = $data->{"playerId"};
 			$gameNo = $data->{"gameNo"};
-			//玩家回合状态，0：解题中；1：完成；2：放弃；3：超时
+			//玩家回合状态，0：解题中；1：完成；2：放弃；3：超时；4：离开；
 			$status = $data->{"status"};
 			echo "Update player's status\n";
 			//更新玩家的回合状态
@@ -340,11 +340,56 @@
 				$refreshResult = $this->refreshPoker($data);
 				$result["restart"] = $refreshResult["restart"];
 				$result["pokerCount"] = $refreshResult["pokerCount"];
+				$result["status"] = 0;
 				if($refreshResult["restart"] == false) {
 					$result["cards"] = $refreshResult["cards"];
 					$result["roundId"] = $refreshResult["roundId"];
 				}
 			}
+			return $result;
+		}
+
+		public function quitRoom($data) {
+			echo "player quit room";
+			$time = date('Y-m-j G:i:s');
+			$playerId = $data->{"playerId"};
+			$roomNo = $data->{"roomNo"};
+			$gameNo = $data->{"gameNo"};
+			$roundId = $data->{"roundId"};
+			$sql = "UPDATE tbl_wechat_game_room_player SET status = 2, quit_time='".$time."' WHERE room_no='".$roomNo."' AND player_id=".$playerId;
+			db_execute($sql);
+			
+			if(!empty($gameNo)) {
+				$sql = "UPDATE tbl_wechat_game_room_number_player SET status = 1 WHERE room_no='".$roomNo."' AND game_no=".$gameNo;
+				db_execute($sql);
+				if(!empty($roundId)) {
+					$sql = "UPDATE tbl_wechat_game_room_round_player SET status = 1 WHERE room_no='".$roomNo."' AND game_no=".$gameNo." AND round_id=".$roundId;
+					db_execute($sql);
+				}
+			}
+			$result = [];
+			//如果房间没玩家了，则将房间关闭
+			$sql = "SELECT COUNT(*) cnt FROM tbl_wechat_game_room_player WHERE status<>2";
+			$rows = mysql_query($sql);
+			$playerCount = 0;
+			while($row = mysql_fetch_array($rows)) {
+				$playerCount = $row["cnt"];
+			}
+			if($playerCount <= 0) {
+				$sql = "UPDATE tbl_wechat_game_room SET status = 2 WHERE room_no='".$roomNo."'";
+				db_execute($sql);
+			} else {
+				$sql = "SELECT t1.websocket_id FROM (SELECT * FROM tbl_wechat_game_room_player t WHERE t.room_no='".$roomNo."' AND t.status = 1) t INNER JOIN tbl_wechat_player t1 ON t.player_id = t1.id";
+				$rows = mysql_query($sql);
+				$socketIds = array();
+				while($row = mysql_fetch_array($rows)) {
+					array_push($socketIds, $row["websocket_id"]);
+				}
+				$socketIdStr = implode(",", $socketIds);
+				echo "upgrade player's socket is ".$socketIdStr."\n";
+				$result["socketIds"] = $socketIdStr;
+			}
+			$result["playerId"] = $playerId;
 			return $result;
 		}
 	}

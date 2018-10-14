@@ -17,9 +17,13 @@
 			$playerId = $data->{"playerId"};
 			$avatarUrl = $data->{"avatarUrl"};
 			$nickName = $data->{"nickName"};
+			$btn = $data->{"btn"};
 			$sql = "UPDATE tbl_wechat_player SET avatar_url='".$avatarUrl."', user_name='".$nickName."' WHERE id=".$playerId;
 			db_execute($sql);
-			return true;
+			$result = [];
+			$result["update"] = "success";
+			$result["btn"] = $btn;
+			return $result;
 		}
 	}
 ?>

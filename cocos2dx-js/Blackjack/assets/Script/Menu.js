@@ -17,10 +17,116 @@ cc.Class({
             }
             console.log('load subpackage successfully.');
         });*/
+        //每次第一次进入游戏菜单没有更新过，才出现按钮，如果已经更新过，则不再出现按钮
+        //省的用户不断的在授权
+        let wxQuickStart;
+        let wxAdvanceBtn;
+        let wxOnlineBtn;
+        if(!Global.updatePlayer || Global.updatePlayer == 0) {
+            wxQuickStart = wx.createUserInfoButton({
+                type: 'text',
+                text: '',
+                style: {
+                    left: 450,
+                    top: 45,
+                    width: 230,
+                    height: 85,
+                    lineHeight: 0,
+                    backgroundColor: '',
+                    borderColor: '#000000',
+                    borderWidth: '#000000',
+                    color: '#ffffff',
+                    textAlign: 'center',
+                    fontSize: 16,
+                    borderRadius: 4
+                }
+            });
+            console.log(wxQuickStart);
+            wxQuickStart.show();
+            wxQuickStart.onTap(function(res) {
+                var userInfo = res.userInfo;
+                var userName = userInfo.nickName;
+                var avatarUrl = userInfo.avatarUrl;
+                var ws = Global.webSocket;
+                if(!ws || ws.readyState !== WebSocket.OPEN || !Global.playerId || !Global.socketId) {
+                    wx.showToast({title:"正在联网中，请稍后"});
+                    //alert("正在联网中，请稍后");
+                    return ;
+                }
+                ws.send("{\"cmd\":\"updatePlayer\", \"data\":{\"playerId\":"+Global.playerId+", \"nickName\":\""+userName+"\", \"avatarUrl\":\""+avatarUrl+"\", \"btn\":\"quickStart\"}}");
+            });
+    
+            wxAdvanceBtn = wx.createUserInfoButton({
+                type: 'text',
+                text: '',
+                style: {
+                    left: 450,
+                    top: 150,
+                    width: 230,
+                    height: 85,
+                    lineHeight: 0,
+                    backgroundColor: '',
+                    borderColor: '#000000',
+                    borderWidth: '#000000',
+                    color: '#ffffff',
+                    textAlign: 'center',
+                    fontSize: 16,
+                    borderRadius: 4
+                }
+            });
+            console.log(wxAdvanceBtn);
+            wxAdvanceBtn.show();
+            wxAdvanceBtn.onTap(function(res) {
+                var userInfo = res.userInfo;
+                var userName = userInfo.nickName;
+                var avatarUrl = userInfo.avatarUrl;
+                var ws = Global.webSocket;
+                if(!ws || ws.readyState !== WebSocket.OPEN || !Global.playerId || !Global.socketId) {
+                    wx.showToast({title:"正在联网中，请稍后"});
+                    //alert("正在联网中，请稍后");
+                    return ;
+                }
+                ws.send("{\"cmd\":\"updatePlayer\", \"data\":{\"playerId\":"+Global.playerId+", \"nickName\":\""+userName+"\", \"avatarUrl\":\""+avatarUrl+"\", \"btn\":\"advanceBtn\"}}");
+            });
+    
+            wxOnlineBtn = wx.createUserInfoButton({
+                type: 'text',
+                text: '',
+                style: {
+                    left: 450,
+                    top: 265,
+                    width: 230,
+                    height: 85,
+                    lineHeight: 0,
+                    backgroundColor: '',
+                    borderColor: '#000000',
+                    borderWidth: '#000000',
+                    color: '#ffffff',
+                    textAlign: 'center',
+                    fontSize: 16,
+                    borderRadius: 4
+                }
+            });
+            console.log(wxOnlineBtn);
+            wxOnlineBtn.show();
+            wxOnlineBtn.onTap(function(res) {
+                var userInfo = res.userInfo;
+                var userName = userInfo.nickName;
+                var avatarUrl = userInfo.avatarUrl;
+                var ws = Global.webSocket;
+                if(!ws || ws.readyState !== WebSocket.OPEN || !Global.playerId || !Global.socketId) {
+                    wx.showToast({title:"正在联网中，请稍后"});
+                    //alert("正在联网中，请稍后");
+                    return ;
+                }
+                ws.send("{\"cmd\":\"updatePlayer\", \"data\":{\"playerId\":"+Global.playerId+", \"nickName\":\""+userName+"\", \"avatarUrl\":\""+avatarUrl+"\", \"btn\":\"advanceBtn\"}}");
+            });
+        }
+
         var ws;
         var url = "https://www.uxgoo.com/calculate24/UserAction.php?m=userLogin";
         var self = this;
-        this.showDialog();
+        //this.showDialog();
         wx.login({
             timeout: 6000,
             success: function(code) {
@@ -31,6 +137,7 @@ cc.Class({
                 //Global.playerId = response.playerId;
                 ws = new WebSocket("wss://www.uxgoo.com");
                 Global.webSocket = ws;
+                Global.heartBeat(); //启动心跳
                 ws.onopen = function (event) {
                     console.log("Send Text WS was opened.");
                     ws.send("{\"cmd\":\"userLogin\", \"data\":{\"code\":\""+code.code+"\"}}");
@@ -85,6 +192,27 @@ cc.Class({
                             ws.send("{\"cmd\":\"enterRoom\", \"data\":{\"socketId\":\""+Global.socketId+"\", \"roomNo\":\""+Global.roomNo+"\", \"roomId\":"+Global.roomId+", \"playerId\":"+Global.playerId+"}}");
                         });
                     }
+                    if(json.cmd == "updatePlayer") {
+                        var btn = json.data.btn;
+                        Global.updatePlayer = 1;
+                        if(wxQuickStart) {
+                            wxQuickStart.destroy();
+                        }
+                        if(wxAdvanceBtn) {
+                            wxAdvanceBtn.destroy();
+                        }
+                        if(wxOnlineBtn) {
+                            wxOnlineBtn.destroy();
+                        }
+                        console.log("用户信息更新成功，用户点击的按钮为："+btn);
+                        if(btn == "quickStart") {
+                            ws.send("{\"cmd\":\"searchRoom\", \"data\": {\"gameLevel\": 0}}");
+                        } else if(btn == "advanceBtn") {
+                            ws.send("{\"cmd\":\"searchRoom\", \"data\": {\"gameLevel\": 1}}");
+                        } else if(btn == "onlienBtn") {
+                            wx.showToast({title:"功能正在开发中，请耐心等待", icon: "none"});
+                        }
+                    }
                 };
                 ws.onerror = function (event) {
                     console.log("Send Text fired an error");
@@ -121,8 +249,10 @@ cc.Class({
                         //alert("正在联网中，请稍后");
                         return ;
                     }
-                    ws.send("{\"cmd\":\"searchRoom\", \"data\": {\"gameLevel\": 0}}");
-                    console.log("开始执行动作回调");
+                    if(Global.updatePlayer == 1) {
+                        ws.send("{\"cmd\":\"searchRoom\", \"data\": {\"gameLevel\": 0}}");
+                        console.log("开始执行动作回调");
+                    }
                 }));
                 btn.runAction(action);
             });
@@ -141,13 +271,22 @@ cc.Class({
                 var btn = event.target;
                 var action = cc.sequence(cc.scaleTo(0.1, 1), cc.callFunc(function() {
                     console.log("开始执行动作回调");
-                    cc.director.loadScene("Game", function() {
+                    /*cc.director.loadScene("Game", function() {
                         var scene = cc.director.getScene();
                         var canvas = scene.getChildByName("Canvas");
                         var gameCmp = canvas.getComponent("Game");
                         gameCmp.gameLevel = 1;
                         gameCmp.initGame();
-                    });
+                    });*/
+                    if(!ws || ws.readyState !== WebSocket.OPEN) {
+                        wx.showToast({title:"正在联网中，请稍后"});
+                        //alert("正在联网中，请稍后");
+                        return ;
+                    }
+                    if(Global.updatePlayer == 1) {
+                        ws.send("{\"cmd\":\"searchRoom\", \"data\": {\"gameLevel\": 1}}");
+                        console.log("开始执行动作回调");
+                    }
                 }));
                 btn.runAction(action);
             });
@@ -165,31 +304,7 @@ cc.Class({
         cc.audioEngine.stop(this.bgAudioId);
     },
     showDialog() {
-        let button = wx.createUserInfoButton({
-            type: 'text',
-            text: '更新个人信息',
-            style: {
-                left: 10,
-                top: 10,
-                width: 100,
-                height: 50,
-                lineHeight: 0,
-                backgroundColor: '',
-                color: '#ffffff',
-                textAlign: 'center',
-                fontSize: 16,
-                borderRadius: 4
-            }
-        });
-        console.log(button);
-        button.show();
-        button.onTap(function(res) {
-            var userInfo = res.userInfo;
-            var userName = userInfo.nickName;
-            var avatarUrl = userInfo.avatarUrl;
-            var ws = Global.webSocket;
-            ws.send("{\"cmd\":\"updatePlayer\", \"data\":{\"playerId\":"+Global.playerId+", \"nickName\":\""+userName+"\", \"avatarUrl\":\""+avatarUrl+"\"}}");
-        });
+        
     }
 
     // called every frame, uncomment this function to activate update callback

@@ -4,6 +4,7 @@ include_once __DIR__."/action/GameRoomAction.php";
 include_once __DIR__."/action/PlayerAction.php";
 include_once __DIR__."/action/UserAction.php";
 use Workerman\Worker;
+use Workerman\Lib\Timer;
 
 $gameRoomAction = new GameRoomAction();
 $playerAction = new PlayerAction();
@@ -25,6 +26,49 @@ $worker = new Worker('websocket://0.0.0.0:443', $context);
 // 设置transport开启ssl，websocket+ssl即wss
 $worker->transport = 'ssl';
 $clients = [];
+// 心跳间隔55秒
+define("HEARTBEAT_TIME",5);
+//检测心跳
+$worker->onWorkerStart = function($worker) {
+    Timer::add(5, function()use($worker){
+    	echo "start check heart beat.\n";
+    	global $clients;
+    	var_dump($clients);
+        $time_now = time();
+        foreach($worker->connections as $connection) {
+            // 有可能该connection还没收到过消息，则lastMessageTime设置为当前时间
+            if (empty($connection->lastMessageTime)) {
+                $connection->lastMessageTime = $time_now;
+                continue;
+            }
+            $timeDiff = $time_now - $connection->lastMessageTime;
+            echo "heart beat time diff: ".$timeDiff;
+            // 上次通讯时间间隔大于心跳间隔，则认为客户端已经下线，关闭连接
+            if ($timeDiff > HEARTBEAT_TIME) {
+            	echo "client is offline, close it.\n";
+                $connection->close();
+                if(!empty($connection->socketId)) {
+                	echo "before remove, socketIds is ".array_keys($clients)."\n";
+                	echo "heart beat exception, remove socket:".$connection->socketId." from clients\n";
+                	unset($clients[$connection->socketId]);
+                	echo "after remove, left socketIds is ".array_keys($clients)."\n";
+                }
+            }
+        }
+    });
+};
+$worker->onClose = function($con) {
+	echo "connection is close.\n";
+	global $clients;
+	var_dump($clients);
+	$socketId = $con->socketId;
+	echo "socketId is ".$socketId."\n";
+	if(empty($socketId)) {
+		return;
+	}
+	unset($clients[$socketId]);
+	echo "after remove from clients, left clients are ".array_keys($clients)."\n";
+};
 $worker->onMessage = function($con, $msg) {
 	global $playerAction;
 	global $gameRoomAction;
@@ -36,6 +80,8 @@ $worker->onMessage = function($con, $msg) {
 	$result["code"] = "";
 	$result["data"] = "";
 	$isSend = false;
+	//设置心跳时间
+	$con->lastMessageTime = time();
 	try {
 		if($msg == null) {
 			throw new Exception("{\"msg\":\"command is null\", \"code\": \"1\"}");
@@ -50,6 +96,7 @@ $worker->onMessage = function($con, $msg) {
 			$result["data"] = $res;
 		} else if($cmd == "getSocketId") {
 			$socketId = uniqid();
+			$con->socketId = $socketId;
 			$data = [];
 			$data["socketId"] = $socketId;
 			$result["data"] = $data;
@@ -61,6 +108,7 @@ $worker->onMessage = function($con, $msg) {
 		} else if($cmd == "updatePlayer") {
 			$data = $jsonData->{"data"};
 			$rs = $playerAction->updatePlayer($data);
+			$result["data"] = $rs;
 		} else if($cmd == "searchRoom") {
             $rs = $gameRoomAction->searchRoom($jsonData->{"data"});
             if($rs != null) {
@@ -97,7 +145,7 @@ $worker->onMessage = function($con, $msg) {
 	            		$isSend = true;  //确保后面不会再发送
 	            	}
 	                $socket = $clients[$socketId];
-	                var_dump($socket);
+	                //var_dump($socket);
 	                $socket->send(json_encode($result));
 	            }
             }
@@ -116,7 +164,7 @@ $worker->onMessage = function($con, $msg) {
             $result["data"] = $rs;
             $result["success"] = true;
             $socketIds = $rs["socketIds"];
-        	echo "playerReady->socketIds:".$socketIds."\n";
+        	echo "commit->socketIds:".$socketIds."\n";
             $socketArr = explode(",", $socketIds);
             foreach($socketArr as $socketId) {
             	echo "socketId:".$socketId."\n";
@@ -125,6 +173,25 @@ $worker->onMessage = function($con, $msg) {
             	}
                 $socket = $clients[$socketId];
                 $socket->send(json_encode($result));
+            }
+        } else if($cmd == "quitRoom") {
+        	$data = $jsonData->{"data"};
+        	$currSocketId = $jsonData->{"data"}->{"socketId"};
+        	$rs = $gameRoomAction->quitRoom($data);
+        	$result["data"] = $rs;
+            $result["success"] = true;
+            if(!empty($rs["socketIds"])) {
+            	$socketIds = $rs["socketIds"];
+	        	echo "quitRoom->socketIds:".$socketIds."\n";
+	            $socketArr = explode(",", $socketIds);
+	            foreach($socketArr as $socketId) {
+	            	echo "socketId:".$socketId."\n";
+	            	if($socketId == $currSocketId) {
+	            		$isSend = true;  //确保后面不会再发送
+	            	}
+	                $socket = $clients[$socketId];
+	                $socket->send(json_encode($result));
+	            }
             }
         }
 		$result["success"] = true;
