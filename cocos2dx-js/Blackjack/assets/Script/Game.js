@@ -366,6 +366,7 @@ cc.Class({
         var self = this;
         this.pokers = [];
         console.log("开始倒计时");
+        this.showInfo("即将开始新回合");
         clock.schedule(function() {
             //获取时钟对象，修改里面的数字
             var time = second-count;
@@ -556,7 +557,8 @@ cc.Class({
             this.clearTips();
             this.resetCalUI();
             this.resetPoker();
-            this.
+            var playerInfoLbl = this.node.getChildByName("player_info").getComponent(cc.Label);
+            playerInfoLbl.string = "分数：0";
             this.showInfo("没牌啦，请重新开始");
         }
         var pokerList = [];
