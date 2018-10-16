@@ -219,6 +219,9 @@
 			if($count <= 0) {
 				$result["restart"] = true;
 				$result["pokerCount"] = $pokerCount;
+				//没牌了，将房间状态更新为0，让其他玩家进入
+				$sql = "UPDATE tbl_wechat_game_room SET t.status=0 WHERE t.room_no='".$roomNo."'";
+				db_execute($sql);
 				//throw new Exception("{\"code\":\"1000-02\", \"msg\":\"没牌啦，请重新开始\"}");
 				return $result;
 			}
@@ -360,16 +363,16 @@
 			db_execute($sql);
 			
 			if(!empty($gameNo)) {
-				$sql = "UPDATE tbl_wechat_game_room_number_player SET status = 1 WHERE room_no='".$roomNo."' AND game_no=".$gameNo;
+				$sql = "UPDATE tbl_wechat_game_room_number_player SET status = 1 WHERE room_no='".$roomNo."' AND game_no=".$gameNo." AND player_id=".$playerId;
 				db_execute($sql);
 				if(!empty($roundId)) {
-					$sql = "UPDATE tbl_wechat_game_room_round_player SET status = 1 WHERE room_no='".$roomNo."' AND game_no=".$gameNo." AND round_id=".$roundId;
+					$sql = "UPDATE tbl_wechat_game_room_round_player SET status = 1 WHERE room_no='".$roomNo."' AND game_no=".$gameNo." AND round_id=".$roundId." AND player_id=".$playerId;
 					db_execute($sql);
 				}
 			}
 			$result = [];
 			//如果房间没玩家了，则将房间关闭
-			$sql = "SELECT COUNT(*) cnt FROM tbl_wechat_game_room_player WHERE status<>2";
+			$sql = "SELECT COUNT(*) cnt FROM tbl_wechat_game_room_player WHERE status<>2 AND room_no='".$roomNo."'";
 			$rows = mysql_query($sql);
 			$playerCount = 0;
 			while($row = mysql_fetch_array($rows)) {
@@ -391,6 +394,59 @@
 			}
 			$result["playerId"] = $playerId;
 			return $result;
+		}
+
+		public function quitRoomBySocketId($clients, $socketId) {
+			$playerId = null;
+			$sql = "SELECT * FROM tbl_wechat_player t WHERE t.websocket_id='".$socketId."'";
+			$rows = mysql_query($sql);
+			while($row = mysql_fetch_array($rows)) {
+				$playerId = $row["id"];
+			}
+			if($playerId != null) {
+				$time = date('Y-m-j G:i:s');
+				$sql = "UPDATE tbl_wechat_game_room_player SET status = 2, quit_time='".$time."' WHERE player_id=".$playerId;
+				db_execute($sql);
+				$sql = "UPDATE tbl_wechat_game_room_number_player SET status = 1 WHERE player_id=".$playerId;
+				db_execute($sql);
+				$sql = "UPDATE tbl_wechat_game_room_round_player SET status = 1 WHERE player_id=".$playerId;
+				db_execute($sql);
+				$sql = "SELECT * FROM tbl_wechat_game_room_player WHERE player_id=".$playerId;
+				$roomIdArr = [];
+				$rows = mysql_query($sql);
+				while($row = mysql_fetch_array($rows)) {
+					$roomNo = $row["room_no"];
+					$sql = "SELECT COUNT(*) cnt FROM tbl_wechat_game_room_player WHERE status<>2 AND room_no='".$roomNo."'";
+					$rows = mysql_query($sql);
+					$playerCount = 0;
+					while($row = mysql_fetch_array($rows)) {
+						$playerCount = $row["cnt"];
+					}
+					if($playerCount <= 0) {
+						$sql = "UPDATE tbl_wechat_game_room SET status = 2 WHERE room_no='".$roomNo."'";
+						db_execute($sql);
+					} else {
+						$sql = "SELECT t1.websocket_id FROM (SELECT * FROM tbl_wechat_game_room_player t WHERE t.room_no='".$roomNo."' AND t.status = 1) t INNER JOIN tbl_wechat_player t1 ON t.player_id = t1.id";
+						$rows = mysql_query($sql);
+						$socketIds = array();
+						while($row = mysql_fetch_array($rows)) {
+							array_push($socketIds, $row["websocket_id"]);
+						}
+						$result = [];
+						$data = [];
+						$data["playerId"] = $playerId;
+						$result["cmd"] = "quitRoom";
+						$result["success"] = true;
+						$result["data"] = $data;
+						foreach($socketIds as $socketId) {
+			            	echo "socketId:".$socketId."\n";
+			                $socket = $clients[$socketId];
+			                $socket->send(json_encode($result));
+			                echo "upgrade player's socket is ".$socketId."\n";
+			            }
+					}
+				}
+			}
 		}
 	}
 ?>

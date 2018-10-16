@@ -310,6 +310,7 @@ cc.Class({
             ws.send("{\"cmd\":\"commit\", \"data\":{\"playerId\":"+Global.playerId+", \"socketId\":\""+Global.socketId+"\",\"roomNo\":\""+Global.roomNo+"\", \"roomId\":"+Global.roomId+", \"gameNo\":"+Global.gameNo+", \"roundId\":"+Global.roundId+", \"status\": 2}}");
             //计算可能的解
             this.showTips();
+            this.calClockUnschedule();
         }, this);
 
         //点击退出按钮，则向服务端发送退出房间指令
@@ -404,6 +405,7 @@ cc.Class({
         var count = 0;
         var second = 60;
         console.log("发完牌，开始进入计算时间倒计时");
+        var self = this;
         //开始倒计时，一局的限定时间为60秒
         clock.schedule(function() {
             //获取时钟对象，修改里面的数字
@@ -416,6 +418,7 @@ cc.Class({
                 clockNode.active = false;
                 var ws = Global.webSocket;
                 ws.send("{\"\cmd\":\"commit\", \"data\":{\"playerId\":"+Global.playerId+", \"socketId\":\""+Global.socketId+"\",\"roomNo\":\""+Global.roomNo+"\", \"roomId\":"+Global.roomId+", \"gameNo\":"+Global.gameNo+", \"roundId\":"+Global.roundId+", \"status\": 3}}");
+                self.showTips();
             }
             count ++;
         }, 1, second, 0);
@@ -550,6 +553,10 @@ cc.Class({
     },
     getPoker() {
         if(this.pokers.length <= 0) {
+            this.clearTips();
+            this.resetCalUI();
+            this.resetPoker();
+            this.
             this.showInfo("没牌啦，请重新开始");
         }
         var pokerList = [];

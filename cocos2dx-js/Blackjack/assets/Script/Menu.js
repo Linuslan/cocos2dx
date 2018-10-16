@@ -25,7 +25,7 @@ cc.Class({
         if(!Global.updatePlayer || Global.updatePlayer == 0) {
             wxQuickStart = wx.createUserInfoButton({
                 type: 'text',
-                text: '更新',
+                text: '',
                 style: {
                     left: 450,
                     top: 45,
@@ -61,7 +61,7 @@ cc.Class({
     
             wxAdvanceBtn = wx.createUserInfoButton({
                 type: 'text',
-                text: '更新2',
+                text: '',
                 style: {
                     left: 450,
                     top: 150,
@@ -95,7 +95,7 @@ cc.Class({
     
             wxOnlineBtn = wx.createUserInfoButton({
                 type: 'text',
-                text: '更新3',
+                text: '',
                 style: {
                     left: 450,
                     top: 265,
@@ -211,11 +211,11 @@ cc.Class({
                         }
                         console.log("用户信息更新成功，用户点击的按钮为："+btn);
                         if(btn == "quickStart") {
-                            //ws.send("{\"cmd\":\"searchRoom\", \"data\": {\"gameLevel\": 0}}");
+                            ws.send("{\"cmd\":\"searchRoom\", \"data\": {\"gameLevel\": 0}}");
                         } else if(btn == "advanceBtn") {
-                            //ws.send("{\"cmd\":\"searchRoom\", \"data\": {\"gameLevel\": 1}}");
+                            ws.send("{\"cmd\":\"searchRoom\", \"data\": {\"gameLevel\": 1}}");
                         } else if(btn == "onlienBtn") {
-                            //wx.showToast({title:"功能正在开发中，请耐心等待", icon: "none"});
+                            wx.showToast({title:"功能正在开发中，请耐心等待", icon: "none"});
                         }
                     }
                 };

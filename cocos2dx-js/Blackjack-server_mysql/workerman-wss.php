@@ -27,13 +27,14 @@ $worker = new Worker('websocket://0.0.0.0:443', $context);
 $worker->transport = 'ssl';
 $clients = [];
 // 心跳间隔55秒
-define("HEARTBEAT_TIME",5);
+define("HEARTBEAT_TIME",10);
 //检测心跳
 $worker->onWorkerStart = function($worker) {
-    /*Timer::add(5, function()use($worker){
+    Timer::add(5, function()use($worker){
     	echo "start check heart beat.\n";
     	global $clients;
-    	var_dump($clients);
+    	global $gameRoomAction;
+    	//var_dump($clients);
         $time_now = time();
         foreach($worker->connections as $connection) {
             // 有可能该connection还没收到过消息，则lastMessageTime设置为当前时间
@@ -42,26 +43,29 @@ $worker->onWorkerStart = function($worker) {
                 continue;
             }
             $timeDiff = $time_now - $connection->lastMessageTime;
-            echo "heart beat time diff: ".$timeDiff;
+            echo "heart beat time diff: ".$timeDiff."\n";
             // 上次通讯时间间隔大于心跳间隔，则认为客户端已经下线，关闭连接
             if ($timeDiff > HEARTBEAT_TIME) {
             	echo "client is offline, close it.\n";
-                $connection->close();
                 if(!empty($connection->socketId)) {
+                	$socketId = $connection->socketId;
                 	echo "before remove, socketIds is \n";
                 	print_r(array_keys($clients));
-                	echo "heart beat exception, remove socket:".$connection->socketId." from clients\n";
-                	unset($clients[$connection->socketId]);
+                	echo "heart beat exception, remove socket:".$socketId." from clients\n";
+                	unset($clients[$socketId]);
                 	echo "after remove, left socketIds is \n";
                 	print_r(array_keys($clients));
+                	$gameRoomAction->quitRoomBySocketId($clients, $socketId);
                 }
+                $connection->close();
             }
         }
-    });*/
+    });
 };
 $worker->onClose = function($con) {
 	echo "connection is close.\n";
 	global $clients;
+	global $gameRoomAction;
 	//var_dump($clients);
 	$socketId = $con->socketId;
 	echo "socketId is ".$socketId."\n";
@@ -71,6 +75,7 @@ $worker->onClose = function($con) {
 	unset($clients[$socketId]);
 	echo "after remove from clients, left clients are \n";
 	print_r(array_keys($clients));
+	$gameRoomAction->quitRoomBySocketId($clients, $socketId);
 };
 $worker->onMessage = function($con, $msg) {
 	global $playerAction;
