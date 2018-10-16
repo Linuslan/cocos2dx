@@ -64,7 +64,7 @@
 			}
 			$sql = "INSERT INTO tbl_wechat_game_room_player(room_id, room_no, player_id, status, score) VALUES(".$roomId.", '".$roomNo."', ".$playerId.", 0, 0)";
 			db_execute($sql);
-			$sql = "SELECT t1.websocket_id, t1.user_name, t1.avatar_url, t1.id FROM (SELECT * FROM tbl_wechat_game_room_player t WHERE t.room_no='".$roomNo."') t INNER JOIN tbl_wechat_player t1 ON t.player_id = t1.id";
+			$sql = "SELECT t1.websocket_id, t1.user_name, t1.avatar_url, t1.id FROM (SELECT * FROM tbl_wechat_game_room_player t WHERE t.room_no='".$roomNo."' AND t.status <> 2) t INNER JOIN tbl_wechat_player t1 ON t.player_id = t1.id";
 			echo $sql."\n";
 			$rs = mysql_query($sql);
 			$socketIds = array();
@@ -112,16 +112,16 @@
 			$isCountDown = false;
 			$second = 5;
 			$result = [];
+			$sql = "SELECT t1.websocket_id FROM (SELECT * FROM tbl_wechat_game_room_player t WHERE t.room_no='".$roomNo."' AND t.status <> 2) t INNER JOIN tbl_wechat_player t1 ON t.player_id = t1.id";
+			$rs = mysql_query($sql);
+			$socketIds = array();
+			while($row = mysql_fetch_array($rs)) {
+				array_push($socketIds, $row["websocket_id"]);
+			}
+			$socketIdStr = implode(",", $socketIds);
 			if($readyCount == $playerCount) {
 				$isCountDown = true;
 				//$card = "4,3,2,1";
-				$sql = "SELECT t1.websocket_id FROM (SELECT * FROM tbl_wechat_game_room_player t WHERE t.room_no='".$roomNo."' AND t.status = 1) t INNER JOIN tbl_wechat_player t1 ON t.player_id = t1.id";
-				$rs = mysql_query($sql);
-				$socketIds = array();
-				while($row = mysql_fetch_array($rs)) {
-					array_push($socketIds, $row["websocket_id"]);
-				}
-				$socketIdStr = implode(",", $socketIds);
 				$sql = "UPDATE tbl_wechat_game_room SET status = 1 WHERE room_no='".$roomNo."'";
 				db_execute($sql);
 				//开始初始化游戏数据
@@ -329,7 +329,7 @@
 				$score = $row["score"];
 			}
 			$result["score"] = $score;
-			$sql = "SELECT t1.websocket_id FROM (SELECT * FROM tbl_wechat_game_room_player t WHERE t.room_no='".$roomNo."' AND t.status = 1) t INNER JOIN tbl_wechat_player t1 ON t.player_id = t1.id";
+			$sql = "SELECT t1.websocket_id FROM (SELECT * FROM tbl_wechat_game_room_player t WHERE t.room_no='".$roomNo."' AND t.status <>2) t INNER JOIN tbl_wechat_player t1 ON t.player_id = t1.id";
 			$rs = mysql_query($sql);
 			$socketIds = array();
 			while($row = mysql_fetch_array($rs)) {
@@ -382,7 +382,7 @@
 				$sql = "UPDATE tbl_wechat_game_room SET status = 2 WHERE room_no='".$roomNo."'";
 				db_execute($sql);
 			} else {
-				$sql = "SELECT t1.websocket_id FROM (SELECT * FROM tbl_wechat_game_room_player t WHERE t.room_no='".$roomNo."' AND t.status = 1) t INNER JOIN tbl_wechat_player t1 ON t.player_id = t1.id";
+				$sql = "SELECT t1.websocket_id FROM (SELECT * FROM tbl_wechat_game_room_player t WHERE t.room_no='".$roomNo."' AND t.status<>2) t INNER JOIN tbl_wechat_player t1 ON t.player_id = t1.id";
 				$rows = mysql_query($sql);
 				$socketIds = array();
 				while($row = mysql_fetch_array($rows)) {
@@ -426,7 +426,7 @@
 						$sql = "UPDATE tbl_wechat_game_room SET status = 2 WHERE room_no='".$roomNo."'";
 						db_execute($sql);
 					} else {
-						$sql = "SELECT t1.websocket_id FROM (SELECT * FROM tbl_wechat_game_room_player t WHERE t.room_no='".$roomNo."' AND t.status = 1) t INNER JOIN tbl_wechat_player t1 ON t.player_id = t1.id";
+						$sql = "SELECT t1.websocket_id FROM (SELECT * FROM tbl_wechat_game_room_player t WHERE t.room_no='".$roomNo."' AND t.status<>2) t INNER JOIN tbl_wechat_player t1 ON t.player_id = t1.id";
 						$rows = mysql_query($sql);
 						$socketIds = array();
 						while($row = mysql_fetch_array($rows)) {

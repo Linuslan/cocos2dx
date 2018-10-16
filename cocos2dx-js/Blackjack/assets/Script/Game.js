@@ -73,6 +73,10 @@ cc.Class({
         lastExpression: {
             default: null,
             type: cc.Label
+        },
+        status: {
+            default: 0,
+            type: cc.Integer
         }
     },
 
@@ -103,7 +107,7 @@ cc.Class({
         ws.onmessage = function (event) {
             var data = event.data;
             //console.log(self);
-            console.log("response text msg: " + event.data);
+            //console.log("response text msg: " + event.data);
             var json = JSON.parse(data);
             //console.log("JSON解析成功");
             //console.log(json);
@@ -116,12 +120,13 @@ cc.Class({
             //玩家准备，同时需要更新房间内其他玩家的界面，将准备的玩家的状态改为已准备，同时分数清空
             //同时，如果准备好的玩家是当前玩家本人，则将玩家的界面上的牌清空
             if(cmd == "playerReady") {
-                readyBtn.active = false;
                 if(data.playerId == Global.playerId) {
+                    readyBtn.active = false;
                     self.resetPoker();
                     self.resetCalUI();
                     var playerInfoLbl = self.node.getChildByName("player_info").getComponent(cc.Label);
                     playerInfoLbl.string = "分数：0";
+                    self.status = 0;
                 } else {
                     console.log("playerId:"+data.playerId);
                     var player = self.getPlayerByPlayerId(data.playerId);
@@ -141,6 +146,7 @@ cc.Class({
                     var roundId = data.roundId;
                     Global.roundId = roundId;
                     self.clockCountDown(cards, second, pokerCount);
+                    self.resetPlayer("解题中");
                 }
 
             } else if(cmd == "commit") {
@@ -187,10 +193,22 @@ cc.Class({
                     giveupBtn.active = false;
                     self.resetPoker();
                     self.resetCalUI();
+                    var playerInfoLbl = self.node.getChildByName("player_info").getComponent(cc.Label);
+                    playerInfoLbl.string = "分数：0";
+                    var clockNode = self.node.getChildByName("clock");
+                    var calClockNode = self.node.getChildByName("cal_clock");
+                    calClockNode.active = false;
+                    clockNode.active = false;
+                    clockNode.getComponent(cc.Label).string="0";
+                    calClockNode.getComponent(cc.Label).string="0";
+                    self.resetPlayer("未准备", 0);
+                    self.status=0;
                     return;
                 }
                 var newRound = data.newRound;
                 if(newRound == true) {
+                    self.resetPoker();
+                    self.resetCalUI();
                     var cards = JSON.parse(data.cards);
                     console.log("新一回合的牌为");
                     console.log(cards);
@@ -199,6 +217,8 @@ cc.Class({
                     console.log("剩余牌数为："+pokerCount+", 新一回合id为："+data.roundId+", 开始倒计时");
                     //开始倒计时，进行新一回合
                     self.clockCountDown(cards, 3, pokerCount);
+                    self.resetPlayer("解题中");
+                    self.status = 0;
                 }
             } else if(cmd == "enterRoom") {
                 wx.showToast({title:"进入房间成功"});
@@ -243,10 +263,12 @@ cc.Class({
                     player.playerId = null;
                     var avatarNode = playerNode.getChildByName("avatar").getChildByName("image");
                     var avatarCmp = avatarNode.getComponent(cc.Sprite);
-                    cc.loader.load({url:"", type:"jpg"}, function (err, texture) {
+                    var spriteFrame = avatarCmp.spriteFrame;
+                    spriteFrame.destory();
+                    /*cc.loader.load({url:"", type:"jpg"}, function (err, texture) {
                         var spriteFrame  = new cc.SpriteFrame(texture);
                         avatarCmp.spriteFrame = spriteFrame;
-                    });
+                    });*/
                     var userNameNode = playerNode.getChildByName("name");
                     var userNameCmp = userNameNode.getComponent(cc.Label);
                     userNameCmp.string = "";
@@ -257,8 +279,6 @@ cc.Class({
                     var statusCmp = statusNode.getComponent(cc.Label);
                     statusCmp.string = "";
                 }
-                cc.director.loadScene("Menu");
-                
             }
         };
         ws.onerror = function (event) {
@@ -310,12 +330,13 @@ cc.Class({
             ws.send("{\"cmd\":\"commit\", \"data\":{\"playerId\":"+Global.playerId+", \"socketId\":\""+Global.socketId+"\",\"roomNo\":\""+Global.roomNo+"\", \"roomId\":"+Global.roomId+", \"gameNo\":"+Global.gameNo+", \"roundId\":"+Global.roundId+", \"status\": 2}}");
             //计算可能的解
             this.showTips();
-            this.calClockUnschedule();
+            //this.calClockUnschedule();
+            this.status = 1;
         }, this);
 
         //点击退出按钮，则向服务端发送退出房间指令
         backBtn.on(cc.Node.EventType.TOUCH_START, function(event) {
-            ws.send("{\"cmd\":\"quitRoom\", \"data\":{\"playerId\":"+Global.playerId+", \"roomNo\":\""+Global.roomNo+"\", \"gameNo\":\""+Global.gameNo+"\", \"roundId\":\""+Global.roundId+"\"}}");
+            ws.send("{\"cmd\":\"quitRoom\", \"data\":{\"playerId\":"+Global.playerId+", \"roomNo\":\""+Global.roomNo+"\", \"gameNo\":\""+Global.gameNo+"\", \"roundId\":\""+Global.roundId+"\", \"socketId\":\""+Global.socketId+"\"}}");
             var btn = event.target;
             cc.loader.loadRes("audio/button", cc.AudioClip, function (err, clip) {
                 var audioID = cc.audioEngine.play(clip, false, 1);
@@ -412,7 +433,12 @@ cc.Class({
             //获取时钟对象，修改里面的数字
             var time = second-count;
             console.log("倒计时数字："+time);
-            clock.string = time;
+            if(self.getStatus() == 1) {
+                clock.string = "回合剩余: "+time;
+            } else {
+                clock.string = time;
+            }
+            
             clockNode.active = true;
             if(time <= 0) {   //倒计时完成，开始发牌
                 console.log("倒计时完成，玩家没有完成计算");
@@ -424,6 +450,9 @@ cc.Class({
             count ++;
         }, 1, second, 0);
     },
+    getStatus() {
+        return this.status;
+    },
     calClockUnschedule() {
         console.log("计算倒计时停止");
         var clockNode = this.node.getChildByName("cal_clock");
@@ -432,7 +461,6 @@ cc.Class({
         console.log("计算倒计时停止结束");
     },
     refreshPoker() {
-        this.resetCalUI();
         var cardDealAudioID = null;
         cc.loader.loadRes("audio/card_deal", cc.AudioClip, function (err, clip) {
             cardDealAudioID = cc.audioEngine.play(clip, false, 1);
@@ -551,6 +579,48 @@ cc.Class({
             calForthPoker.getComponent("Porker").key = "";
             calForthPoker.getComponent("Porker").value = 0;
         });
+    },
+    resetPlayer(status, score) {
+        var firstPlayer = this.node.getChildByName("first_player");
+        var secondPlayer = this.node.getChildByName("second_player");
+        var thirdPlayer = this.node.getChildByName("third_player");
+        var forthPlayer = this.node.getChildByName("forth_player");
+        var playerCmp = firstPlayer.getComponent("Player");
+        var playerCmpId = playerCmp.playerId;
+        console.log("第一个玩家的playerId="+playerCmpId);
+        if(playerCmpId) {
+            firstPlayer.getChildByName("status").getComponent(cc.Label).string=status;
+            if(score) {
+                firstPlayer.getChildByName("score").getComponent(cc.Label).string=score;
+            }
+        }
+        playerCmp = secondPlayer.getComponent("Player");
+        playerCmpId = playerCmp.playerId;
+        console.log("第二个玩家的playerId="+playerCmpId);
+        if(playerCmpId) {
+            secondPlayer.getChildByName("status").getComponent(cc.Label).string=status;
+            if(score) {
+                secondPlayer.getChildByName("score").getComponent(cc.Label).string=score;
+            }
+        }
+        playerCmp = thirdPlayer.getComponent("Player");
+        playerCmpId = playerCmp.playerId;
+        console.log("第三个玩家的playerId="+playerCmpId);
+        if(playerCmpId) {
+            thirdPlayer.getChildByName("status").getComponent(cc.Label).string=status;
+            if(score) {
+                thirdPlayer.getChildByName("score").getComponent(cc.Label).string=score;
+            }
+        }
+        playerCmp = forthPlayer.getComponent("Player");
+        playerCmpId = playerCmp.playerId;
+        console.log("第四个玩家的playerId="+playerCmpId);
+        if(playerCmpId) {
+            forthPlayer.getChildByName("status").getComponent(cc.Label).string=status;
+            if(score) {
+                forthPlayer.getChildByName("score").getComponent(cc.Label).string=score;
+            }
+        }
     },
     getPoker() {
         if(this.pokers.length <= 0) {
@@ -758,8 +828,9 @@ cc.Class({
                 //var clockNode = this.node.getChildByName("clock");
                 //var clock = clockNode.getComponent(cc.Label);
                 //clock.unschedule();
-                console.log("停止计算倒计时");
-                this.calClockUnschedule();
+                //console.log("停止计算倒计时");
+                //this.calClockUnschedule();
+                this.status = 1;
                 return ;
             }
         }

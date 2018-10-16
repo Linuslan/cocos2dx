@@ -31,7 +31,7 @@ define("HEARTBEAT_TIME",10);
 //检测心跳
 $worker->onWorkerStart = function($worker) {
     Timer::add(5, function()use($worker){
-    	echo "start check heart beat.\n";
+    	//echo "start check heart beat.\n";
     	global $clients;
     	global $gameRoomAction;
     	//var_dump($clients);
@@ -43,18 +43,18 @@ $worker->onWorkerStart = function($worker) {
                 continue;
             }
             $timeDiff = $time_now - $connection->lastMessageTime;
-            echo "heart beat time diff: ".$timeDiff."\n";
+            //echo "heart beat time diff: ".$timeDiff."\n";
             // 上次通讯时间间隔大于心跳间隔，则认为客户端已经下线，关闭连接
             if ($timeDiff > HEARTBEAT_TIME) {
-            	echo "client is offline, close it.\n";
+            	//echo "client is offline, close it.\n";
                 if(!empty($connection->socketId)) {
                 	$socketId = $connection->socketId;
-                	echo "before remove, socketIds is \n";
-                	print_r(array_keys($clients));
-                	echo "heart beat exception, remove socket:".$socketId." from clients\n";
+                	//echo "before remove, socketIds is \n";
+                	//print_r(array_keys($clients));
+                	//echo "heart beat exception, remove socket:".$socketId." from clients\n";
                 	unset($clients[$socketId]);
-                	echo "after remove, left socketIds is \n";
-                	print_r(array_keys($clients));
+                	//echo "after remove, left socketIds is \n";
+                	//print_r(array_keys($clients));
                 	$gameRoomAction->quitRoomBySocketId($clients, $socketId);
                 }
                 $connection->close();
@@ -63,25 +63,25 @@ $worker->onWorkerStart = function($worker) {
     });
 };
 $worker->onClose = function($con) {
-	echo "connection is close.\n";
+	//echo "connection is close.\n";
 	global $clients;
 	global $gameRoomAction;
 	//var_dump($clients);
 	$socketId = $con->socketId;
-	echo "socketId is ".$socketId."\n";
+	//echo "socketId is ".$socketId."\n";
 	if(empty($socketId)) {
 		return;
 	}
 	unset($clients[$socketId]);
-	echo "after remove from clients, left clients are \n";
-	print_r(array_keys($clients));
+	//echo "after remove from clients, left clients are \n";
+	//print_r(array_keys($clients));
 	$gameRoomAction->quitRoomBySocketId($clients, $socketId);
 };
 $worker->onMessage = function($con, $msg) {
 	global $playerAction;
 	global $gameRoomAction;
 	global $clients;
-	echo "receive:".$msg."\n";
+	//echo "receive:".$msg."\n";
 	$result = [];
 	$result["success"] = false;
 	$result["msg"] = "";
@@ -128,7 +128,7 @@ $worker->onMessage = function($con, $msg) {
 			$result["success"] = true;
 			$currSocketId = $jsonData->{"data"}->{"socketId"};
 			$socketIds = $rs["socketIds"];
-        	echo "playerReady->socketIds:".$socketIds."\n";
+        	echo "enterRoom->socketIds:".$socketIds."\n";
             $socketArr = explode(",", $socketIds);
             foreach($socketArr as $socketId) {
             	echo "socketId:".$socketId."\n";
@@ -143,19 +143,17 @@ $worker->onMessage = function($con, $msg) {
 			$rs = $gameRoomAction->playerReady($jsonData->{"data"});
 			$result["data"] = $rs;
 			$result["success"] = true;
-            if($rs["isCountDown"]) {
-            	$socketIds = $rs["socketIds"];
-            	echo "enterRoom->socketIds:".$socketIds."\n";
-	            $socketArr = explode(",", $socketIds);
-	            foreach($socketArr as $socketId) {
-	            	echo "socketId:".$socketId."\n";
-	            	if($socketId == $currSocketId) {
-	            		$isSend = true;  //确保后面不会再发送
-	            	}
-	                $socket = $clients[$socketId];
-	                //var_dump($socket);
-	                $socket->send(json_encode($result));
-	            }
+            $socketIds = $rs["socketIds"];
+            echo "playerReady->socketIds:".$socketIds."\n";
+            $socketArr = explode(",", $socketIds);
+            foreach($socketArr as $socketId) {
+                echo "socketId:".$socketId."\n";
+                if($socketId == $currSocketId) {
+                    $isSend = true;  //确保后面不会再发送
+                }
+                $socket = $clients[$socketId];
+                //var_dump($socket);
+                $socket->send(json_encode($result));
             }
 		} else if($cmd == "refreshPoker") {
             $data = $jsonData->{"data"};
