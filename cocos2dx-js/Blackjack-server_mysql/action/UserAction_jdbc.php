@@ -2,7 +2,7 @@
 	//include_once "utils/JdbcUtil.php";
 	$cur_dir=dirname(__FILE__);
 	chdir($cur_dir);
-	include_once "../utils/JdbcUtil2.php";
+	include_once "../utils/JdbcUtil.php";
 	include_once "GameRoomAction.php";
 	getConn();
 	/*$method = $_REQUEST["m"];
@@ -29,18 +29,19 @@
 		$openId = $json->{"openid"};
 		$sql = "SELECT * FROM tbl_wechat_player t WHERE t.openid='".$openId."'";
 		echo $sql."\n";
-		$rows = db_execute($sql);
+		$result = mysql_query($sql);
 		$userCount = 0;
 		$id = null;
 		$userName = "";
-		foreach($rows as $row) {
+		while($row = mysql_fetch_array($result)) {
 			$id = $row["id"];
 			$userName = $row["user_name"];
 		}
 		if($id == null || $id < 0) {
 			echo "can't find player, insert new player.\n";
 			$sql = "INSERT INTO tbl_wechat_player(openid, score, create_time, login_time) VALUES('".$openId."', 0, '".date("Y-m-d H:i:s")."', '".date("Y-m-d H:i:s")."')";
-			$id = db_execute($sql);
+			mysql_query($sql);
+			$id = mysql_insert_id();
 		}
 		echo "{\"playerId\": \"".$id."\", \"userName\":\"".$userName."\"}\n";
 		//每次登录，判断用户是否还在某个房间里面玩，如果还在某个房间里面玩，则直接进入某个房间

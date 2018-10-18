@@ -11,7 +11,7 @@ window.Global = {
     heartBeat: function() { //心跳
         var self = this;
         setInterval(function() {
-            //console.log("开始发送心跳");
+            console.log("开始发送心跳");
             self.webSocket.send("{\"cmd\":\"heartBeat\"}");
         }, 5000);
     }

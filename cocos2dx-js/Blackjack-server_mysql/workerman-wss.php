@@ -43,19 +43,21 @@ $worker->onWorkerStart = function($worker) {
                 continue;
             }
             $timeDiff = $time_now - $connection->lastMessageTime;
-            //echo "heart beat time diff: ".$timeDiff."\n";
+            echo "heart beat time diff: ".$timeDiff."\n";
             // 上次通讯时间间隔大于心跳间隔，则认为客户端已经下线，关闭连接
             if ($timeDiff > HEARTBEAT_TIME) {
-            	//echo "client is offline, close it.\n";
+            	echo "client is offline, close it.\n";
                 if(!empty($connection->socketId)) {
                 	$socketId = $connection->socketId;
                 	//echo "before remove, socketIds is \n";
                 	//print_r(array_keys($clients));
                 	//echo "heart beat exception, remove socket:".$socketId." from clients\n";
-                	unset($clients[$socketId]);
                 	//echo "after remove, left socketIds is \n";
                 	//print_r(array_keys($clients));
                 	$gameRoomAction->quitRoomBySocketId($clients, $socketId);
+                    echo "remove ".$socketId." from clients.\n";
+                    unset($clients[$socketId]);
+                    echo "remove success.\n";
                 }
                 $connection->close();
             }
@@ -68,14 +70,16 @@ $worker->onClose = function($con) {
 	global $gameRoomAction;
 	//var_dump($clients);
 	$socketId = $con->socketId;
-	//echo "socketId is ".$socketId."\n";
-	if(empty($socketId)) {
+	echo "socketId is ".$socketId."\n";
+	if(empty($socketId) || empty($clients[$socketId])) {
 		return;
 	}
-	unset($clients[$socketId]);
 	//echo "after remove from clients, left clients are \n";
 	//print_r(array_keys($clients));
 	$gameRoomAction->quitRoomBySocketId($clients, $socketId);
+    echo "remove ".$socketId." from clients.\n";
+    unset($clients[$socketId]);
+    echo "remove success.\n";
 };
 $worker->onMessage = function($con, $msg) {
 	global $playerAction;
@@ -100,7 +104,7 @@ $worker->onMessage = function($con, $msg) {
 		//var_dump($clients);
 		if($cmd == "userLogin") {
 			$data = $jsonData->{"data"};
-			$res = userLogin($data);
+			$res = userLogin($data, $clients);
 			$result["data"] = $res;
 		} else if($cmd == "getSocketId") {
 			$socketId = uniqid();

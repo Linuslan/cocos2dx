@@ -262,9 +262,8 @@ cc.Class({
                     var player = playerNode.getComponent("Player");
                     player.playerId = null;
                     var avatarNode = playerNode.getChildByName("avatar").getChildByName("image");
-                    var avatarCmp = avatarNode.getComponent(cc.Sprite);
-                    var spriteFrame = avatarCmp.spriteFrame;
-                    spriteFrame.destory();
+                    avatarNode.removeComponent(cc.Sprite);
+                    avatarNode.addComponent(cc.Sprite);
                     /*cc.loader.load({url:"", type:"jpg"}, function (err, texture) {
                         var spriteFrame  = new cc.SpriteFrame(texture);
                         avatarCmp.spriteFrame = spriteFrame;
@@ -278,6 +277,8 @@ cc.Class({
                     var statusNode = playerNode.getChildByName("status");
                     var statusCmp = statusNode.getComponent(cc.Label);
                     statusCmp.string = "";
+                } else {
+                    cc.director.loadScene("Menu", function() {});
                 }
             }
         };
@@ -313,6 +314,11 @@ cc.Class({
         }, this);
 
         readyBtn.on(cc.Node.EventType.TOUCH_END, function(event){
+            if(!ws || ws.readyState !== WebSocket.OPEN) {
+                wx.showToast({title: "您离线，请重新登录", icon: "none"});
+                cc.director.loadScene("Menu", function() {});
+                return ;
+            }
             //发送到服务端玩家准备完成
             ws.send("{\"cmd\":\"playerReady\", \"data\": {\"roomNo\":\""+Global.roomNo+"\", \"playerId\":"+Global.playerId+", \"gameLevel\":"+this.gameLevel+", \"socketId\":\""+Global.socketId+"\"}}");
             giveupBtn.active = true;
@@ -327,6 +333,11 @@ cc.Class({
         giveupBtn.on(cc.Node.EventType.TOUCH_END, function(event){
             //readyBtn.active = true;
             //giveupBtn.active = false;
+            if(!ws || ws.readyState !== WebSocket.OPEN) {
+                wx.showToast({title: "您离线，请重新登录", icon: "none"});
+                cc.director.loadScene("Menu", function() {});
+                return ;
+            }
             ws.send("{\"cmd\":\"commit\", \"data\":{\"playerId\":"+Global.playerId+", \"socketId\":\""+Global.socketId+"\",\"roomNo\":\""+Global.roomNo+"\", \"roomId\":"+Global.roomId+", \"gameNo\":"+Global.gameNo+", \"roundId\":"+Global.roundId+", \"status\": 2}}");
             //计算可能的解
             this.showTips();
@@ -336,12 +347,20 @@ cc.Class({
 
         //点击退出按钮，则向服务端发送退出房间指令
         backBtn.on(cc.Node.EventType.TOUCH_START, function(event) {
-            ws.send("{\"cmd\":\"quitRoom\", \"data\":{\"playerId\":"+Global.playerId+", \"roomNo\":\""+Global.roomNo+"\", \"gameNo\":\""+Global.gameNo+"\", \"roundId\":\""+Global.roundId+"\", \"socketId\":\""+Global.socketId+"\"}}");
+            
             var btn = event.target;
             cc.loader.loadRes("audio/button", cc.AudioClip, function (err, clip) {
                 var audioID = cc.audioEngine.play(clip, false, 1);
             });
             btn.runAction(cc.sequence(cc.scaleTo(0.1, 0.85, 0.85), cc.scaleTo(0.1, 1, 1), cc.callFunc(function() {
+                console.log("退出按钮点击");
+                console.log(ws);
+                if(!ws || ws.readyState !== WebSocket.OPEN) {
+                    wx.showToast({title: "您离线，请重新登录", icon: "none"});
+                    cc.director.loadScene("Menu", function() {});
+                } else {
+                    ws.send("{\"cmd\":\"quitRoom\", \"data\":{\"playerId\":"+Global.playerId+", \"roomNo\":\""+Global.roomNo+"\", \"gameNo\":\""+Global.gameNo+"\", \"roundId\":\""+Global.roundId+"\", \"socketId\":\""+Global.socketId+"\"}}");
+                }
                 
             }, this)));
         }, this);
@@ -444,8 +463,14 @@ cc.Class({
                 console.log("倒计时完成，玩家没有完成计算");
                 clockNode.active = false;
                 var ws = Global.webSocket;
-                ws.send("{\"\cmd\":\"commit\", \"data\":{\"playerId\":"+Global.playerId+", \"socketId\":\""+Global.socketId+"\",\"roomNo\":\""+Global.roomNo+"\", \"roomId\":"+Global.roomId+", \"gameNo\":"+Global.gameNo+", \"roundId\":"+Global.roundId+", \"status\": 3}}");
-                self.showTips();
+                if(!ws || ws.readyState !== WebSocket.OPEN) {
+                    wx.showToast({title: "您离线，请重新登录", icon: "none"});
+                    cc.director.loadScene("Menu", function() {});
+                } else {
+                    ws.send("{\"\cmd\":\"commit\", \"data\":{\"playerId\":"+Global.playerId+", \"socketId\":\""+Global.socketId+"\",\"roomNo\":\""+Global.roomNo+"\", \"roomId\":"+Global.roomId+", \"gameNo\":"+Global.gameNo+", \"roundId\":"+Global.roundId+", \"status\": 3}}");
+                    self.showTips();
+                }
+                
             }
             count ++;
         }, 1, second, 0);
@@ -824,6 +849,11 @@ cc.Class({
                 this.showInfo("过关");
                 this.clearTips();
                 var ws = Global.webSocket;
+                if(!ws || ws.readyState !== WebSocket.OPEN) {
+                    wx.showToast({title: "您离线，请重新登录", icon: "none"});
+                    cc.director.loadScene("Menu", function() {});
+                    return ;
+                }
                 ws.send("{\"cmd\":\"commit\", \"data\":{\"playerId\":"+Global.playerId+", \"socketId\":\""+Global.socketId+"\",\"roomNo\":\""+Global.roomNo+"\", \"roomId\":"+Global.roomId+", \"gameNo\":"+Global.gameNo+", \"roundId\":"+Global.roundId+", \"status\": 1}}");
                 //var clockNode = this.node.getChildByName("clock");
                 //var clock = clockNode.getComponent(cc.Label);

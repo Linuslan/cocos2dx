@@ -1,7 +1,7 @@
 <?php
 	$cur_dir=dirname(__FILE__);
 	chdir($cur_dir);
-	include_once "../utils/JdbcUtil2.php";
+	include_once "../utils/JdbcUtil.php";
 	getConn();
 	class PlayerAction {
 		function updateSocketId($data) {
@@ -10,7 +10,7 @@
 			$playerId = $data->{"playerId"};
 			$sql = "UPDATE tbl_wechat_player SET websocket_id='".$websocketId."' WHERE id=".$playerId;
 			echo $sql."\n";
-			db_execute($sql);
+			mysql_query($sql);
 			return true;
 		}
 		function updatePlayer($data) {
