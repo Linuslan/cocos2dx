@@ -27,7 +27,7 @@ $worker = new Worker('websocket://0.0.0.0:443', $context);
 $worker->transport = 'ssl';
 $clients = [];
 // 心跳间隔55秒
-define("HEARTBEAT_TIME",10);
+define("HEARTBEAT_TIME",120);
 //检测心跳
 $worker->onWorkerStart = function($worker) {
     Timer::add(5, function()use($worker){
@@ -139,6 +139,9 @@ $worker->onMessage = function($con, $msg) {
             	if($socketId == $currSocketId) {
             		$isSend = true;  //确保后面不会再发送
             	}
+                if(empty($clients[$socketId])) {
+                    continue;
+                }
                 $socket = $clients[$socketId];
                 $socket->send(json_encode($result));
             }
@@ -154,6 +157,9 @@ $worker->onMessage = function($con, $msg) {
                 echo "socketId:".$socketId."\n";
                 if($socketId == $currSocketId) {
                     $isSend = true;  //确保后面不会再发送
+                }
+                if(empty($clients[$socketId])) {
+                    continue;
                 }
                 $socket = $clients[$socketId];
                 //var_dump($socket);
@@ -181,6 +187,9 @@ $worker->onMessage = function($con, $msg) {
             	if($socketId == $currSocketId) {
             		$isSend = true;  //确保后面不会再发送
             	}
+                if(empty($clients[$socketId])) {
+                    continue;
+                }
                 $socket = $clients[$socketId];
                 $socket->send(json_encode($result));
             }
@@ -199,6 +208,9 @@ $worker->onMessage = function($con, $msg) {
 	            	if($socketId == $currSocketId) {
 	            		$isSend = true;  //确保后面不会再发送
 	            	}
+                    if(empty($clients[$socketId])) {
+                        continue;
+                    }
 	                $socket = $clients[$socketId];
 	                $socket->send(json_encode($result));
 	            }
@@ -206,6 +218,7 @@ $worker->onMessage = function($con, $msg) {
         }
 		$result["success"] = true;
 	} catch(Exception $ex) {
+        echo "exception: ".$ex->getFile()."(".$ex->getLine()."): ".$ex->getMessage()."\n";
 		$errJson = json_decode($ex->getMessage());
 		$result["success"] = false;
 		$result["msg"] = $errJson->{"msg"};

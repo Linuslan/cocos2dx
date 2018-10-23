@@ -188,6 +188,7 @@ cc.Class({
                 }
                 //重新开始，将放弃按钮隐藏，将准备按钮显示为可见，同时刷新界面
                 if(restart) {
+                    self.showPokerInfo(0);
                     wx.showToast({title:"没牌啦，请重新开始", icon: "none"});
                     readyBtn.active = true;
                     giveupBtn.active = false;
@@ -234,7 +235,11 @@ cc.Class({
                         continue;
                     }
                     console.log("非本玩家，更新玩家头像");
-                    var playerNode = self.getEmptyPlayerCmp();
+                    var playerNode = self.getPlayerByPlayerId(id);
+                    if(playerNode) {
+                        continue;
+                    }
+                    playerNode = self.getEmptyPlayerCmp();
                     var player = playerNode.getComponent("Player");
                     player.playerId = id;
                     console.log(playerNode);
@@ -242,9 +247,29 @@ cc.Class({
                     var avatarNode = playerNode.getChildByName("avatar").getChildByName("image");
                     var avatarCmp = avatarNode.getComponent(cc.Sprite);
                     cc.loader.load({url:avatarUrl, type:"jpg"}, function (err, texture) {
-                        var spriteFrame  = new cc.SpriteFrame(texture);
-                        avatarCmp.spriteFrame = spriteFrame;
+                        console.log("开始设置头像");
+                        console.log(texture);
+                        //var spriteFrame  = new cc.SpriteFrame(texture);
+                        //avatarCmp.spriteFrame = spriteFrame;
+                        var url = texture.url;
+                        for(var j = 0; j < players.length; j ++) {
+                            var player = players[j];
+                            var id = player.id;
+                            var avatarUrl = player.avatarUrl;
+                            if(url != avatarUrl) {
+                                continue;
+                            }
+                            var playerNode = self.getPlayerByPlayerId(id);
+                            if(playerNode) {
+                                var player = playerNode.getComponent("Player");
+                                var avatarNode = playerNode.getChildByName("avatar").getChildByName("image");
+                                var avatarCmp = avatarNode.getComponent(cc.Sprite);
+                                var spriteFrame  = new cc.SpriteFrame(texture);
+                                avatarCmp.spriteFrame = spriteFrame;
+                            }
+                        }
                     });
+                    console.log("头像加载完成");
                     var userNameNode = playerNode.getChildByName("name");
                     var userNameCmp = userNameNode.getComponent(cc.Label);
                     userNameCmp.string = userName;
@@ -408,6 +433,10 @@ cc.Class({
         console.log("开始倒计时");
         this.showInfo("即将开始新回合");
         clock.schedule(function() {
+            var readyBtn = self.node.getChildByName("buttons").getChildByName("ready");
+            var giveupBtn = self.node.getChildByName("buttons").getChildByName("giveup");
+            readyBtn.active = false;
+            giveupBtn.active = false;
             //获取时钟对象，修改里面的数字
             var time = second-count;
             console.log("倒计时数字："+time);
@@ -416,6 +445,7 @@ cc.Class({
             if(time <= 0) {   //倒计时完成，开始发牌
                 console.log("倒计时完成，开始发牌");
                 clockNode.active = false;
+                giveupBtn.active = true;
                 for(var key in cards) {
                     var value = cards[key];
                     var poker = new cc.Object();
@@ -426,8 +456,8 @@ cc.Class({
                 }
                 console.log("得到的牌：");
                 console.log(self.pokers);
-                self.refreshPoker();
                 self.showPokerInfo(pokerCount);
+                self.refreshPoker();
             }
             count ++;
         }, 1, second, 0);
@@ -655,6 +685,7 @@ cc.Class({
             var playerInfoLbl = this.node.getChildByName("player_info").getComponent(cc.Label);
             playerInfoLbl.string = "分数：0";
             this.showInfo("没牌啦，请重新开始");
+            this.showPokerInfo();
         }
         var pokerList = [];
         for(var i = 0; i < this.pokers.length; i ++) {
@@ -885,7 +916,7 @@ cc.Class({
     },
     showPokerInfo(pokerCount) {
         var len = this.pokers.length;
-        if(pokerCount) {
+        if(pokerCount || pokerCount == 0) {
             len = pokerCount;
         }
         this.pokerInfo.string = "剩余牌数："+len;

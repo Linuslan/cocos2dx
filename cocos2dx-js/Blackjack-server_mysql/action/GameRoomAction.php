@@ -176,6 +176,7 @@
 			$pokerValue = [];
 			if($gameLevel == 0) {
 				$pokerValue = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+				//$pokerValue = [1, 2];
 			} else if($gameLevel == 1) {
 				$pokerValue = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 			}
@@ -229,7 +230,7 @@
 				$result["restart"] = true;
 				$result["pokerCount"] = $pokerCount;
 				//没牌了，将房间状态更新为0，让其他玩家进入
-				$sql = "UPDATE tbl_wechat_game_room SET t.status=0 WHERE t.room_no='".$roomNo."'";
+				$sql = "UPDATE tbl_wechat_game_room t SET t.status=0 WHERE t.room_no='".$roomNo."'";
 				db_execute($sql);
 				//throw new Exception("{\"code\":\"1000-02\", \"msg\":\"没牌啦，请重新开始\"}");
 				return $result;
@@ -465,6 +466,9 @@
 					print_r(array_keys($clients));
 					foreach($socketIds as $socketId) {
 		            	echo "socketId:".$socketId."\n";
+		            	if(empty($clients[$socketId])) {
+		            		continue;
+		            	}
 		                $socket = $clients[$socketId];
 		                $socket->send(json_encode($result));
 		                echo "upgrade player's socket is ".$socketId."\n";
