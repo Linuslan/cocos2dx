@@ -3,6 +3,7 @@
 //
 
 #include "RoleConfig.h"
+std::string RoleConfig::DATA_KEY = "RoleConfig";
 std::string RoleConfig::init() {
     std::string writePath = RoleConfig::getFilePath();
     std::string data = FileUtils::getInstance()->getStringFromFile(writePath);

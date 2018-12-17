@@ -12,7 +12,7 @@ USING_NS_CC;
 using namespace rapidjson;
 class GoodsConfig {
 public:
-    static std::string DATA_KEY = "GoodsConfig";
+    static std::string DATA_KEY;
     static std::string init();
     static std::string getStringByName(std::string key);
     static int getIntByName(std::string key);

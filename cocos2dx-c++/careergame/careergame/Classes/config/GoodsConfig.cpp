@@ -3,6 +3,7 @@
 //
 
 #include "GoodsConfig.h"
+std::string GoodsConfig::DATA_KEY = "GoodsConfig";
 std::string GoodsConfig::init() {
     std::string writePath = GoodsConfig::getFilePath();
     std::string data = FileUtils::getInstance()->getStringFromFile(writePath);

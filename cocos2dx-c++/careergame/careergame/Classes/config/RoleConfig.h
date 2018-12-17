@@ -12,7 +12,7 @@ USING_NS_CC;
 using namespace rapidjson;
 class RoleConfig {
 public:
-    static std::string DATA_KEY = "RoleConfig";
+    static std::string DATA_KEY;
     static std::string init();
     static std::string getStringByName(std::string key);
     static int getIntByName(std::string key);
