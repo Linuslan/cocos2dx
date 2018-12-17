@@ -19,11 +19,13 @@
     "Spine Skeleton",
     "DragonBones",
     "RichText",
+    "MotionStreak",
     "ScrollView",
     "Layout",
     "EditBox",
     "VideoPlayer",
-    "WebView"
+    "WebView",
+    "Physics"
   ],
   "fit-height": true,
   "fit-width": false,

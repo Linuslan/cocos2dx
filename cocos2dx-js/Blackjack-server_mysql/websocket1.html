@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>websocket</title>
+ </head>
+ <body>
+ <input id="text" value="">
+ <input type="submit" value="send" onclick="start()">
+ <input type="submit" value="close" onclick="close()">
+ <input type="submit" value="getSocketId" onclick="getSocketId()">
+ <input type="submit" value="updateSocketId" onclick="updateSocketId()">
+ <input type="submit" value="ready" onclick="ready()">
+<div id="msg"></div>
+<div id="socketId"></div>
+<div id="countDown"></div>
+ <script>
+ /**
+ 0：未连接
+1：连接成功，可通讯
+2：正在关闭
+3：连接已关闭或无法打开
+*/
+ 
+    //创建一个webSocket 实例
+    var webSocket  = new WebSocket("wss://www.uxgoo.com:8083");
+ 
+ 
+    webSocket.onerror = function (event){
+        onError(event);
+    };
+ 
+    // 打开websocket
+    webSocket.onopen = function (event){
+        onOpen(event);
+    };
+ 
+    //监听消息
+    webSocket.onmessage = function (event){
+        onMessage(event);
+    };
+ 
+ 
+    webSocket.onclose = function (event){
+        onClose(event);
+    }
+ 
+    //关闭监听websocket
+    function onError(event){
+        document.getElementById("msg").innerHTML = "<p>close</p>";
+        console.log("error"+event.data);
+    };
+ 
+    function onOpen(event){
+        console.log("open:"+sockState());
+        document.getElementById("msg").innerHTML = "<p>Connect to Service</p>";
+    };
+    function onMessage(event){
+        console.log("onMessage");
+        document.getElementById("msg").innerHTML += "<p>response:"+event.data+"</p>";
+        var response = event.data;
+        var json = eval("("+response+")");
+        if(!json.success) {
+            return;
+        }
+        var data = json.data;
+        if(json.cmd == "getSocketId") {
+            document.getElementById("socketId").innerHTML = data.socketId;
+        }
+        if(json.cmd == "playerReady") {
+            doReady(data);
+        }
+    };
+ 
+    function onClose(event){
+        document.getElementById("msg").innerHTML = "<p>close</p>";
+        console.log("close:"+sockState());
+        webSocket.close();
+    }
+ 
+    function sockState(){
+        var status = ['未连接','连接成功，可通讯','正在关闭','连接已关闭或无法打开'];
+            return status[webSocket.readyState];
+    }
+ 
+    function start(event){
+        console.log(webSocket);
+        var msg = document.getElementById('text').value;
+        document.getElementById('text').value = '';
+        console.log("send:"+sockState());
+        console.log("msg="+msg);
+        webSocket.send(msg);
+        document.getElementById("msg").innerHTML += "<p>request: "+msg+"</p>";
+    };
+ 
+    function close(event){
+        webSocket.close();
+    }
+
+    function getSocketId(event) {
+        console.log("getSocketId");
+        console.log(webSocket);
+        var msg = "{\"cmd\": \"getSocketId\"}";
+        webSocket.send(msg);
+        document.getElementById("msg").innerHTML += "<p>request: "+msg+"</p>";
+    }
+
+    function updateSocketId(event) {
+        console.log("updateSocketId");
+        console.log(webSocket);
+        var socketId = document.getElementById("socketId").innerHTML;
+        var msg = "{\"cmd\": \"updateSocketId\", \"data\":{\"playerId\":1, \"socketId\":\""+socketId+"\"}}";
+        webSocket.send(msg);
+        document.getElementById("msg").innerHTML += "<p>request: "+msg+"</p>";
+    }
+
+    function ready(event) {
+        console.log("player ready");
+        console.log(webSocket);
+        var socketId = document.getElementById("socketId").innerHTML;
+        var msg = "{\"cmd\": \"playerReady\", \"data\":{\"playerId\":1, \"roomNo\":\"123456\", \"socketId\":\""+socketId+"\"}}";
+        document.getElementById("msg").innerHTML += "<p>request: "+msg+"</p>";
+        webSocket.send(msg);
+    }
+
+    function doReady(data) {
+        console.log(data);
+        var json = eval("("+data+")");
+        console.log(json.second);
+        doCountDown(json.second);
+    }
+
+    function doCountDown(second) {
+        console.log(second);
+        var count = second;
+        var id = setInterval(function() {
+            document.getElementById("countDown").innerHTML = "倒计时："+count;
+            if(count <= 0) {
+                window.clearInterval(id);
+            }
+            count --;
+        },1000);
+    }
+ </script>
+ </body>
+</html>
